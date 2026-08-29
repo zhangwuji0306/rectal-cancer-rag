@@ -1,0 +1,2094 @@
+{
+ "files": [
+  {
+   "folder": "2AGKL8MW",
+   "filename": "Cao 等 - 2020 - A New MRI-Defined Biomarker for Rectal Mucinous Adenocarcinoma Mucin Pool Patterns in Determining t.pdf",
+   "size_mb": 2.83,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Cao W, Wu L, Zhao Y, et al. A New MRI-Defined Biomarker for Rectal Mucinous Adenocarcinoma: Mucin Pool Patterns in Determining the Efficacy of Neoadjuvant Therapy. Front Oncol. 2020;10:1425. doi:10.3389/fonc.2020.01425",
+   "csv_key": "GLKUXXXJ",
+   "title": "A New MRI-Defined Biomarker for Rectal Mucinous Adenocarcinoma: Mucin Pool Patterns in Determining the Efficacy of Neoadjuvant Therapy",
+   "year": "2020",
+   "journal": "Frontiers in Oncology",
+   "doi": "10.3389/fonc.2020.01425",
+   "author": "Cao, Wuteng; Wu, Lei; Zhao, Yandong; Zhou, Jie; Li, Wenli; Wang, Xinhua; Xu, Jianbo; Zhou, Zhiyang; Liang, Changhong",
+   "abstract": "Background and Aim: This work aims to study the relationship between MRI-defined mucin pool (MP) patterns prior to treatment and the efficacy of neoadjuvant therapy (NAT) in locally advanced rectal mu"
+  },
+  {
+   "folder": "3HSLWWWG",
+   "filename": "Wu 等 - 2025 - Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal.pdf",
+   "size_mb": 1.65,
+   "converted": true,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": null,
+   "title": "Wu 等 - 2025 - Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal",
+   "year": null,
+   "journal": null,
+   "doi": null,
+   "abstract": ""
+  },
+  {
+   "folder": "3TQKLBH5",
+   "filename": "Zhou 等 - 2024 - Integrating single-cell and spatial analysis reveals MUC1-mediated cellular crosstalk in mucinous co.pdf",
+   "size_mb": 14.29,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Zhou H, Shen Y, Zheng G, et al. Integrating single-cell and spatial analysis reveals MUC1-mediated cellular crosstalk in mucinous colorectal adenocarcinoma. Clin Transl Med. 2024;14(5):e1701. doi:10.1002/ctm2.1701",
+   "csv_key": "G7U3W3E2",
+   "title": "Integrating single-cell and spatial analysis reveals MUC1-mediated cellular crosstalk in mucinous colorectal adenocarcinoma",
+   "year": "2024",
+   "journal": "Clinical and Translational Medicine",
+   "doi": "10.1002/ctm2.1701",
+   "author": "Zhou, Haiyang; Shen, Yiwen; Zheng, Guangyong; Zhang, Beibei; Wang, Anqi; Zhang, Jing; Hu, Hao; Lin, Jiayi; Liu, Sanhong; Luan, Xin; Zhang, Weidong",
+   "abstract": "BACKGROUND: Mucinous colorectal adenocarcinoma (MCA) is a distinct subtype of colorectal cancer (CRC) with the most aggressive pattern, but effective treatment of MCA remains a challenge due to its va"
+  },
+  {
+   "folder": "4JC344PW",
+   "filename": "Hendrick 等 - 2025 - Incomplete Resection Is Twice as Likely in Locally Advanced Mucinous Compared to Nonmucinous Rectal.pdf",
+   "size_mb": 0.57,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Hendrick LE, Naffouje S, Imanirad I, et al. Incomplete Resection Is Twice as Likely in Locally Advanced Mucinous Compared to Nonmucinous Rectal Adenocarcinoma: A National Propensity-Matched Analysis. J Surg Oncol. 2025;131(6):1090-1100. doi:10.1002/jso.28041",
+   "csv_key": "YMI4NRQP",
+   "title": "Incomplete Resection Is Twice as Likely in Locally Advanced Mucinous Compared to Nonmucinous Rectal Adenocarcinoma: A National Propensity-Matched Analysis",
+   "year": "2025",
+   "journal": "Journal of Surgical Oncology",
+   "doi": "10.1002/jso.28041",
+   "author": "Hendrick, Leah E.; Naffouje, Samer; Imanirad, Iman; Pereira, Allan Lima; Biachi, Tiago; Sanchez, Julian; Dessureault, Sophie; Stefanou, Amalia; Dineen, Sean P.; Felder, Seth",
+   "abstract": "BACKGROUND AND OBJECTIVES: Rectal mucinous adenocarcinoma (MA) has poor response to neoadjuvant chemoradiation (NCR) and higher involved radial surgical margin rates than nonmucinous rectal adenocarci"
+  },
+  {
+   "folder": "4NW3C9Z5",
+   "filename": "Vernmark 等 - 2023 - The impact of adjuvant chemotherapy on survival in mucinous and non-mucinous rectal adenocarcinoma p.pdf",
+   "size_mb": 0.93,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Vernmark K, Knutsen A, Loftås P, Sun XF. The impact of adjuvant chemotherapy on survival in mucinous and non-mucinous rectal adenocarcinoma patients after TME surgery. PLoS One. 2023;18(2):e0282211. doi:10.1371/journal.pone.0282211",
+   "csv_key": "UYZVM9CB",
+   "title": "The impact of adjuvant chemotherapy on survival in mucinous and non-mucinous rectal adenocarcinoma patients after TME surgery",
+   "year": "2023",
+   "journal": "PloS One",
+   "doi": "10.1371/journal.pone.0282211",
+   "author": "Vernmark, Karolina; Knutsen, Annika; Loftås, Per; Sun, Xiao-Feng",
+   "abstract": "INTRODUCTION: The value of adjuvant chemotherapy for rectal cancer patients is debated and varies in different subgroups. One such subgroup is mucinous adenocarcinoma (MAC), which is more treatment re"
+  },
+  {
+   "folder": "4Q4STB45",
+   "filename": "Wang 等 - 2024 - Clinicopathological and prognostic features of colorectal mucinous adenocarcinomas a systematic rev.pdf",
+   "size_mb": 2.47,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Wang X, Wang H, He H, et al. Clinicopathological and prognostic features of colorectal mucinous adenocarcinomas: a systematic review and meta-analysis. BMC Cancer. 2024;24(1):1161. doi:10.1186/s12885-024-12905-3",
+   "csv_key": "TKNRVZPM",
+   "title": "Clinicopathological and prognostic features of colorectal mucinous adenocarcinomas: a systematic review and meta-analysis",
+   "year": "2024",
+   "journal": "BMC cancer",
+   "doi": "10.1186/s12885-024-12905-3",
+   "author": "Wang, Xiao; Wang, Haoran; He, Haoqing; Lv, Kai; Yuan, Wenguang; Chen, Jingbo; Yang, Hui",
+   "abstract": "BACKGROUND: Many studies have explored the clinicopathological features and prognosis between colorectal mucinous adenocarcinoma (MAC) and adenocarcinoma (AC) and have given different results. This me"
+  },
+  {
+   "folder": "57B9WN32",
+   "filename": "Sun 等 - 2010 - Locally Advanced Rectal Carcinoma Treated with Preoperative Chemotherapy and Radiation Therapy Prel.pdf",
+   "size_mb": 1.46,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "JJ9JWXTV",
+   "title": "Locally Advanced Rectal Carcinoma Treated with Preoperative Chemotherapy and Radiation Therapy: Preliminary Analysis of Diffusion-weighted MR Imaging for Early Detection of Tumor Histopathologic Downstaging",
+   "year": "2010",
+   "journal": "Radiology",
+   "doi": "10.1148/radiol.2541082230",
+   "author": "Sun, Ying-Shi; Zhang, Xiao-Peng; Tang, Lei; Ji, Jia-Fu; Et., Al",
+   "abstract": ""
+  },
+  {
+   "folder": "5NPRJX88",
+   "filename": "Aydin 等 - 2025 - The Influence of Mucinous Histology on the Prognosis of Stage II and III Colorectal Cancers.pdf",
+   "size_mb": 0.86,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Aydin İC, Torun M, Sönmez MR, et al. The Influence of Mucinous Histology on the Prognosis of Stage II and III Colorectal Cancers. Medicina (Kaunas). 2025;61(3):456. doi:10.3390/medicina61030456",
+   "csv_key": "8NUVNGD3",
+   "title": "The Influence of Mucinous Histology on the Prognosis of Stage II and III Colorectal Cancers",
+   "year": "2025",
+   "journal": "Medicina (Kaunas, Lithuania)",
+   "doi": "10.3390/medicina61030456",
+   "author": "Aydin, İsa Caner; Torun, Mehmet; Sönmez, Mehmet Reşit; Ademoğlu, Serkan; Sunar, Ahmet Orhan; Uzun, Orhan; Gülmez, Selçuk; Polat, Erdal; Duman, Mustafa",
+   "abstract": "Background and Objectives: Mucinous adenocarcinoma (MAC) and mucinous components (MCP) in colorectal cancers (CRC) have shown conflicting results regarding their prognostic impact. This study aims to "
+  },
+  {
+   "folder": "6CBGYKPJ",
+   "filename": "Ladaika 等 - 2025 - LSD1 and CoREST2 Potentiate STAT3 Activity to Promote Enteroendocrine Cell Differentiation in Mucino.pdf",
+   "size_mb": 2.54,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Ladaika CA, Ghobashi AH, Boulton WC, Miller SA, O’Hagan HM. LSD1 and CoREST2 Potentiate STAT3 Activity to Promote Enteroendocrine Cell Differentiation in Mucinous Colorectal Cancer. Cancer Res. 2025;85(1):52-68. doi:10.1158/0008-5472.CAN-24-0788",
+   "csv_key": "YBZYLD99",
+   "title": "LSD1 and CoREST2 Potentiate STAT3 Activity to Promote Enteroendocrine Cell Differentiation in Mucinous Colorectal Cancer",
+   "year": "2025",
+   "journal": "Cancer Research",
+   "doi": "10.1158/0008-5472.CAN-24-0788",
+   "author": "Ladaika, Christopher A.; Ghobashi, Ahmed H.; Boulton, William C.; Miller, Samuel A.; O'Hagan, Heather M.",
+   "abstract": "Neuroendocrine cells have been implicated in therapeutic resistance and worse overall survival in many cancer types. Mucinous colorectal cancer (mCRC) is uniquely enriched for enteroendocrine cells (E"
+  },
+  {
+   "folder": "6IEXLYX2",
+   "filename": "Hosseini 等 - 2019 - Predictive Significance of Mucinous Histology on Pathologic Complete Response Rate Following Capecit.pdf",
+   "size_mb": 0.43,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Hosseini S, Nguyen N, Mohammadianpanah M, Mirzaei S, Bananzadeh AM. Predictive Significance of Mucinous Histology on Pathologic Complete Response Rate Following Capecitabine-Based Neoadjuvant Chemoradiation in Rectal Cancer: a Comparative Study. J Gastrointest Canc. 2019;50(4):716-722. doi:10.1007/s12029-018-0136-x",
+   "csv_key": "8D9LSZUN",
+   "title": "Predictive Significance of Mucinous Histology on Pathologic Complete Response Rate Following Capecitabine-Based Neoadjuvant Chemoradiation in Rectal Cancer: a Comparative Study",
+   "year": "2019",
+   "journal": "Journal of Gastrointestinal Cancer",
+   "doi": "10.1007/s12029-018-0136-x",
+   "author": "Hosseini, Sare; Nguyen, NamPhong; Mohammadianpanah, Mohammad; Mirzaei, Sepideh; Bananzadeh, Ali Mohammad",
+   "abstract": "Currently, neoadjuvant fluoropyrimidine-based chemoradiation followed by surgery is considered the standard of care for locally advanced rectal cancer. The current study aimed to investigate the predi"
+  },
+  {
+   "folder": "6ZFGDVNH",
+   "filename": "Yu 等 - 2014 - Magnetic resonance imaging defined mucinous rectal carcinoma is an independent imaging biomarker for.pdf",
+   "size_mb": 0.72,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Yu SKT, Chand M, Tait DM, Brown G. Magnetic resonance imaging defined mucinous rectal carcinoma is an independent imaging biomarker for poor prognosis and poor response to preoperative chemoradiotherapy. Eur J Cancer. 2014;50(5):920-927. doi:10.1016/j.ejca.2013.12.007",
+   "csv_key": "2VQN53YX",
+   "title": "Magnetic resonance imaging defined mucinous rectal carcinoma is an independent imaging biomarker for poor prognosis and poor response to preoperative chemoradiotherapy",
+   "year": "2014",
+   "journal": "European Journal of Cancer (Oxford, England: 1990)",
+   "doi": "10.1016/j.ejca.2013.12.007",
+   "author": "Yu, Stanley K. T.; Chand, Manish; Tait, Diana M.; Brown, Gina",
+   "abstract": "INTRODUCTION: Mucinous adenocarcinomas represent a potentially poor prognostic subgroup identifiable by imaging. We compared outcomes between magnetic resonance imaging (MRI) detected rectal mucinous "
+  },
+  {
+   "folder": "7TE8XYFI",
+   "filename": "ESGAR Rectal Imaging Guideline Group 等 - 2026 - MRI to guide clinical management of rectal cancer updated consensus recommendations from the Europe.pdf",
+   "size_mb": 1.21,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "XVAMF95B",
+   "title": "MRI to guide clinical management of rectal cancer: updated consensus recommendations from the European Society of Gastrointestinal and Abdominal Radiology (ESGAR)—PART I primary staging",
+   "year": "2026",
+   "journal": "European Radiology",
+   "doi": "10.1007/s00330-025-12274-w",
+   "author": "ESGAR Rectal Imaging Guideline Group; Ayuso, Juan-Ramón; Balyaniskova, Svetlana; Beets-Tan, Regina G. H.; Blazic, Ivana; Blomqvist, Lennart; Caruso, Damiano; Crimì, Filippo; Curvo-Semedo, Luís; Dresen, Raphaëla C.; Gollub, Marc J.; Goh, Vicky; Gormly, Kirsten; Gourtsoyianni, Sofia; Gurses, Bengi; Hoeffel, Christine; Hötker, Andreas M.; Horvat, Natally; Ippolito, Davide; Kim, Seung Ho; Laghi, Andrea; Lahaye, Max J.; Lambregts, Doenja M. J.; Maas, Monique; Nougaret, Stephanie; Ortega, Cinthia D.; Quaia, Emilio; Rafaelsen, Søren R.; Rodríguez Carnero, Pablo; Santiago, Inês; Sen, Saugata; Stocker-Ghafoor, Soleen; Stoker, Jaap",
+   "abstract": "Objectives To provide up-to-date consensus recommendations on the acquisition, interpretation and reporting of MRI for the primary staging of rectal cancer. Materials and methods A panel of twenty-six"
+  },
+  {
+   "folder": "7W8YWHKB",
+   "filename": "Luo 等 - 2019 - Mucinous colorectal adenocarcinoma clinical pathology and treatment options.pdf",
+   "size_mb": 1.15,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Luo C, Cen S, Ding G, Wu W. Mucinous colorectal adenocarcinoma: clinical pathology and treatment options. Cancer Commun (Lond). 2019;39(1):13. doi:10.1186/s40880-019-0361-0",
+   "csv_key": "8G2SFMJG",
+   "title": "Mucinous colorectal adenocarcinoma: clinical pathology and treatment options",
+   "year": "2019",
+   "journal": "Cancer Communications (London, England)",
+   "doi": "10.1186/s40880-019-0361-0",
+   "author": "Luo, Cong; Cen, Shuyi; Ding, Guojun; Wu, Wei",
+   "abstract": "Mucinous colorectal adenocarcinoma is a distinct subtype of colorectal cancer (CRC) characterized by the presence of abundant extracellular mucin which accounts for at least 50% of the tumor volume. M"
+  },
+  {
+   "folder": "7WLQPSBM",
+   "filename": "Chen 等 - 2025 - A nomogram for predicting cancer-specific survival in patients with rectal mucinous adenocarcinoma f.pdf",
+   "size_mb": 1.68,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "RVS8CDDK",
+   "title": "A nomogram for predicting cancer-specific survival in patients with rectal mucinous adenocarcinoma following surgery",
+   "year": "2025",
+   "journal": "Scientific Reports",
+   "doi": "10.1038/s41598-025-90428-y",
+   "author": "Chen, Ying; Duan, Chunxia; Zhang, Xiehua; Liu, Kezheng; Xiao, Ya; Hsu, Chao-Yu; Hao, Jianhong",
+   "abstract": "Nomograms for predicting survival are well-established for colorectal adenocarcinoma but are less common for rectal mucinous adenocarcinoma (MAC). This study leverages Surveillance, Epidemiology, and "
+  },
+  {
+   "folder": "8Y2M5ZCV",
+   "filename": "Ražov Radas和Lisica Šikić - 2024 - ENDOSCOPIC RECTAL ULTRASOUND IN RECTAL ADENOCARCINOMA STAGING CAN A SURGEON RELY ON ENDOSCOPIC FIND.pdf",
+   "size_mb": 0.47,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "BYNRDG3N",
+   "title": "ENDOSCOPIC RECTAL ULTRASOUND IN RECTAL ADENOCARCINOMA STAGING: CAN A SURGEON RELY ON ENDOSCOPIC FINDINGS BEFORE THE SURGERY? - COMPARISON WITH POSTOPERATIVE PATHOLOGICAL DIAGNOSIS",
+   "year": "2024",
+   "journal": "Acta Clinica Croatica",
+   "doi": "10.20471/acc.2024.63.03-04.09",
+   "author": "Ražov Radas, Melanija; Lisica Šikić, Nataša",
+   "abstract": "Our aim in this study was to demonstrate the usefulness of endoscopic rectal ultra- sound scan (ERUS) in providing information that can help surgeons decide on therapeutic approach and type of surgica"
+  },
+  {
+   "folder": "92P23BSA",
+   "filename": "Yin 等 - 2025 - Optimizing lymph node evaluation in colorectal mucinous adenocarcinoma a multicenter and population.pdf",
+   "size_mb": 0.71,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "BQDWWAML",
+   "title": "Optimizing lymph node evaluation in colorectal mucinous adenocarcinoma: a multicenter and population-based study",
+   "year": "2025",
+   "journal": "International Journal of Surgery (London, England)",
+   "doi": "10.1097/JS9.0000000000002545",
+   "author": "Yin, Qiying; Sun, Yanlai; Jing, Changqing; Liang, Benjia; Guan, Xu; Zhang, Peng; Tao, Kaixiong; Sun, Yueming; Zhang, Yifei; Ning, Shanglei; Yu, Minhao; Lv, Yanfeng; Wang, Lei; Sun, Qi; Liu, Jiangang; Jiao, Meng; Zhang, Zhao; Jiang, Congqing; Ren, Xianghai; Yu, Guodong; Ma, Bin; Ye, Zhibin; Li, Jun; Liu, Dongning; Kong, Xiangheng; Chen, Jingbo; Zhang, Guangyong; Yang, Hui",
+   "abstract": "BACKGROUND: While the currently recommended minimum number of examined lymph nodes (ELNs) for colorectal cancer is 12, the applicability of this standard to colorectal mucinous adenocarcinoma (MAC), a"
+  },
+  {
+   "folder": "95MTV6KJ",
+   "filename": "Miranda 等 - 2023 - Mucinous Degeneration on MRI After Neoadjuvant Therapy in Patients With Rectal Adenocarcinoma Frequ.pdf",
+   "size_mb": 1.07,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Miranda J, Pinto PVA, Kinochita F, et al. Mucinous Degeneration on MRI After Neoadjuvant Therapy in Patients With Rectal Adenocarcinoma: Frequency and Association With Clinical Outcomes. AJR Am J Roentgenol. 2023;221(2):206-216. doi:10.2214/AJR.23.29002",
+   "csv_key": "68X3RL7Q",
+   "title": "Mucinous Degeneration on MRI After Neoadjuvant Therapy in Patients With Rectal Adenocarcinoma: Frequency and Association With Clinical Outcomes",
+   "year": "2023",
+   "journal": "AJR. American journal of roentgenology",
+   "doi": "10.2214/AJR.23.29002",
+   "author": "Miranda, Joao; Pinto, Paulo Victor Alves; Kinochita, Fernanda; Garcia, Camila Marchiolli; El Homsi, Maria; Vilela de Oliveira, Camila; Pandini, Rafael Vaz; Nahas, Caio Sergio Rizkallah; Nahas, Sergio C.; Gollub, Marc J.; Horvat, Natally",
+   "abstract": "BACKGROUND. Patients with nonmucinous rectal adenocarcinoma may develop mucinous changes after neoadjuvant chemoradiotherapy, which are described as mucinous degeneration. The finding's significance i"
+  },
+  {
+   "folder": "AUHVV9PR",
+   "filename": "Sood 等 - 2025 - Mucinous rectal adenocarcinoma recurrence A case report and literature review.pdf",
+   "size_mb": 1.48,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "7I2X385P",
+   "title": "Mucinous rectal adenocarcinoma recurrence: A case report and literature review",
+   "year": "2025",
+   "journal": "Radiology Case Reports",
+   "doi": "10.1016/j.radcr.2025.01.046",
+   "author": "Sood, Riya; Badjatia, Trisha; Bhargava, Peeyush",
+   "abstract": "Mucinous rectal adenocarcinoma (MRA) is a relatively uncommon type of rectal cancer, accounting for only about 5%-10% of all adenocarcinomas of the rectum. Characterized by the presence of extracellul"
+  },
+  {
+   "folder": "BIS2NH97",
+   "filename": "jgo-13-05-2366.pdf",
+   "size_mb": 0.34,
+   "converted": true,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "LNK5A6WI",
+   "title": "Locally advanced rectal mucinous adenocarcinoma: is preoperative radiation necessary?",
+   "year": "2022",
+   "journal": "Journal of Gastrointestinal Oncology",
+   "doi": "10.21037/jgo-22-817",
+   "author": "Li, Biao; Wu, Ketong; Li, Jiao; Wu, Qianyu; Wu, Yue; Wang, Xinhua; Linghu, Yu; Hu, Huabin; Wang, Huaiming; Cao, Wuteng",
+   "abstract": "BACKGROUND: Neoadjuvant chemoradiotherapy is recommended for locally advanced rectal cancer, allowing preoperative down-staging of the primary tumor to facilitate complete surgical removal. However, f"
+  },
+  {
+   "folder": "BU3XRA5P",
+   "filename": "Hussain 等 - 1999 - Mucinous versus nonmucinous rectal carcinomas differentiation with MR imaging.pdf",
+   "size_mb": 0.34,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Hussain SM, Outwater EK, Siegelman ES. Mucinous versus nonmucinous rectal carcinomas: differentiation with MR imaging. Radiology. 1999;213(1):79-85. doi:10.1148/radiology.213.1.r99se3879",
+   "csv_key": "GMM462SG",
+   "title": "Mucinous versus nonmucinous rectal carcinomas: differentiation with MR imaging",
+   "year": "1999",
+   "journal": "Radiology",
+   "doi": "10.1148/radiology.213.1.r99se3879",
+   "author": "Hussain, S. M.; Outwater, E. K.; Siegelman, E. S.",
+   "abstract": "PURPOSE: To determine if quantitative and qualitative magnetic resonance (MR) imaging measures can help differentiation of mucinous from nonmucinous rectal tumors. MATERIALS AND METHODS: In 26 patient"
+  },
+  {
+   "folder": "CL55BBYQ",
+   "filename": "Melis 等 - 2010 - Gene Expression Profiling of Colorectal Mucinous Adenocarcinomas.pdf",
+   "size_mb": 1.0,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Melis M, Hernandez J, Siegel EM, et al. Gene expression profiling of colorectal mucinous adenocarcinomas. Dis Colon Rectum. 2010;53(6):936-943. doi:10.1007/DCR.0b013e3181d320c4",
+   "csv_key": "B6WBY9QY",
+   "title": "Gene Expression Profiling of Colorectal Mucinous Adenocarcinomas",
+   "year": "2010",
+   "journal": "Diseases of the Colon & Rectum",
+   "doi": "10.1007/DCR.0b013e3181d320c4",
+   "author": "Melis, Marcovalerio; Hernandez, Jonathan; Siegel, Erin M.; McLoughlin, James M.; Ly, Quan P.; Nair, Rajesh M.; Lewis, James M.; Jensen, Eric H.; Alvarado, Michael D.; Coppola, Domenico; Eschrich, Steve; Bloom, Gregory C.; Yeatman, Timothy J.; Shibata, David",
+   "abstract": ""
+  },
+  {
+   "folder": "CPLPRS4W",
+   "filename": "Elomaa 等 - 2025 - Associations of mucinous differentiation and mucin expression with immune cell infiltration and prog.pdf",
+   "size_mb": 2.0,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Elomaa H, Tarkiainen V, Äijälä VK, et al. Associations of mucinous differentiation and mucin expression with immune cell infiltration and prognosis in colorectal adenocarcinoma. Br J Cancer. 2025;132(7):660-669. doi:10.1038/s41416-025-02960-3",
+   "csv_key": "BSAWP6F8",
+   "title": "Associations of mucinous differentiation and mucin expression with immune cell infiltration and prognosis in colorectal adenocarcinoma",
+   "year": "2025",
+   "journal": "British Journal of Cancer",
+   "doi": "10.1038/s41416-025-02960-3",
+   "author": "Elomaa, Hanna; Tarkiainen, Vilma; Äijälä, Ville K.; Sirniö, Päivi; Ahtiainen, Maarit; Sirkiä, Onni; Karjalainen, Henna; Kastinen, Meeri; Tapiainen, Vilja V.; Rintala, Jukka; Meriläinen, Sanna; Saarnio, Juha; Rautio, Tero; Tuomisto, Anne; Helminen, Olli; Wirta, Erkki-Ville; Seppälä, Toni T.; Böhm, Jan; Mäkinen, Markus J.; Mecklin, Jukka-Pekka; Väyrynen, Juha P.",
+   "abstract": "BACKGROUND: The production of extracellular mucus and expression of mucins are commonly aberrant in colorectal cancer, yet their roles in tumour progression remain unclear. METHODS: To investigate the"
+  },
+  {
+   "folder": "DA8E4DRJ",
+   "filename": "zrac039_supplementary_data.docx",
+   "size_mb": 0.08,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Enblad M, Hammarström K, Folkesson J, Imam I, Golubovik M, Glimelius B. Mucinous rectal cancers: clinical features and prognosis in a population-based cohort. BJS Open. 2022;6(2):zrac039. doi:10.1093/bjsopen/zrac039",
+   "csv_key": "XFJE2HEC",
+   "title": "Mucinous rectal cancers: clinical features and prognosis in a population-based cohort",
+   "year": "2022",
+   "journal": "BJS open",
+   "doi": "10.1093/bjsopen/zrac039",
+   "author": "Enblad, Malin; Hammarström, Klara; Folkesson, Joakim; Imam, Israa; Golubovik, Milan; Glimelius, Bengt",
+   "abstract": "PURPOSE: Mucinous rectal cancers are generally associated with poor prognosis. This study aimed to clinically characterize mucinous rectal cancers in a defined region of Sweden. METHODS: All patients "
+  },
+  {
+   "folder": "DHFQQ8XH",
+   "filename": "Kim 等 - 2009 - Locally Advanced Rectal Cancer Added Value of Diffusion-weighted MR Imaging in the Evaluation of Tu.pdf",
+   "size_mb": 0.45,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "7M88TN7N",
+   "title": "Locally Advanced Rectal Cancer: Added Value of Diffusion-weighted MR Imaging in the Evaluation of Tumor Response to Neoadjuvant Chemo- and Radiation Therapy",
+   "year": "2009",
+   "journal": "Radiology",
+   "doi": "10.1148/radiol.2532090027",
+   "author": "Kim, Seung Ho; Lee, Jeong Min; Hong, Sung Hyun; Kim, Gi Hyeon; Et., Al",
+   "abstract": ""
+  },
+  {
+   "folder": "DHUG6WTJ",
+   "filename": "Kim 等 - 2003 - Accuracy in differentiation of mucinous and nonmucinous rectal carcinoma on MR imaging.pdf",
+   "size_mb": 0.84,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Kim MJ, Park JS, Park SI, et al. Accuracy in differentiation of mucinous and nonmucinous rectal carcinoma on MR imaging. J Comput Assisted Tomogr. 2003;27(1):48-55. doi:10.1097/00004728-200301000-00010",
+   "csv_key": "KMN4289N",
+   "title": "Accuracy in differentiation of mucinous and nonmucinous rectal carcinoma on MR imaging",
+   "year": "2003",
+   "journal": "Journal of Computer Assisted Tomography",
+   "doi": "10.1097/00004728-200301000-00010",
+   "author": "Kim, Myeong-Jin; Park, Jeong Seon; Park, Sung Il; Kim, Nam Kyu; Kim, Joo Hee; Moon, Hee Jung; Park, Young Nyun; Kim, Won Ho",
+   "abstract": "Purpose: The purpose of this work was to determine the diagnostic accuracy of MRI for the differentiation of mucinous and nonmucinous carcinomas in patients with rectal carcinomas. Method: Seventy-six"
+  },
+  {
+   "folder": "DPUCQ7CF",
+   "filename": "Liu 等 - 2025 - Transcriptomic Landscape of Colorectal Mucinous Adenocarcinoma has Similarity with Intestinal Goblet.pdf",
+   "size_mb": 16.79,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "89C3NYLM",
+   "title": "Transcriptomic Landscape of Colorectal Mucinous Adenocarcinoma has Similarity with Intestinal Goblet Cell Differentiation",
+   "year": "2025",
+   "journal": "Current Genomics",
+   "doi": "10.2174/0113892029312303240821080358",
+   "author": "Liu, Jianbo; Qiu, Siyuan; Fu, Xiaorui; Zhou, Bin; Zu, Ruijuan; Lv, Zhaoying; Li, Yuan; Yang, Lie; Zhou, Zongguang",
+   "abstract": "INTRODUCTION: Colorectal mucinous adenocarcinoma (MC) differs from adenocarcinoma (AD) in clinical features and molecular characteristics. The current treatment of colorectal MC is not precise enough,"
+  },
+  {
+   "folder": "E4B28ZDZ",
+   "filename": "Monno 等 - 2024 - POFUT1 and PLAGL2 are characteristic markers of mucinous colorectal cancer associated with MUC2 expr.pdf",
+   "size_mb": 2.62,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "K7CBJMYX",
+   "title": "POFUT1 and PLAGL2 are characteristic markers of mucinous colorectal cancer associated with MUC2 expression",
+   "year": "2024",
+   "journal": "Cell Biochemistry and Function",
+   "doi": "10.1002/cbf.3989",
+   "author": "Monno, Masayoshi; Ogiri, Masayo; Seishima, Ryo; Suzuki, Yoshiyuki; Hattori, Kaoru; Matsui, Shimpei; Shigeta, Kohei; Okabayashi, Koji; Kitagawa, Yuko",
+   "abstract": "Colorectal mucinous adenocarcinoma (MAC) is one of the most lethal histological types of colorectal cancer, and its mechanism of development is not well understood. In this study, we aimed to clarify "
+  },
+  {
+   "folder": "F3KEFB2R",
+   "filename": "Li 等 - 2021 - Predicting Treatment Response to Neoadjuvant Chemoradiotherapy in Rectal Mucinous Adenocarcinoma Usi.pdf",
+   "size_mb": 1.92,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "RQKHATAS",
+   "title": "Predicting Treatment Response to Neoadjuvant Chemoradiotherapy in Rectal Mucinous Adenocarcinoma Using an MRI-Based Radiomics Nomogram",
+   "year": "2021",
+   "journal": "Frontiers in Oncology",
+   "doi": "10.3389/fonc.2021.671636",
+   "author": "Li, Zhihui; Li, Shuai; Zang, Shuqin; Ma, Xiaolu; Chen, Fangying; Xia, Yuwei; Chen, Liuping; Shen, Fu; Lu, Yong; Lu, Jianping",
+   "abstract": "OBJECTIVE: To build and validate an MRI-based radiomics nomogram to predict the therapeutic response to neoadjuvant chemoradiotherapy (nCRT) in rectal mucinous adenocarcinoma (RMAC). METHODS: Totally,"
+  },
+  {
+   "folder": "F46NPY6H",
+   "filename": "Yin 等 - 2024 - Overexpression of Basonuclin Zinc Finger Protein 2 in stromal cell is related to mesenchymal phenoty.pdf",
+   "size_mb": 25.03,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "H9NHZ9SI",
+   "title": "Overexpression of Basonuclin Zinc Finger Protein 2 in stromal cell is related to mesenchymal phenotype and immunosuppression of mucinous colorectal adenocarcinoma",
+   "year": "2024",
+   "journal": "International Immunopharmacology",
+   "doi": "10.1016/j.intimp.2024.113184",
+   "author": "Yin, Qing-Zhong; Liu, Yuan-Jie; Zhang, Qian; Xi, Song-Yang; Yang, Tian-Bao; Li, Jie-Pin; Gao, Ju",
+   "abstract": "BACKGROUND: Mucinous carcinoma (MC) is a distinct histologic subtype of colorectal cancer (CRC) that is less studied and associated with poor prognosis. This study aimed to identify MC-specific therap"
+  },
+  {
+   "folder": "FZQ7B3VD",
+   "filename": "ESGAR Rectal Imaging Guideline Group 等 - 2026 - MRI to guide clinical management of rectal cancer updated consensus recommendations from the Europe.pdf",
+   "size_mb": 1.36,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "HPCZ3SDB",
+   "title": "MRI to guide clinical management of rectal cancer: updated consensus recommendations from the European Society of Gastrointestinal and Abdominal Radiology (ESGAR): PART II—Restaging and response evaluation",
+   "year": "2026",
+   "journal": "European Radiology",
+   "doi": "10.1007/s00330-025-12275-9",
+   "author": "ESGAR Rectal Imaging Guideline Group; Ayuso, Juan-Ramón; Balyaniskova, Svetlana; Beets-Tan, Regina G. H.; Blazic, Ivana; Blomqvist, Lennart; Caruso, Damiano; Crimì, Filippo; Curvo-Semedo, Luís; Dresen, Raphaëla C.; Gollub, Marc J.; Goh, Vicky; Gormly, Kirsten; Gourtsoyianni, Sofia; Gurses, Bengi; Hoeffel, Christine; Hötker, Andreas M.; Horvat, Natally; Ippolito, Davide; Kim, Seung Ho; Laghi, Andrea; Lahaye, Max J.; Lambregts, Doenja M. J.; Maas, Monique; Nougaret, Stephanie; Ortega, Cinthia D.; Quaia, Emilio; Rafaelsen, Søren R.; Carnero, Pablo Rodríguez; Santiago, Inês; Sen, Saugata; Stocker-Ghafoor, Soleen; Stoker, Jaap",
+   "abstract": "Objectives To provide up-to-date consensus recommendations on the acquisition, interpretation and reporting of MRI for restaging and response evaluation of rectal cancer after neoadjuvant treatment. M"
+  },
+  {
+   "folder": "G7YQCIR4",
+   "filename": "Elkhamisy 等 - 2024 - Reduced expression of SOX11 in colorectal adenocarcinoma is associated with mucinous and signet ring.pdf",
+   "size_mb": 3.91,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "T3RXDMCZ",
+   "title": "Reduced expression of SOX11 in colorectal adenocarcinoma is associated with mucinous and signet ring cell types, poor survival, and lower ALK expression",
+   "year": "2024",
+   "journal": "Pathology, Research and Practice",
+   "doi": "10.1016/j.prp.2024.155450",
+   "author": "Elkhamisy, Fatma Alzahraa Abdelsalam; Eesa, Ahmed Naeem; Elnady, Ola Mousa; Elnaghi, Khaled Abd Elaziz Ahmed; Foda, Abd AlRahman Mohammad",
+   "abstract": "BACKGROUND: Mucinous and signet ring cell colorectal carcinoma (m/srCRC) are challenging colorectal adenocarcinoma (CRC) types with poor prognosis. This study aimed to investigate SOX11 and ALK immuno"
+  },
+  {
+   "folder": "GGT86EI7",
+   "filename": "Ling 等 - 2025 - Prediction of mucinous adenocarcinoma in colorectal cancer with mucinous components detected in preo.pdf",
+   "size_mb": 2.65,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "BESYBSUF",
+   "title": "Prediction of mucinous adenocarcinoma in colorectal cancer with mucinous components detected in preoperative biopsy diagnosis",
+   "year": "2025",
+   "journal": "Abdominal Radiology (New York)",
+   "doi": "10.1007/s00261-024-04743-5",
+   "author": "Ling, Tong; Zuo, Zhichao; Huang, Mingwei; Wu, Liucheng; Ma, Jie; Huang, Xiaoliang; Tang, Weizhong",
+   "abstract": "OBJECTIVES: Endoscopic biopsy diagnosis for the preoperative assessment of mucinous components in patients with colorectal cancer is limited. This study investigated a radiomics model and established "
+  },
+  {
+   "folder": "GWN7MGNE",
+   "filename": "El Homsi 等 - 2024 - Contrast-enhanced pelvic magnetic resonance imaging (MRI) for the prediction of treatment response i.pdf",
+   "size_mb": 1.36,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "El Homsi M, Yildirim O, Gangai N, Shia J, Gollub MJ, Mazaheri Y. Contrast-enhanced pelvic magnetic resonance imaging (MRI) for the prediction of treatment response in mucinous rectal cancer. Quant Imaging Med Surg. 2024;14(6):4110-4122. doi:10.21037/qims-23-1463",
+   "csv_key": "27A4FGZU",
+   "title": "Contrast-enhanced pelvic magnetic resonance imaging (MRI) for the prediction of treatment response in mucinous rectal cancer",
+   "year": "2024",
+   "journal": "Quantitative Imaging in Medicine and Surgery",
+   "doi": "10.21037/qims-23-1463",
+   "author": "El Homsi, Maria; Yildirim, Onur; Gangai, Natalie; Shia, Jinru; Gollub, Marc J.; Mazaheri, Yousef",
+   "abstract": "BACKGROUND: In mucinous rectal cancer, it can be difficult to differentiate between cellular and acellular mucin. The purpose of this study was to evaluate, in patients with mucinous rectal cancer, th"
+  },
+  {
+   "folder": "I8TSE2C2",
+   "filename": "Liu 等 - 2025 - Application of T1-mapping combined with high-spatial-resolution T2-weighted imaging in discriminatin.pdf",
+   "size_mb": 1.39,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Liu YY, Wen ZQ, Ma YR, et al. Application of T1-mapping combined with high-spatial-resolution T2-weighted imaging in discriminating mucinous from nonmucinous adenocarcinoma in rectal cancer. Abdom Radiol (NY). 2025;50(6):2380-2387. doi:10.1007/s00261-024-04728-4",
+   "csv_key": "26PRUGMM",
+   "title": "Application of T1-mapping combined with high-spatial-resolution T2-weighted imaging in discriminating mucinous from nonmucinous adenocarcinoma in rectal cancer",
+   "year": "2025",
+   "journal": "Abdominal Radiology (New York)",
+   "doi": "10.1007/s00261-024-04728-4",
+   "author": "Liu, Yi-Yan; Wen, Zi-Qiang; Ma, Yu-Ru; Yang, Xin-Yue; Lu, Bao-Lan; Liu, Quan-Meng; Fan, Wen-Jie; Wu, Yun-Zhu; Yu, Shen-Ping; Chen, Yan",
+   "abstract": "PURPOSE: The aim of this study was to evaluate the utility of T1-mapping, high-spatial-resolution T2-weighted imaging (HR-T2WI), and their combined model in distinguishing between adenocarcinoma not o"
+  },
+  {
+   "folder": "ICVNKJ7U",
+   "filename": "Yuan 等 - 2025 - Clinicopathological features and prognosis of patients with colorectal Mucinous adenocarcinoma mixed.pdf",
+   "size_mb": 1.22,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Yuan J, He H, Zhang P, et al. Clinicopathological features and prognosis of patients with colorectal Mucinous adenocarcinoma mixed with other pathological components: a nationwide retrospective study in China. Tech Coloproctol. 2025;29(1):187. doi:10.1007/s10151-025-03225-0",
+   "csv_key": "3H6IBANS",
+   "title": "Clinicopathological features and prognosis of patients with colorectal Mucinous adenocarcinoma mixed with other pathological components: a nationwide retrospective study in China",
+   "year": "2025",
+   "journal": "Techniques in Coloproctology",
+   "doi": "10.1007/s10151-025-03225-0",
+   "author": "Yuan, J.; He, H.; Zhang, P.; Guan, X.; Yu, M.; Zhang, Y.; Ning, S.; Wang, L.; Lv, Y.; Jiao, M.; Sun, Y.; Sun, Q.; Ren, X.; Liu, D.; Zhang, Z.; Ye, Z.; Li, J.; Yu, G.; Ma, B.; Fu, W.; Kong, X. H.; Jing, C.; Tao, K.; Sun, Y.; Jiang, C.; Chen, J.; Zhang, G.; Yang, H.",
+   "abstract": "BACKGROUND: Mucinous adenocarcinoma (MAC) is typically admixed with other pathological components, including conventional adenocarcinoma, signet ring cell carcinoma, and/or neuroendocrine neoplasms. S"
+  },
+  {
+   "folder": "IPI6MUFW",
+   "filename": "Cao 等 - 2019 - Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoad.pdf",
+   "size_mb": 1.02,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Cao W, Li Z, Mohamoud A, et al. Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoadjuvant therapy. Clin Radiol. 2019;74(4):278-286. doi:10.1016/j.crad.2018.10.015",
+   "csv_key": "RSYLC3IA",
+   "title": "Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoadjuvant therapy",
+   "year": "2019",
+   "journal": "Clinical Radiology",
+   "doi": "10.1016/j.crad.2018.10.015",
+   "author": "Cao, W.; Li, Z.; Mohamoud, A.; Gong, J.; Wang, X.; Zhou, J.; Hu, H.; Huang, Y.; Li, W.; Li, F.; Liu, D.; Liang, C.; Zhou, Z.",
+   "abstract": "AIM: To evaluate the association between volume ratio of the mucus pool and tumour response to neoadjuvant therapy in patients with mucinous rectal adenocarcinoma (MC). MATERIALS AND METHODS: The volu"
+  },
+  {
+   "folder": "IPZR3C92",
+   "filename": "Lan 等 - 2021 - Clinicopathological and Molecular Features of Colorectal Cancer Patients With Mucinous and Non-Mucin.pdf",
+   "size_mb": 0.61,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Lan YT, Chang SC, Lin PC, et al. Clinicopathological and Molecular Features of Colorectal Cancer Patients With Mucinous and Non-Mucinous Adenocarcinoma. Front Oncol. 2021;11:620146. doi:10.3389/fonc.2021.620146",
+   "csv_key": "SQ7IERKP",
+   "title": "Clinicopathological and Molecular Features of Colorectal Cancer Patients With Mucinous and Non-Mucinous Adenocarcinoma",
+   "year": "2021",
+   "journal": "Frontiers in Oncology",
+   "doi": "10.3389/fonc.2021.620146",
+   "author": "Lan, Yuan-Tzu; Chang, Shih-Ching; Lin, Pei-Ching; Lin, Chun-Chi; Lin, Hung-Hsin; Huang, Shen-Chieh; Lin, Chien-Hsing; Liang, Wen-Yi; Chen, Wei-Shone; Jiang, Jeng-Kai; Lin, Jen-Kou; Yang, Shung-Haur",
+   "abstract": "BACKGROUND: The prognosis of mucinous adenocarcinoma (MAC) and non-mucinous adenocarcinoma (NMAC) in colorectal cancer (CRC) is controversial, and the molecular differences between them are unclear. M"
+  },
+  {
+   "folder": "IY5ICN88",
+   "filename": "Barbaro 等 - 2017 - The potential predictive value of MRI and PET-CT in mucinous and nonmucinous rectal cancer to identi.pdf",
+   "size_mb": 1.18,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Barbaro B, Leccisotti L, Vecchio FM, et al. The potential predictive value of MRI and PET-CT in mucinous and nonmucinous rectal cancer to identify patients at high risk of metastatic disease. Br J Radiol. 2017;90(1069):20150836. doi:10.1259/bjr.20150836",
+   "csv_key": "6VUVRSSK",
+   "title": "The potential predictive value of MRI and PET-CT in mucinous and nonmucinous rectal cancer to identify patients at high risk of metastatic disease",
+   "year": "2017",
+   "journal": "The British Journal of Radiology",
+   "doi": "10.1259/bjr.20150836",
+   "author": "Barbaro, Brunella; Leccisotti, Lucia; Vecchio, Fabio M.; Di Matteo, Marialuisa; Serra, Teresa; Salsano, Marco; Poscia, Andrea; Coco, Claudio; Persiani, Roberto; Alfieri, Sergio; Gambacorta, Maria Antonietta; Valentini, Vincenzo; Giordano, Alessandro; Bonomo, Lorenzo",
+   "abstract": "OBJECTIVE: To correlate imaging parameters from baseline MRI diffusion-weighted imaging (DWI) and fludeoxyglucose (FDG) positron emission tomography (PET)-CT with synchronous and metachronous metastas"
+  },
+  {
+   "folder": "J3QVUR3X",
+   "filename": "Al-Kubati - 2025 - Comparative Outcomes of Neo-Adjuvant Chemo-Radiotherapy in Stage II and III Mucinous versus Non-Muci.pdf",
+   "size_mb": 3.83,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "K523V7LF",
+   "title": "Comparative Outcomes of Neo-Adjuvant Chemo-Radiotherapy in Stage II and III Mucinous versus Non-Mucinous Rectal Adenocarcinoma: A Retrospective Study",
+   "year": "2025",
+   "journal": "Cancer Management and Research",
+   "doi": "10.2147/CMAR.S542654",
+   "author": "Al-Kubati, Waheeb Radman",
+   "abstract": "BACKGROUND: This study investigates the effectiveness of neo-adjuvant chemo-radiotherapy (neo-CRT) in patients with clinical stage II and III mucinous rectal adenocarcinoma (MRA) and compares clinical"
+  },
+  {
+   "folder": "J7C322ZF",
+   "filename": "Djikic Rom 等 - 2024 - Markers of Epithelial–Mesenchymal Transition and Mucinous Histology Are Significant Predictors of Di.pdf",
+   "size_mb": 1.43,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Djikic Rom A, Dragicevic S, Jankovic R, et al. Markers of Epithelial–Mesenchymal Transition and Mucinous Histology Are Significant Predictors of Disease Severity and Tumor Characteristics in Early-Onset Colorectal Cancer. Diagnostics (Basel). 2024;14(14):1512. doi:10.3390/diagnostics14141512",
+   "csv_key": "4P522678",
+   "title": "Markers of Epithelial–Mesenchymal Transition and Mucinous Histology Are Significant Predictors of Disease Severity and Tumor Characteristics in Early-Onset Colorectal Cancer",
+   "year": "2024",
+   "journal": "Diagnostics",
+   "doi": "10.3390/diagnostics14141512",
+   "author": "Djikic Rom, Aleksandra; Dragicevic, Sandra; Jankovic, Radmila; Radojevic Skodric, Sanja; Sabljak, Predrag; Markovic, Velimir; Stojkovic, Jovana Rosic; Barisic, Goran; Nikolic, Aleksandra",
+   "abstract": "Approximately 20% of patients with colorectal cancer (CRC) are diagnosed with a mucinous subtype of this tumor, have a worse prognosis, and often show resistance to available therapies. Molecules from"
+  },
+  {
+   "folder": "JCLA7DA4",
+   "filename": "Park 等 - 2017 - Rectal Mucinous Adenocarcinoma MR Imaging Assessment of Response to Concurrent Chemotherapy and Rad.pdf",
+   "size_mb": 1.18,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Park SH, Lim JS, Lee J, et al. Rectal Mucinous Adenocarcinoma: MR Imaging Assessment of Response to Concurrent Chemotherapy and Radiation Therapy-A Hypothesis-generating Study. Radiology. 2017;285(1):124-133. doi:10.1148/radiol.2017162657",
+   "csv_key": "5GIM8DRV",
+   "title": "Rectal Mucinous Adenocarcinoma: MR Imaging Assessment of Response to Concurrent Chemotherapy and Radiation Therapy-A Hypothesis-generating Study",
+   "year": "2017",
+   "journal": "Radiology",
+   "doi": "10.1148/radiol.2017162657",
+   "author": "Park, Seung Hyun; Lim, Joon Seok; Lee, Jinae; Kim, Ha Yan; Koom, Woong Sub; Hur, Hyuk; Park, Mi-Suk; Kim, Myeong-Jin; Kim, Honsoul",
+   "abstract": "Purpose To develop a system for assessment of tumor regression grade (TRG) with magnetic resonance (MR) imaging that is applicable to rectal mucinous adenocarcinoma (RMAC) and to obtain a preliminary "
+  },
+  {
+   "folder": "KPH67ABU",
+   "filename": "Miyakita 等 - 2018 - Mucinous components assessed by magnetic resonance imaging in primary rectal cancer tissue before an.pdf",
+   "size_mb": 0.33,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Miyakita H, Sadahiro S, Ogimi T, et al. Mucinous components assessed by magnetic resonance imaging in primary rectal cancer tissue before and after chemoradiotherapy and tumor response. Int J Colorectal Dis. 2018;33(8):1135-1138. doi:10.1007/s00384-018-3047-1",
+   "csv_key": "DCQBY85Z",
+   "title": "Mucinous components assessed by magnetic resonance imaging in primary rectal cancer tissue before and after chemoradiotherapy and tumor response",
+   "year": "2018",
+   "journal": "International Journal of Colorectal Disease",
+   "doi": "10.1007/s00384-018-3047-1",
+   "author": "Miyakita, Hiroshi; Sadahiro, Sotaro; Ogimi, Takashi; Saito, Gota; Okada, Kazutake; Tanaka, Akira; Suzuki, Toshiyuki; Kajiwara, Hiroshi; Yamamuro, Hiroshi; Akiba, Takeshi",
+   "abstract": "BACKGROUND: Mucinous rectal carcinoma has been reported to have a lower survival rate and a poorer histologic response to chemoradiotherapy(CRT). Magnetic resonance imaging (MRI) can accurately evalua"
+  },
+  {
+   "folder": "LMF8QQ6J",
+   "filename": "Enblad 等 - 2022 - Mucinous rectal cancers clinical features and prognosis in a population-based cohort.pdf",
+   "size_mb": 0.45,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Enblad M, Hammarström K, Folkesson J, Imam I, Golubovik M, Glimelius B. Mucinous rectal cancers: clinical features and prognosis in a population-based cohort. BJS Open. 2022;6(2):zrac039. doi:10.1093/bjsopen/zrac039",
+   "csv_key": "XFJE2HEC",
+   "title": "Mucinous rectal cancers: clinical features and prognosis in a population-based cohort",
+   "year": "2022",
+   "journal": "BJS open",
+   "doi": "10.1093/bjsopen/zrac039",
+   "author": "Enblad, Malin; Hammarström, Klara; Folkesson, Joakim; Imam, Israa; Golubovik, Milan; Glimelius, Bengt",
+   "abstract": "PURPOSE: Mucinous rectal cancers are generally associated with poor prognosis. This study aimed to clinically characterize mucinous rectal cancers in a defined region of Sweden. METHODS: All patients "
+  },
+  {
+   "folder": "LWBLMTE2",
+   "filename": "Marimuthu 等 - 2021 - Mucins reprogram stemness, metabolism and promote chemoresistance during cancer progression.pdf",
+   "size_mb": 1.17,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "6YZIDVFK",
+   "title": "Mucins reprogram stemness, metabolism and promote chemoresistance during cancer progression",
+   "year": "2021",
+   "journal": "Cancer Metastasis Reviews",
+   "doi": "10.1007/s10555-021-09959-1",
+   "author": "Marimuthu, Saravanakumar; Rauth, Sanchita; Ganguly, Koelina; Zhang, Chunmeng; Lakshmanan, Imayavaramban; Batra, Surinder K.; Ponnusamy, Moorthy P.",
+   "abstract": "Mucins are high-molecular-weight glycoproteins dysregulated in aggressive cancers. The role of mucins in disease progression, tumor proliferation, and chemotherapy resistance has been studied extensiv"
+  },
+  {
+   "folder": "LX53V66P",
+   "filename": "Xiao 等 - 2021 - Endoscopy biopsy is not efficiency enough for diagnosis of mucinous colorectal adenocarcinoma.pdf",
+   "size_mb": 1.12,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Xiao S, Huang J, Zhang Y, et al. Endoscopy biopsy is not efficiency enough for diagnosis of mucinous colorectal adenocarcinoma. Discov Oncol. 2021;12(1):44. doi:10.1007/s12672-021-00443-4",
+   "csv_key": "M559S6DY",
+   "title": "Endoscopy biopsy is not efficiency enough for diagnosis of mucinous colorectal adenocarcinoma",
+   "year": "2021",
+   "journal": "Discover Oncology",
+   "doi": "10.1007/s12672-021-00443-4",
+   "author": "Xiao, Shuai; Huang, Jia; Zhang, Yiwei; Tang, Rong; Xu, Yunhua; He, Rongfang; Huang, Qiulin; Ouyang, Jun; Zu, Xuyu; Peng, Xiuda; Fu, Kai",
+   "abstract": "BACKGROUND: Endoscopy biopsy (EB) is the standard diagnostic method for colorectal cancer (CRC), whereas its accuracy and efficiency in mucinous adenocarcinoma (MAC) initial diagnosis is unclear. METH"
+  },
+  {
+   "folder": "MF5CDIXZ",
+   "filename": "Zou 等 - 2025 - Expanding the clinical and technical implications of lymph node evaluation in colorectal mucinous ad.pdf",
+   "size_mb": 0.71,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "B8F3NZVP",
+   "title": "Expanding the clinical and technical implications of lymph node evaluation in colorectal mucinous adenocarcinoma",
+   "year": "2025",
+   "journal": "International Journal of Surgery (London, England)",
+   "doi": "10.1097/JS9.0000000000003202",
+   "author": "Zou, Min; Feng, Jinkai; Yang, Zijie; Yang, Zengqiang",
+   "abstract": ""
+  },
+  {
+   "folder": "MXCYJ5WT",
+   "filename": "Liang 等 - 2024 - Risk stratification of stage II rectal mucinous adenocarcinoma to predict the benefit of adjuvant ch.pdf",
+   "size_mb": 1.61,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Liang Y, Liao H, Shi H, et al. Risk stratification of stage II rectal mucinous adenocarcinoma to predict the benefit of adjuvant chemotherapy following neoadjuvant chemoradiation and surgery. Front Oncol. 2024;14:1352660. doi:10.3389/fonc.2024.1352660",
+   "csv_key": "GXAFJZ5I",
+   "title": "Risk stratification of stage II rectal mucinous adenocarcinoma to predict the benefit of adjuvant chemotherapy following neoadjuvant chemoradiation and surgery",
+   "year": "2024",
+   "journal": "Frontiers in Oncology",
+   "doi": "10.3389/fonc.2024.1352660",
+   "author": "Liang, Yahang; Liao, Hualin; Shi, Haoran; Li, Tao; Liu, Yaxiong; Yuan, Yuli; Li, Mingming; Li, Aidi; Liu, Yang; Yao, Yao; Li, Taiyuan",
+   "abstract": "BACKGROUND: The treatment strategy for stage II rectal mucinous adenocarcinoma (RMA) recommends neoadjuvant chemoradiotherapy (NCR) followed by total mesorectal excision (TME). However, the necessity "
+  },
+  {
+   "folder": "NG7AQS69",
+   "filename": "Alshehri 等 - 2024 - Mucinous Differentiation in Colorectal Cancer A 10-Year Experience Audit at King Faisal Specialist.pdf",
+   "size_mb": 0.38,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "TRBYRPAK",
+   "title": "Mucinous Differentiation in Colorectal Cancer: A 10-Year Experience Audit at King Faisal Specialist Hospital and Research Centre, Jeddah",
+   "year": "2024",
+   "journal": "Cureus",
+   "doi": "10.7759/cureus.56722",
+   "author": "Alshehri, Khalid A.; Alsulaimani, Naif; Alghamdi, Wejdan A.; Almansouri, Zuhoor; Zubair, Syed A.; Zekri, Jamal; Saimeh, Haitham; Sultan, Sufian",
+   "abstract": "Given that colorectal cancer is one of the leading causes of mortality, mucinous adenocarcinoma is one of the subtypes and is characterized by the presence of mucin-producing tumor cells with mucin co"
+  },
+  {
+   "folder": "NKJA6ULL",
+   "filename": "Reynolds 等 - 2019 - Mucinous adenocarcinoma of the colon and rectum A genomic analysis.pdf",
+   "size_mb": 5.93,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Reynolds IS, O’Connell E, Fichtner M, et al. Mucinous adenocarcinoma of the colon and rectum: A genomic analysis. J Surg Oncol. 2019;120(8):1427-1435. doi:10.1002/jso.25764",
+   "csv_key": "3H2AZJ7G",
+   "title": "Mucinous adenocarcinoma of the colon and rectum: A genomic analysis",
+   "year": "2019",
+   "journal": "Journal of Surgical Oncology",
+   "doi": "10.1002/jso.25764",
+   "author": "Reynolds, Ian S.; O'Connell, Emer; Fichtner, Michael; McNamara, Deborah A.; Kay, Elaine W.; Prehn, Jochen H. M.; Furney, Simon J.; Burke, John P.",
+   "abstract": "BACKGROUND AND OBJECTIVES: Mucinous adenocarcinoma is a distinct subtype of colorectal cancer (CRC) with a worse prognosis when compared with non-mucinous adenocarcinoma. The aim of this study was to "
+  },
+  {
+   "folder": "Q7FE469T",
+   "filename": "Huang 等 - 2022 - Survival after curative resection for stage I colorectal mucinous adenocarcinoma.pdf",
+   "size_mb": 1.13,
+   "converted": true,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "MQ4EQWDK",
+   "title": "Survival after curative resection for stage I colorectal mucinous adenocarcinoma",
+   "year": "2022",
+   "journal": "BMC gastroenterology",
+   "doi": "10.1186/s12876-022-02276-z",
+   "author": "Huang, Liang; Luo, Shuangling; Lai, Sicong; Liu, Zhanzhen; Hu, Huanxin; Chen, Mian; Kang, Liang",
+   "abstract": "PURPOSE: The prognostic value of the mucinous adenocarcinoma histotype on the early stages especially for stage I colorectal cancer (CRC) is still unclear. This study determined the clinicopathologic "
+  },
+  {
+   "folder": "QVTUE5XI",
+   "filename": "Wang 等 - 2025 - [Preoperative discrimination of colorectal mucinous adenocarcinoma using enhanced CT-based radiomics.pdf",
+   "size_mb": 1.93,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "6875TPGM",
+   "title": "[Preoperative discrimination of colorectal mucinous adenocarcinoma using enhanced CT-based radiomics and deep learning fusion model]",
+   "year": "2025",
+   "journal": "Zhonghua Wai Ke Za Zhi [Chinese Journal of Surgery]",
+   "doi": "10.3760/cma.j.cn112139-20250407-00179",
+   "author": "Wang, B. Z.; Zhang, X.; Wang, Y. L.; Wang, X. Y.; Wang, Q. G.; Luo, Z.; Xu, S. L.; Huang, C.",
+   "abstract": "Objective: To develop a preoperative differentiation model for colorectal mucinous adenocarcinoma and non-mucinous adenocarcinoma using a combination of contrast-enhanced CT radiomics and deep learnin"
+  },
+  {
+   "folder": "R3T2WKUL",
+   "filename": "McCawley 等 - 2016 - Mucinous Rectal Adenocarcinoma Is Associated with a Poor Response to Neoadjuvant Chemoradiotherapy.pdf",
+   "size_mb": 0.54,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "McCawley N, Clancy C, O’Neill BDP, Deasy J, McNamara DA, Burke JP. Mucinous Rectal Adenocarcinoma Is Associated with a Poor Response to Neoadjuvant Chemoradiotherapy: A Systematic Review and Meta-analysis. Dis Colon Rectum. 2016;59(12):1200-1208. doi:10.1097/DCR.0000000000000635",
+   "csv_key": "J34HX3AM",
+   "title": "Mucinous Rectal Adenocarcinoma Is Associated with a Poor Response to Neoadjuvant Chemoradiotherapy: A Systematic Review and Meta-analysis",
+   "year": "2016",
+   "journal": "Diseases of the Colon and Rectum",
+   "doi": "10.1097/DCR.0000000000000635",
+   "author": "McCawley, Niamh; Clancy, Cillian; O'Neill, Brian D. P.; Deasy, Joseph; McNamara, Deborah A.; Burke, John P.",
+   "abstract": "BACKGROUND: Mucinous adenocarcinoma represents a potentially poor prognostic subgroup of rectal cancer. A consensus on the effect of mucinous cancer on outcomes following neoadjuvant chemoradiotherapy"
+  },
+  {
+   "folder": "RELV745M",
+   "filename": "Cortés-Guiral 等 - 2021 - Primary and metastatic peritoneal surface malignancies.pdf",
+   "size_mb": 3.07,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "RU2RIHPF",
+   "title": "Primary and metastatic peritoneal surface malignancies",
+   "year": "2021",
+   "journal": "Nature Reviews. Disease Primers",
+   "doi": "10.1038/s41572-021-00326-6",
+   "author": "Cortés-Guiral, Delia; Hübner, Martin; Alyami, Mohammad; Bhatt, Aditi; Ceelen, Wim; Glehen, Olivier; Lordick, Florian; Ramsay, Robert; Sgarbura, Olivia; Van Der Speeten, Kurt; Turaga, Kiran K.; Chand, Manish",
+   "abstract": "Peritoneal surface malignancies comprise a heterogeneous group of primary tumours, including peritoneal mesothelioma, and peritoneal metastases of other tumours, including ovarian, gastric, colorectal"
+  },
+  {
+   "folder": "RUFZMV8T",
+   "filename": "Huang 等 - 2024 - Clinicopathological characteristics and outcomes of colorectal mucinous adenocarcinoma a retrospect.pdf",
+   "size_mb": 3.31,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Huang A, Yang Y, Sun Z, et al. Clinicopathological characteristics and outcomes of colorectal mucinous adenocarcinoma: a retrospective analysis from China. Front Oncol. 2024;14:1335678. doi:10.3389/fonc.2024.1335678",
+   "csv_key": "EEPE2Y5E",
+   "title": "Clinicopathological characteristics and outcomes of colorectal mucinous adenocarcinoma: a retrospective analysis from China",
+   "year": "2024",
+   "journal": "Frontiers in Oncology",
+   "doi": "10.3389/fonc.2024.1335678",
+   "author": "Huang, An; Yang, Yong; Sun, Zhuang; Hong, Haopeng; Chen, Jiajia; Gao, Zhaoya; Gu, Jin",
+   "abstract": "BACKGROUND: Mucinous adenocarcinoma (MAC) is a unique subtype of colorectal cancer and its prognostic value remains controversial. This study aimed to compare the clinicopathological characteristics a"
+  },
+  {
+   "folder": "RWX3PBWF",
+   "filename": "Benesch 等 - 2023 - Location Has Prognostic Impact on the Outcome of Colorectal Mucinous Adenocarcinomas.pdf",
+   "size_mb": 2.69,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Benesch MGK, Nelson ED, O’Brien SBL. Location Has Prognostic Impact on the Outcome of Colorectal Mucinous Adenocarcinomas. Cancers (Basel). 2023;16(1):147. doi:10.3390/cancers16010147",
+   "csv_key": "6ZAI5FJA",
+   "title": "Location Has Prognostic Impact on the Outcome of Colorectal Mucinous Adenocarcinomas",
+   "year": "2023",
+   "journal": "Cancers",
+   "doi": "10.3390/cancers16010147",
+   "author": "Benesch, Matthew G. K.; Nelson, Erek D.; O'Brien, Shalana B. L.",
+   "abstract": "Mucinous (colloid) adenocarcinomas (MAs) are a rare histological subtype of tumors defined by extracellular mucin comprising more than 50% of the tumor. These tumors are on a continuum of mucin-produc"
+  },
+  {
+   "folder": "S3E6K2AL",
+   "filename": "Cai 等 - 2020 - Risk factor analysis for inaccurate pre-operative MRI staging in rectal cancer.pdf",
+   "size_mb": 0.8,
+   "converted": true,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "PZ669V66",
+   "title": "Risk factor analysis for inaccurate pre-operative MRI staging in rectal cancer",
+   "year": "2020",
+   "journal": "BMC cancer",
+   "doi": "10.1186/s12885-020-06761-0",
+   "author": "Cai, Zerong; Xie, Xiaoyu; Chen, Yufeng; Chen, Zexian; Cao, Wuteng; Saad, Khamis Salem Saeed; Zou, Yifeng; Lan, Ping; Wu, Xiaojian",
+   "abstract": "BACKGROUND: Various tumor characteristics might lead to inaccurate local MRI-defined stage of rectal cancer and the purpose of this study was to explore the clinicopathological factors that impact on "
+  },
+  {
+   "folder": "SAZX7IRY",
+   "filename": "He 等 - 2026 - Magnetic resonance imaging-based radiomics of mesorectum for predicting extramural venous invasion i.pdf",
+   "size_mb": 2.61,
+   "converted": false,
+   "mac": false,
+   "evidence": "标题判断(非黏液腺癌)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "QNN4TA95",
+   "title": "Magnetic resonance imaging-based radiomics of mesorectum for predicting extramural venous invasion in patients with rectal cancer: a bi-centric study",
+   "year": "2026",
+   "journal": "Cancer Imaging: The Official Publication of the International Cancer Imaging Society",
+   "doi": "10.1186/s40644-026-01020-0",
+   "author": "He, Jia; Tan, Xianzheng; Lin, Huashan; Fang, Jing; Liu, Diejuan; Liu, Jiabei; Feng, Xiang; Yu, Xiaoping; Liu, Peng",
+   "abstract": "OBJECTIVES: To develop and validate a magnetic resonance imaging (MRI)-based radiomics model of the mesorectum for predicting extramural venous invasion (EMVI) in patients with rectal cancer (RC). MET"
+  },
+  {
+   "folder": "SJ23382K",
+   "filename": "Patel 等 - 2023 - Immunophenotypic profiles and prognosis for colorectal mucinous adenocarcinomas are dependent on ana.pdf",
+   "size_mb": 2.57,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Patel C, Behring M, Al Diffalha S, et al. Immunophenotypic profiles and prognosis for colorectal mucinous adenocarcinomas are dependent on anatomic location. Cancer Med. 2023;12(8):9637-9643. doi:10.1002/cam4.5803",
+   "csv_key": "V7SVZWY4",
+   "title": "Immunophenotypic profiles and prognosis for colorectal mucinous adenocarcinomas are dependent on anatomic location",
+   "year": "2023",
+   "journal": "Cancer Medicine",
+   "doi": "10.1002/cam4.5803",
+   "author": "Patel, Chirag; Behring, Michael; Al Diffalha, Sameer; Dhall, Deepti; Lee, Goo; Shanmugam, Chandrakumar; Grizzle, William E.; Manne, Upender",
+   "abstract": "BACKGROUND: The prognostic value of mucinous adenocarcinomas (MCAs, exhibiting >50% extracellular mucin) of the colorectum, in relation to their anatomic location is not well studied. MATERIALS AND ME"
+  },
+  {
+   "folder": "SK4WFNZR",
+   "filename": "Kang 等 - 2016 - Prevalence and clinical significance of cellular and acellular mucin in patients with locally advanc.pdf",
+   "size_mb": 0.14,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "LTF4R7ZS",
+   "title": "Prevalence and clinical significance of cellular and acellular mucin in patients with locally advanced mucinous rectal cancer who underwent preoperative chemoradiotherapy followed by radical surgery",
+   "year": "2016",
+   "journal": "Colorectal Disease",
+   "doi": "10.1111/codi.13169",
+   "author": "Kang, C. M.; Lim, S.-B.; Hong, S.-M.; Yu, C. S.; Hong, Y. S.; Kim, T. W.; Park, J.-H.; Kim, J. H.; Kim, J. C.",
+   "abstract": "Aim The frequent presence of acellular mucin in specimens showing pathological complete response to preoperative chemoradiotherapy (CRT) and the poor response to preoperative CRT in mucinous rectal ca"
+  },
+  {
+   "folder": "T5XV35WR",
+   "filename": "Emile 等 - 2024 - A Propensity Score-Matched Analysis of the Impact of Neoadjuvant Radiation Therapy on the Outcomes o.pdf",
+   "size_mb": 0.87,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Emile SH, Horesh N, Freund MR, Silva-Alvarenga E, Wexner SD. A Propensity Score-Matched Analysis of the Impact of Neoadjuvant Radiation Therapy on the Outcomes of Stage II and III Mucinous Rectal Carcinoma. Dis Colon Rectum. 2024;67(5):655-663. doi:10.1097/DCR.0000000000003081",
+   "csv_key": "S6NIPQI8",
+   "title": "A Propensity Score-Matched Analysis of the Impact of Neoadjuvant Radiation Therapy on the Outcomes of Stage II and III Mucinous Rectal Carcinoma",
+   "year": "2024",
+   "journal": "Diseases of the Colon and Rectum",
+   "doi": "10.1097/DCR.0000000000003081",
+   "author": "Emile, Sameh Hany; Horesh, Nir; Freund, Michael R.; Silva-Alvarenga, Emanuela; Wexner, Steven D.",
+   "abstract": "BACKGROUND: Patients with mucinous rectal carcinoma tend to present in advanced stage with a poor prognosis. OBJECTIVE: This study aimed to assess the effect of neoadjuvant radiation therapy on outcom"
+  },
+  {
+   "folder": "TCESZP8I",
+   "filename": "Nagtegaal 等 - 2020 - The 2019 WHO classification of tumours of the digestive system.pdf",
+   "size_mb": 0.12,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Nagtegaal ID, Odze RD, Klimstra D, et al. The 2019 WHO classification of tumours of the digestive system. Histopathology. 2020;76(2):182-188. doi:10.1111/his.13975",
+   "csv_key": "BA8MNQCG",
+   "title": "The 2019 WHO classification of tumours of the digestive system",
+   "year": "2020",
+   "journal": "Histopathology",
+   "doi": "10.1111/his.13975",
+   "author": "Nagtegaal, Iris D.; Odze, Robert D.; Klimstra, David; Paradis, Valerie; Rugge, Massimo; Schirmacher, Peter; Washington, Kay M.; Carneiro, Fatima; Cree, Ian A.; WHO Classification of Tumours Editorial Board",
+   "abstract": ""
+  },
+  {
+   "folder": "TCJNK4TF",
+   "filename": "Oberholzer 等 - 2012 - Rectal cancer mucinous carcinoma on magnetic resonance imaging indicates poor response to neoadjuva.pdf",
+   "size_mb": 0.35,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Oberholzer K, Menig M, Kreft A, et al. Rectal cancer: mucinous carcinoma on magnetic resonance imaging indicates poor response to neoadjuvant chemoradiation. Int J Radiat Oncol Biol Phys. 2012;82(2):842-848. doi:10.1016/j.ijrobp.2010.08.057",
+   "csv_key": "C4ZW3XDV",
+   "title": "Rectal cancer: mucinous carcinoma on magnetic resonance imaging indicates poor response to neoadjuvant chemoradiation",
+   "year": "2012",
+   "journal": "International Journal of Radiation Oncology, Biology, Physics",
+   "doi": "10.1016/j.ijrobp.2010.08.057",
+   "author": "Oberholzer, Katja; Menig, Matthias; Kreft, Andreas; Schneider, Astrid; Junginger, Theodor; Heintz, Achim; Kreitner, Karl-Friedrich; Hötker, Andreas M.; Hansen, Torsten; Düber, Christoph; Schmidberger, Heinz",
+   "abstract": "PURPOSE: To assess response of locally advanced rectal carcinoma to chemoradiation with regard to mucinous status and local tumor invasion found at pretherapeutic magnetic resonance imaging (MRI). MET"
+  },
+  {
+   "folder": "UI3K6W98",
+   "filename": "Liao 等 - 2024 - The benefit of adjuvant chemotherapy in pathological T1-3N0M0 rectal mucinous adenocarcinoma no imp.pdf",
+   "size_mb": 0.5,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Liao H, Zeng T, Xie X, et al. The benefit of adjuvant chemotherapy in pathological T1-3N0M0 rectal mucinous adenocarcinoma: no improvement survival outcomes based on long-term survival analysis of large population data. J Gastrointest Oncol. 2024;15(4):1568-1579. doi:10.21037/jgo-24-271",
+   "csv_key": "6F75MNZT",
+   "title": "The benefit of adjuvant chemotherapy in pathological T1-3N0M0 rectal mucinous adenocarcinoma: no improvement survival outcomes based on long-term survival analysis of large population data",
+   "year": "2024",
+   "journal": "Journal of Gastrointestinal Oncology",
+   "doi": "10.21037/jgo-24-271",
+   "author": "Liao, Hualin; Zeng, Tengyu; Xie, Xianqiang; Li, Jiyang; Li, Dongsheng; Yan, Kejin; Chen, Fan; Zhu, Hongliang",
+   "abstract": "BACKGROUND: Currently, the benefits of the administration of adjuvant chemotherapy (AT) in pathological low-risk rectal mucinous adenocarcinoma (RM) with T1-3N0M0 are unclear. The objective of this st"
+  },
+  {
+   "folder": "URSC7IXK",
+   "filename": "Lin 等 - 2024 - Predictive value of circulating lymphocyte subsets and inflammatory indexes for neoadjuvant chemorad.pdf",
+   "size_mb": 2.86,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "U7J4SI9P",
+   "title": "Predictive value of circulating lymphocyte subsets and inflammatory indexes for neoadjuvant chemoradiotherapy response in rectal mucinous adenocarcinoma patients: A machine learning approach",
+   "year": "2024",
+   "journal": "Cancer Medicine",
+   "doi": "10.1002/cam4.7416",
+   "author": "Lin, Yu; Sun, Yanwu; Jiang, Weizhong; Deng, Yu; Huang, Ying; Chi, Pan",
+   "abstract": "INTRODUCTION: In this study, we aimed to evaluate the predictive value of circulating lymphocyte subsets and inflammatory indexes in response to neoadjuvant chemoradiotherapy (NCRT) in patients with r"
+  },
+  {
+   "folder": "USEKRMN3",
+   "filename": "Zhang 等 - 2022 - Quantitative T2 Mapping to Discriminate Mucinous from Nonmucinous Adenocarcinoma in Rectal Cancer C.pdf",
+   "size_mb": 10.7,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Zhang J, Ge Y, Zhang H, Wang Z, Dou W, Hu S. Quantitative T2 Mapping to Discriminate Mucinous from Nonmucinous Adenocarcinoma in Rectal Cancer: Comparison with Diffusion-weighted Imaging. Magn Reson Med Sci. 2022;21(4):593-598. doi:10.2463/mrms.mp.2021-0067",
+   "csv_key": "5ZIA6Z67",
+   "title": "Quantitative T2 Mapping to Discriminate Mucinous from Nonmucinous Adenocarcinoma in Rectal Cancer: Comparison with Diffusion-weighted Imaging",
+   "year": "2022",
+   "journal": "Magnetic resonance in medical sciences: MRMS: an official journal of Japan Society of Magnetic Resonance in Medicine",
+   "doi": "10.2463/mrms.mp.2021-0067",
+   "author": "Zhang, Junqin; Ge, Yuxi; Zhang, Heng; Wang, Zi; Dou, Weiqiang; Hu, Shudong",
+   "abstract": "PURPOSE: Mucinous adenocarcinoma (MA) is associated with worse clinicopathological characteristics and a poorer prognosis than non-MA. Moreover, MA is related to worse tumor regression grade and tumor"
+  },
+  {
+   "folder": "UTPJBFF3",
+   "filename": "Cao 等 - 2020 - Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous ade.pdf",
+   "size_mb": 1.82,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Cao W, Li B, Gong J, et al. Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous adenocarcinoma predicts tumor response to neoadjuvant therapy. Eur J Radiol. 2020;125:108890. doi:10.1016/j.ejrad.2020.108890",
+   "csv_key": "IUN5R86U",
+   "title": "Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous adenocarcinoma predicts tumor response to neoadjuvant therapy",
+   "year": "2020",
+   "journal": "European Journal of Radiology",
+   "doi": "10.1016/j.ejrad.2020.108890",
+   "author": "Cao, Wuteng; Li, Biao; Gong, Jiayin; Hu, Meiyu; Li, Wenli; Pan, Ximin; Zhou, Zhiyang",
+   "abstract": "PURPOSE: To determine the prognostic value of diffusion-weighted magnetic resonance imaging (DW-MRI) of mucin pools (MPs) in predicting the response of patients with locally advanced rectal mucinous a"
+  },
+  {
+   "folder": "V7HNZLLL",
+   "filename": "Naccarati 等 - 2025 - Fecal miRNA profiles in colorectal cancers with mucinous morphology.pdf",
+   "size_mb": 6.14,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "3D3YSLL5",
+   "title": "Fecal miRNA profiles in colorectal cancers with mucinous morphology",
+   "year": "2025",
+   "journal": "Mutagenesis",
+   "doi": "10.1093/mutage/geae015",
+   "author": "Naccarati, Alessio; Dragomir, Mihnea P.; Tarallo, Sonia; Gagliardi, Amedeo; Alberini, Virginia; Buchler, Tomas; Liska, Vaclav; Gallo, Gaetano; Vymetalkova, Veronika; Vodickova, Ludmila; Vodicka, Pavel; Pardini, Barbara; Ferrero, Giulio",
+   "abstract": "The diagnostic performance of molecular markers in surrogate tissues like stool may be affected by colorectal cancer (CRC) morphological heterogeneity. The mucinous histotype represents a subgroup of "
+  },
+  {
+   "folder": "VJUSGPTQ",
+   "filename": "Duggan 等 - 2023 - Multiplexed Immunofluorescence Imaging Reveals an Immune-Rich Tumor Microenvironment in Mucinous Rec.pdf",
+   "size_mb": 1.2,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Duggan WP, Kisakol B, O’Connell E, et al. Multiplexed Immunofluorescence Imaging Reveals an Immune-Rich Tumor Microenvironment in Mucinous Rectal Cancer Characterized by Increased Lymphocyte Infiltration and Enhanced Programmed Cell Death Protein 1 Expression. Dis Colon Rectum. 2023;66(7):914-922. doi:10.1097/DCR.0000000000002624",
+   "csv_key": "RAQK69VR",
+   "title": "Multiplexed Immunofluorescence Imaging Reveals an Immune-Rich Tumor Microenvironment in Mucinous Rectal Cancer Characterized by Increased Lymphocyte Infiltration and Enhanced Programmed Cell Death Protein 1 Expression",
+   "year": "2023",
+   "journal": "Diseases of the Colon and Rectum",
+   "doi": "10.1097/DCR.0000000000002624",
+   "author": "Duggan, William P.; Kisakol, Batuhan; O'Connell, Emer; Matveeva, Anna; O'Grady, Tony; McDonough, Elizabeth; Lindner, Andreas U.; McNamara, Deborah; Longley, Daniel; Ginty, Fiona; Burke, John P.; Prehn, Jochen H. M.",
+   "abstract": "BACKGROUND: Mucinous rectal cancer is associated with a higher incidence of microsatellite instability and a poorer response to neoadjuvant chemoradiotherapy compared to other subtypes of rectal adeno"
+  },
+  {
+   "folder": "WDND5LVQ",
+   "filename": "Liu 等 - 2024 - Should the Baseline MRI Staging Criteria Differentiate Between Mucinous and Classical Rectal Adenoca.pdf",
+   "size_mb": 1.98,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Liu J, Miao G, Deng L, et al. Should the Baseline MRI Staging Criteria Differentiate Between Mucinous and Classical Rectal Adenocarcinoma? Acad Radiol. 2024;31(4):1378-1387. doi:10.1016/j.acra.2023.10.031",
+   "csv_key": "YWYI8R9P",
+   "title": "Should the Baseline MRI Staging Criteria Differentiate Between Mucinous and Classical Rectal Adenocarcinoma?",
+   "year": "2024",
+   "journal": "Academic Radiology",
+   "doi": "10.1016/j.acra.2023.10.031",
+   "author": "Liu, Jingjing; Miao, Gengyun; Deng, Lamei; Zhou, Guofeng; Yang, Chun; Rao, Shengxiang; Liu, Liheng; Zeng, Mengsu",
+   "abstract": "RATIONALE AND OBJECTIVES: To compare baseline MR imaging features for pre-treatment staging between rectal mucinous adenocarcinoma (RMAC) and rectal classical adenocarcinoma (RCAC), and to investigate"
+  },
+  {
+   "folder": "X7ZFBMH6",
+   "filename": "Tan 等 - 2024 - Construction and validation of prognostic model for colorectal mucinous adenocarcinoma patients and.pdf",
+   "size_mb": 5.28,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "4XIXU54V",
+   "title": "Construction and validation of prognostic model for colorectal mucinous adenocarcinoma patients and identification of a new prognosis related gene FAM174B",
+   "year": "2024",
+   "journal": "Translational Cancer Research",
+   "doi": "10.21037/tcr-24-347",
+   "author": "Tan, Xiangwen; Fang, Qing; Xu, Yunhua; Li, Shuxiang; Yuan, Jinyi; Xu, Kunming; Chen, Xiguang; Fu, Guang; Liu, Yarui; Huang, Qiulin; Peng, Xiuda; Xiao, Shuai",
+   "abstract": "BACKGROUND: Mucinous adenocarcinoma (MAC) is a peculiar histological subtype of colorectal cancer (CRC) with distinct medical, disease-related, and genetic characteristics. The prognosis of MAC is gen"
+  },
+  {
+   "folder": "XMHZTJLS",
+   "filename": "Hugen 等 - 2014 - Insight into mucinous colorectal carcinoma clues from etiology.pdf",
+   "size_mb": 0.27,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Hugen N, van Beek JJP, de Wilt JHW, Nagtegaal ID. Insight into mucinous colorectal carcinoma: clues from etiology. Ann Surg Oncol. 2014;21(9):2963-2970. doi:10.1245/s10434-014-3706-6",
+   "csv_key": "JQDN6CEE",
+   "title": "Insight into mucinous colorectal carcinoma: clues from etiology",
+   "year": "2014",
+   "journal": "Annals of Surgical Oncology",
+   "doi": "10.1245/s10434-014-3706-6",
+   "author": "Hugen, Niek; van Beek, Jasper J. P.; de Wilt, Johannes H. W.; Nagtegaal, Iris D.",
+   "abstract": "The prognostic impact of mucinous carcinoma (MC) in colorectal cancer (CRC) has been subject to debate ever since the introduction of the classification of tumors according to their histological diffe"
+  },
+  {
+   "folder": "XRLR7M9W",
+   "filename": "Melis 等 - 2010 - Gene expression profiling of colorectal mucinous adenocarcinomas.pdf",
+   "size_mb": 1.0,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Melis M, Hernandez J, Siegel EM, et al. Gene expression profiling of colorectal mucinous adenocarcinomas. Dis Colon Rectum. 2010;53(6):936-943. doi:10.1007/DCR.0b013e3181d320c4",
+   "csv_key": "2JWJY5S6",
+   "title": "Gene expression profiling of colorectal mucinous adenocarcinomas",
+   "year": "2010",
+   "journal": "Diseases of the Colon and Rectum",
+   "doi": "10.1007/DCR.0b013e3181d320c4",
+   "author": "Melis, Marcovalerio; Hernandez, Jonathan; Siegel, Erin M.; McLoughlin, James M.; Ly, Quan P.; Nair, Rajesh M.; Lewis, James M.; Jensen, Eric H.; Alvarado, Michael D.; Coppola, Domenico; Eschrich, Steve; Bloom, Gregory C.; Yeatman, Timothy J.; Shibata, David",
+   "abstract": "PURPOSE: Although mucinous adenocarcinomas represent 6% to 19% of all colorectal adenocarcinomas, little is known about the genome-wide alterations associated with this malignancy. We have sought to c"
+  },
+  {
+   "folder": "Y67NPARN",
+   "filename": "Bong 等 - 2022 - Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Dis.pdf",
+   "size_mb": 4.0,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Bong JW, Gim JA, Ju Y, et al. Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Distant Metastasis. Cancers (Basel). 2022;14(5):1297. doi:10.3390/cancers14051297",
+   "csv_key": "NLA22C5W",
+   "title": "Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Distant Metastasis",
+   "year": "2022",
+   "journal": "Cancers",
+   "doi": "10.3390/cancers14051297",
+   "author": "Bong, Jun-Woo; Gim, Jeong-An; Ju, Yeonuk; Cheong, Chinock; Lee, Sun-Il; Oh, Sang-Cheul; Min, Byung-Wook; Kang, Sanghee",
+   "abstract": "In colorectal cancer, whereas mucinous adenocarcinoma (MAC) has several poor clinical prognostic factors compared to adenocarcinoma (AC), the prognosis of MAC remains controversial. We evaluated the p"
+  },
+  {
+   "folder": "YPKIZIXX",
+   "filename": "NIHMS2115008-supplement-Supplement.docx",
+   "size_mb": 0.65,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Javed-Tayyab S, Miranda J, Reif de Paula T, et al. Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cancer. Eur Radiol. Published online August 26, 2025. doi:10.1007/s00330-025-11967-6",
+   "csv_key": "8J74QF2V",
+   "title": "Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cancer",
+   "year": "2025",
+   "journal": "European Radiology",
+   "doi": "10.1007/s00330-025-11967-6",
+   "author": "Javed-Tayyab, Sidra; Miranda, Joao; Reif de Paula, Thais; Nevin, Rachel; Alves Pinto, Paulo Victor; Zheng, Junting; Firat, Canan; El Homsi, Maria; Rodriguez, Lee; Capanu, Marinela; Weiser, Martin R.; Shia, Jinru; Gollub, Marc J.; Horvat, Natally",
+   "abstract": "OBJECTIVES: To evaluate the relationship between mucin quantity on MRI and outcomes following total neoadjuvant therapy (TNT) in patients with rectal cancer. MATERIALS AND METHODS: This retrospective,"
+  },
+  {
+   "folder": "YSUBMCP2",
+   "filename": "Wu 等 - 2025 - Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal.pdf",
+   "size_mb": 1.65,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Wu S, Wang Z, Qiu C, et al. Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal adenocarcinoma. BMC Med Imaging. 2025;26(1):51. doi:10.1186/s12880-025-02129-7",
+   "csv_key": "ZUAIYLUP",
+   "title": "Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal adenocarcinoma",
+   "year": "2025",
+   "journal": "BMC medical imaging",
+   "doi": "10.1186/s12880-025-02129-7",
+   "author": "Wu, Shuzhen; Wang, Zhipeng; Qiu, Chenyang; Ma, Yinchao; Liu, Jiahao; Han, Kun; Li, Ming; Xiao, Mengjun; Fu, Wenting; Wang, Haiyan",
+   "abstract": "BACKGROUND: Preoperative differentiation between rectal mucinous adenocarcinoma (MAC) and non-mucinous adenocarcinoma (NMAC) remains a clinical challenge. This study aimed to develop and validate a no"
+  },
+  {
+   "folder": "YV2JYMZS",
+   "filename": "Javed-Tayyab 等 - 2025 - Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cance.pdf",
+   "size_mb": 1.2,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Javed-Tayyab S, Miranda J, Reif de Paula T, et al. Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cancer. Eur Radiol. Published online August 26, 2025. doi:10.1007/s00330-025-11967-6",
+   "csv_key": "8J74QF2V",
+   "title": "Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cancer",
+   "year": "2025",
+   "journal": "European Radiology",
+   "doi": "10.1007/s00330-025-11967-6",
+   "author": "Javed-Tayyab, Sidra; Miranda, Joao; Reif de Paula, Thais; Nevin, Rachel; Alves Pinto, Paulo Victor; Zheng, Junting; Firat, Canan; El Homsi, Maria; Rodriguez, Lee; Capanu, Marinela; Weiser, Martin R.; Shia, Jinru; Gollub, Marc J.; Horvat, Natally",
+   "abstract": "OBJECTIVES: To evaluate the relationship between mucin quantity on MRI and outcomes following total neoadjuvant therapy (TNT) in patients with rectal cancer. MATERIALS AND METHODS: This retrospective,"
+  },
+  {
+   "folder": "YVT8R63K",
+   "filename": "Berar 等 - 2025 - Comprehensive Overview of Molecular, Imaging, and Therapeutic Challenges in Rectal Mucinous Adenocar.pdf",
+   "size_mb": 0.76,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Berar M, Ciocan A, Moiș E, et al. Comprehensive Overview of Molecular, Imaging, and Therapeutic Challenges in Rectal Mucinous Adenocarcinoma. Int J Mol Sci. 2025;26(2):432. doi:10.3390/ijms26020432",
+   "csv_key": "6LNH2SVL",
+   "title": "Comprehensive Overview of Molecular, Imaging, and Therapeutic Challenges in Rectal Mucinous Adenocarcinoma",
+   "year": "2025",
+   "journal": "International Journal of Molecular Sciences",
+   "doi": "10.3390/ijms26020432",
+   "author": "Berar, Mihaela; Ciocan, Andra; Moiș, Emil; Furcea, Luminița; Popa, Călin; Ciocan, Răzvan Alexandru; Zaharie, Florin; Puia, Cosmin; Al Hajjar, Nadim; Caraiani, Cosmin; Rusu, Ioana; Graur, Florin",
+   "abstract": "Rectal cancer is one of the most frequent malignancies worldwide. The most common histological type is adenocarcinoma, followed by mucinous adenocarcinoma. The outcome is less favorable for the mucino"
+  },
+  {
+   "folder": "YZU242IA",
+   "filename": "Kim 等 - 2019 - Impact of Mucin Proportion in the Pretreatment MRI on the Outcomes of Rectal Cancer Patients Undergo.pdf",
+   "size_mb": 1.33,
+   "converted": true,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Kim E, Kim K, Kim SH, et al. Impact of Mucin Proportion in the Pretreatment MRI on the Outcomes of Rectal Cancer Patients Undergoing Neoadjuvant Chemoradiotherapy. Cancer Res Treat. 2019;51(3):1188-1197. doi:10.4143/crt.2018.434",
+   "csv_key": "LQ7KPVVJ",
+   "title": "Impact of Mucin Proportion in the Pretreatment MRI on the Outcomes of Rectal Cancer Patients Undergoing Neoadjuvant Chemoradiotherapy",
+   "year": "2019",
+   "journal": "Cancer Research and Treatment",
+   "doi": "10.4143/crt.2018.434",
+   "author": "Kim, Eunji; Kim, Kyubo; Kim, Se Hyung; Han, Sae-Won; Kim, Tae-You; Jeong, Seung-Yong; Park, Kyu Joo; Koh, Jaemoon; Kang, Gyeong Hoon; Chie, Eui Kyu",
+   "abstract": "PURPOSE: The purpose of this study was to evaluate treatment response to neoadjuvant chemoradiotherapy (CRT) with regard to mucin status in pathology and pretreatment magnetic resonance imaging (MRI) "
+  },
+  {
+   "folder": "Z55ER447",
+   "filename": "cancers-1559433-supplementary.pdf",
+   "size_mb": 0.91,
+   "converted": false,
+   "mac": true,
+   "evidence": "参考文献清单",
+   "in_user_refs": true,
+   "ref_raw": "Bong JW, Gim JA, Ju Y, et al. Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Distant Metastasis. Cancers (Basel). 2022;14(5):1297. doi:10.3390/cancers14051297",
+   "csv_key": "NLA22C5W",
+   "title": "Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Distant Metastasis",
+   "year": "2022",
+   "journal": "Cancers",
+   "doi": "10.3390/cancers14051297",
+   "author": "Bong, Jun-Woo; Gim, Jeong-An; Ju, Yeonuk; Cheong, Chinock; Lee, Sun-Il; Oh, Sang-Cheul; Min, Byung-Wook; Kang, Sanghee",
+   "abstract": "In colorectal cancer, whereas mucinous adenocarcinoma (MAC) has several poor clinical prognostic factors compared to adenocarcinoma (AC), the prognosis of MAC remains controversial. We evaluated the p"
+  },
+  {
+   "folder": "ZQIS2UA8",
+   "filename": "Stanietzky 等 - 2024 - Mucinous Rectal Adenocarcinoma-Challenges in Magnetic Resonance Imaging Interpretation.pdf",
+   "size_mb": 1.13,
+   "converted": false,
+   "mac": true,
+   "evidence": "标题判断(含mucin/mucus/黏液)",
+   "in_user_refs": false,
+   "ref_raw": "",
+   "csv_key": "K2AWK4B6",
+   "title": "Mucinous Rectal Adenocarcinoma-Challenges in Magnetic Resonance Imaging Interpretation",
+   "year": "2024",
+   "journal": "Journal of Computer Assisted Tomography",
+   "doi": "10.1097/RCT.0000000000001599",
+   "author": "Stanietzky, Nir; Morani, Ajaykumar; Surabhi, Venkateswar; Jensen, Corey; Horvat, Natally; Vikram, Raghu",
+   "abstract": "Mucinous rectal cancer (MRC) is defined by the World Health Organization as an adenocarcinoma with greater than 50% mucin content. Classic teaching suggests that it carries a poorer prognosis than con"
+  }
+ ],
+ "refs": [
+  {
+   "doi": "10.1111/his.13975",
+   "first_author": "id",
+   "year": "2019",
+   "raw": "Nagtegaal ID, Odze RD, Klimstra D, et al. The 2019 WHO classification of tumours of the digestive system. Histopathology. 2020;76(2):182-188. doi:10.1111/his.13975",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1245/s10434-014-3706-6",
+   "first_author": "n",
+   "year": "2014",
+   "raw": "Hugen N, van Beek JJP, de Wilt JHW, Nagtegaal ID. Insight into mucinous colorectal carcinoma: clues from etiology. Ann Surg Oncol. 2014;21(9):2963-2970. doi:10.1245/s10434-014-3706-6",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.4251/wjgo.v15.i8.1461",
+   "first_author": "j",
+   "year": "2023",
+   "raw": "Jiang J, Tang XW, Huang S, et al. Epidemiologic characteristics and risk factors associated with overall survival for patients with mucinous colorectal cancer: A population-based study. World J Gastrointest Oncol. 2023;15(8):1461-1474. doi:10.4251/wjgo.v15.i8.1461",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.3390/ijms26020432",
+   "first_author": "m",
+   "year": "2025",
+   "raw": "Berar M, Ciocan A, Moiș E, et al. Comprehensive Overview of Molecular, Imaging, and Therapeutic Challenges in Rectal Mucinous Adenocarcinoma. Int J Mol Sci. 2025;26(2):432. doi:10.3390/ijms26020432",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/dcr.0b013e3181d320c4",
+   "first_author": "m",
+   "year": "2010",
+   "raw": "Melis M, Hernandez J, Siegel EM, et al. Gene expression profiling of colorectal mucinous adenocarcinomas. Dis Colon Rectum. 2010;53(6):936-943. doi:10.1007/DCR.0b013e3181d320c4",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1186/s40880-019-0361-0",
+   "first_author": null,
+   "year": null,
+   "raw": "Luo C, Cen S, Ding G, Wu W. Mucinous colorectal adenocarcinoma: clinical pathology and treatment options. Cancer Commun (Lond). 2019;39(1):13. doi:10.1186/s40880-019-0361-0",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1038/s41416-025-02960-3",
+   "first_author": "h",
+   "year": "2025",
+   "raw": "Elomaa H, Tarkiainen V, Äijälä VK, et al. Associations of mucinous differentiation and mucin expression with immune cell infiltration and prognosis in colorectal adenocarcinoma. Br J Cancer. 2025;132(7):660-669. doi:10.1038/s41416-025-02960-3",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.3390/diagnostics14141512",
+   "first_author": null,
+   "year": null,
+   "raw": "Djikic Rom A, Dragicevic S, Jankovic R, et al. Markers of Epithelial–Mesenchymal Transition and Mucinous Histology Are Significant Predictors of Disease Severity and Tumor Characteristics in Early-Onset Colorectal Cancer. Diagnostics (Basel). 2024;14(14):1512. doi:10.3390/diagnostics14141512",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1016/j.isci.2023.106600",
+   "first_author": null,
+   "year": null,
+   "raw": "Ji D, Jia J, Cui X, Li Z, Wu A. FAP promotes metastasis and chemoresistance via regulating YAP1 and macrophages in mucinous colorectal adenocarcinoma. iScience. 2023;26(6):106600. doi:10.1016/j.isci.2023.106600",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1158/0008-5472.can-24-0788",
+   "first_author": null,
+   "year": null,
+   "raw": "Ladaika CA, Ghobashi AH, Boulton WC, Miller SA, O’Hagan HM. LSD1 and CoREST2 Potentiate STAT3 Activity to Promote Enteroendocrine Cell Differentiation in Mucinous Colorectal Cancer. Cancer Res. 2025;85(1):52-68. doi:10.1158/0008-5472.CAN-24-0788",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1097/dcr.0000000000002624",
+   "first_author": null,
+   "year": null,
+   "raw": "Duggan WP, Kisakol B, O’Connell E, et al. Multiplexed Immunofluorescence Imaging Reveals an Immune-Rich Tumor Microenvironment in Mucinous Rectal Cancer Characterized by Increased Lymphocyte Infiltration and Enhanced Programmed Cell Death Protein 1 Expression. Dis Colon Rectum. 2023;66(7):914-922. doi:10.1097/DCR.0000000000002624",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1245/s10434-021-09873-4",
+   "first_author": null,
+   "year": null,
+   "raw": "O’Connell E, Salvucci M, Reynolds IS, McNamara DA, Burke JP, Prehn JHM. Mucinous Colorectal Cancer is Associated With Expression of the TIM-3 Immune Checkpoint Independently of Microsatellite Instability (MSI) Status. Ann Surg Oncol. 2021;28(12):7999-8006. doi:10.1245/s10434-021-09873-4",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.3390/cancers14051297",
+   "first_author": null,
+   "year": null,
+   "raw": "Bong JW, Gim JA, Ju Y, et al. Prognosis and Sensitivity of Adjuvant Chemotherapy in Mucinous Colorectal Adenocarcinoma without Distant Metastasis. Cancers (Basel). 2022;14(5):1297. doi:10.3390/cancers14051297",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s10151-025-03225-0",
+   "first_author": "j",
+   "year": "2025",
+   "raw": "Yuan J, He H, Zhang P, et al. Clinicopathological features and prognosis of patients with colorectal Mucinous adenocarcinoma mixed with other pathological components: a nationwide retrospective study in China. Tech Coloproctol. 2025;29(1):187. doi:10.1007/s10151-025-03225-0",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1111/j.1440-1746.2008.05560.x",
+   "first_author": "m",
+   "year": "2008",
+   "raw": "Gulubova M, Vlaykova T. Chromogranin A-, serotonin-, synaptophysin- and vascular endothelial growth factor-positive endocrine cells and the prognosis of colorectal cancer: an immunohistochemical and ultrastructural study. J Gastroenterol Hepatol. 2008;23(10):1574-1585. doi:10.1111/j.1440-1746.2008.05560.x",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.3389/fonc.2024.1335678",
+   "first_author": "a",
+   "year": "2024",
+   "raw": "Huang A, Yang Y, Sun Z, et al. Clinicopathological characteristics and outcomes of colorectal mucinous adenocarcinoma: a retrospective analysis from China. Front Oncol. 2024;14:1335678. doi:10.3389/fonc.2024.1335678",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1186/s12885-024-12905-3",
+   "first_author": "x",
+   "year": "2024",
+   "raw": "Wang X, Wang H, He H, et al. Clinicopathological and prognostic features of colorectal mucinous adenocarcinomas: a systematic review and meta-analysis. BMC Cancer. 2024;24(1):1161. doi:10.1186/s12885-024-12905-3",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s12672-021-00443-4",
+   "first_author": "s",
+   "year": "2021",
+   "raw": "Xiao S, Huang J, Zhang Y, et al. Endoscopy biopsy is not efficiency enough for diagnosis of mucinous colorectal adenocarcinoma. Discov Oncol. 2021;12(1):44. doi:10.1007/s12672-021-00443-4",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s11604-011-0023-x",
+   "first_author": "k",
+   "year": "2012",
+   "raw": "Nasu K, Kuroki Y, Minami M. Diffusion-weighted imaging findings of mucinous carcinoma arising in the ano-rectal region: comparison of apparent diffusion coefficient with that of tubular adenocarcinoma. Jpn J Radiol. 2012;30(2):120-127. doi:10.1007/s11604-011-0023-x",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s00261-024-04728-4",
+   "first_author": null,
+   "year": null,
+   "raw": "Liu YY, Wen ZQ, Ma YR, et al. Application of T1-mapping combined with high-spatial-resolution T2-weighted imaging in discriminating mucinous from nonmucinous adenocarcinoma in rectal cancer. Abdom Radiol (NY). 2025;50(6):2380-2387. doi:10.1007/s00261-024-04728-4",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.2463/mrms.mp.2021-0067",
+   "first_author": null,
+   "year": null,
+   "raw": "Zhang J, Ge Y, Zhang H, Wang Z, Dou W, Hu S. Quantitative T2 Mapping to Discriminate Mucinous from Nonmucinous Adenocarcinoma in Rectal Cancer: Comparison with Diffusion-weighted Imaging. Magn Reson Med Sci. 2022;21(4):593-598. doi:10.2463/mrms.mp.2021-0067",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251121文献汇报"
+   ]
+  },
+  {
+   "doi": "10.1136/jclinpath-2011-200340",
+   "first_author": "j",
+   "year": "2012",
+   "raw": "Verhulst J, Ferdinande L, Demetter P, Ceelen W. Mucinous subtype as prognostic factor in colorectal cancer: a systematic review and meta-analysis. J Clin Pathol. 2012;65(5):381-388. doi:10.1136/jclinpath-2011-200340",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1097/dcr.0000000000000635",
+   "first_author": "n",
+   "year": "2016",
+   "raw": "McCawley N, Clancy C, O’Neill BDP, Deasy J, McNamara DA, Burke JP. Mucinous Rectal Adenocarcinoma Is Associated with a Poor Response to Neoadjuvant Chemoradiotherapy: A Systematic Review and Meta-analysis. Dis Colon Rectum. 2016;59(12):1200-1208. doi:10.1097/DCR.0000000000000635",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1002/cam4.5803",
+   "first_author": "c",
+   "year": "2023",
+   "raw": "Patel C, Behring M, Al Diffalha S, et al. Immunophenotypic profiles and prognosis for colorectal mucinous adenocarcinomas are dependent on anatomic location. Cancer Med. 2023;12(8):9637-9643. doi:10.1002/cam4.5803",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.3390/cancers16010147",
+   "first_author": null,
+   "year": null,
+   "raw": "Benesch MGK, Nelson ED, O’Brien SBL. Location Has Prognostic Impact on the Outcome of Colorectal Mucinous Adenocarcinomas. Cancers (Basel). 2023;16(1):147. doi:10.3390/cancers16010147",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s10151-024-03027-w",
+   "first_author": "l",
+   "year": "2024",
+   "raw": "Schabl L, Duraes LC, Connelly T, et al. Does stage III rectal mucinous adenocarcinoma benefit from neoadjuvant chemoradiation? Tech Coloproctol. 2024;28(1):146. doi:10.1007/s10151-024-03027-w",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1097/dcr.0000000000003081",
+   "first_author": "sh",
+   "year": "2024",
+   "raw": "Emile SH, Horesh N, Freund MR, Silva-Alvarenga E, Wexner SD. A Propensity Score-Matched Analysis of the Impact of Neoadjuvant Radiation Therapy on the Outcomes of Stage II and III Mucinous Rectal Carcinoma. Dis Colon Rectum. 2024;67(5):655-663. doi:10.1097/DCR.0000000000003081",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1038/s41598-023-38846-8",
+   "first_author": "c",
+   "year": "1514",
+   "raw": "Chen C, Chen X, Jiang J. Long-term effect of neoadjuvant radiotherapy in patients with locally advanced rectal mucinous adenocarcinoma: a population-based study of 1514 patients. Sci Rep. 2023;13(1):11696. doi:10.1038/s41598-023-38846-8",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1016/j.clcc.2021.06.004",
+   "first_author": null,
+   "year": null,
+   "raw": "Zhang J, Xie X, Wu Z, et al. Mucinous Adenocarcinoma Predicts Poor Response and Prognosis in Patients With Locally Advanced Rectal Cancer: A Pooled Analysis of Individual Participant Data From 3 Prospective Studies. Clin Colorectal Cancer. 2021;20(4):e240-e248. doi:10.1016/j.clcc.2021.06.004",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.3389/fonc.2024.1352660",
+   "first_author": "y",
+   "year": "2024",
+   "raw": "Liang Y, Liao H, Shi H, et al. Risk stratification of stage II rectal mucinous adenocarcinoma to predict the benefit of adjuvant chemotherapy following neoadjuvant chemoradiation and surgery. Front Oncol. 2024;14:1352660. doi:10.3389/fonc.2024.1352660",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1177/00031348241257469",
+   "first_author": "j",
+   "year": "2024",
+   "raw": "Rong J, Deng W. Survival Benefits of Postoperative Chemotherapy in Patients With Colorectal Mucinous Adenocarcinoma: An Analysis Utilizing Propensity Score Matching From the Surveillance, Epidemiology, and End Results Database. Am Surg. 2024;90(11):2969-2984. doi:10.1177/00031348241257469",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1371/journal.pone.0282211",
+   "first_author": "k",
+   "year": "2023",
+   "raw": "Vernmark K, Knutsen A, Loftås P, Sun XF. The impact of adjuvant chemotherapy on survival in mucinous and non-mucinous rectal adenocarcinoma patients after TME surgery. PLoS One. 2023;18(2):e0282211. doi:10.1371/journal.pone.0282211",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.21037/jgo-24-271",
+   "first_author": null,
+   "year": null,
+   "raw": "Liao H, Zeng T, Xie X, et al. The benefit of adjuvant chemotherapy in pathological T1-3N0M0 rectal mucinous adenocarcinoma: no improvement survival outcomes based on long-term survival analysis of large population data. J Gastrointest Oncol. 2024;15(4):1568-1579. doi:10.21037/jgo-24-271",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s11605-023-05765-y",
+   "first_author": "h",
+   "year": "2023",
+   "raw": "Liao H, Tang C, Zhou Z, et al. Adjuvant Radiotherapy Is Not Necessary for Stage III Mucinous Rectal Cancer: Evidence Based on Long Survival Analysis from SEER Data. J Gastrointest Surg. 2023;27(12):2857-2866. doi:10.1007/s11605-023-05765-y",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1002/jso.28041",
+   "first_author": "le",
+   "year": "2025",
+   "raw": "Hendrick LE, Naffouje S, Imanirad I, et al. Incomplete Resection Is Twice as Likely in Locally Advanced Mucinous Compared to Nonmucinous Rectal Adenocarcinoma: A National Propensity-Matched Analysis. J Surg Oncol. 2025;131(6):1090-1100. doi:10.1002/jso.28041",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.2214/ajr.23.29002",
+   "first_author": "j",
+   "year": "2023",
+   "raw": "Miranda J, Pinto PVA, Kinochita F, et al. Mucinous Degeneration on MRI After Neoadjuvant Therapy in Patients With Rectal Adenocarcinoma: Frequency and Association With Clinical Outcomes. AJR Am J Roentgenol. 2023;221(2):206-216. doi:10.2214/AJR.23.29002",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.3390/medicina61030456",
+   "first_author": null,
+   "year": null,
+   "raw": "Aydin İC, Torun M, Sönmez MR, et al. The Influence of Mucinous Histology on the Prognosis of Stage II and III Colorectal Cancers. Medicina (Kaunas). 2025;61(3):456. doi:10.3390/medicina61030456",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s00330-025-11967-6",
+   "first_author": null,
+   "year": null,
+   "raw": "Javed-Tayyab S, Miranda J, Reif de Paula T, et al. Mucin quantity on MRI and outcomes following total neoadjuvant therapy in patients with rectal cancer. Eur Radiol. Published online August 26, 2025. doi:10.1007/s00330-025-11967-6",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1016/j.crad.2018.10.015",
+   "first_author": "w",
+   "year": "2019",
+   "raw": "Cao W, Li Z, Mohamoud A, et al. Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoadjuvant therapy. Clin Radiol. 2019;74(4):278-286. doi:10.1016/j.crad.2018.10.015",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1093/bjsopen/zrac039",
+   "first_author": "m",
+   "year": "2022",
+   "raw": "Enblad M, Hammarström K, Folkesson J, Imam I, Golubovik M, Glimelius B. Mucinous rectal cancers: clinical features and prognosis in a population-based cohort. BJS Open. 2022;6(2):zrac039. doi:10.1093/bjsopen/zrac039",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.3389/fonc.2020.01425",
+   "first_author": "w",
+   "year": "2020",
+   "raw": "Cao W, Wu L, Zhao Y, et al. A New MRI-Defined Biomarker for Rectal Mucinous Adenocarcinoma: Mucin Pool Patterns in Determining the Efficacy of Neoadjuvant Therapy. Front Oncol. 2020;10:1425. doi:10.3389/fonc.2020.01425",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1148/radiol.2017162657",
+   "first_author": "sh",
+   "year": "2017",
+   "raw": "Park SH, Lim JS, Lee J, et al. Rectal Mucinous Adenocarcinoma: MR Imaging Assessment of Response to Concurrent Chemotherapy and Radiation Therapy-A Hypothesis-generating Study. Radiology. 2017;285(1):124-133. doi:10.1148/radiol.2017162657",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.21037/qims-23-1463",
+   "first_author": null,
+   "year": null,
+   "raw": "El Homsi M, Yildirim O, Gangai N, Shia J, Gollub MJ, Mazaheri Y. Contrast-enhanced pelvic magnetic resonance imaging (MRI) for the prediction of treatment response in mucinous rectal cancer. Quant Imaging Med Surg. 2024;14(6):4110-4122. doi:10.21037/qims-23-1463",
+   "docs": [
+    "20251113直肠黏液腺癌资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1002/jso.25764",
+   "first_author": "is",
+   "year": "2019",
+   "raw": "Reynolds IS, O’Connell E, Fichtner M, et al. Mucinous adenocarcinoma of the colon and rectum: A genomic analysis. J Surg Oncol. 2019;120(8):1427-1435. doi:10.1002/jso.25764",
+   "docs": [
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.3389/fonc.2021.620146",
+   "first_author": "yt",
+   "year": "2021",
+   "raw": "Lan YT, Chang SC, Lin PC, et al. Clinicopathological and Molecular Features of Colorectal Cancer Patients With Mucinous and Non-Mucinous Adenocarcinoma. Front Oncol. 2021;11:620146. doi:10.3389/fonc.2021.620146",
+   "docs": [
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1007/s12029-018-0136-x",
+   "first_author": "s",
+   "year": "2019",
+   "raw": "Hosseini S, Nguyen N, Mohammadianpanah M, Mirzaei S, Bananzadeh AM. Predictive Significance of Mucinous Histology on Pathologic Complete Response Rate Following Capecitabine-Based Neoadjuvant Chemoradiation in Rectal Cancer: a Comparative Study. J Gastrointest Canc. 2019;50(4):716-722. doi:10.1007/s12029-018-0136-x",
+   "docs": [
+    "20251117直肠MA补充资料汇总"
+   ]
+  },
+  {
+   "doi": null,
+   "first_author": null,
+   "year": null,
+   "raw": "Graur F, Puia A, Mois E, et al. Analysis of the MLH1, MLH2, MLH6, PMS2 genes and their correlations with clinical data in rectal mucinous adenocarcinoma. Ann Ital Chir. 2022;93:188-194.",
+   "docs": [
+    "20251117直肠MA补充资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1002/ctm2.1701",
+   "first_author": null,
+   "year": null,
+   "raw": "Zhou H, Shen Y, Zheng G, et al. Integrating single-cell and spatial analysis reveals MUC1-mediated cellular crosstalk in mucinous colorectal adenocarcinoma. Clin Transl Med. 2024;14(5):e1701. doi:10.1002/ctm2.1701",
+   "docs": [
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1007/s00384-018-3047-1",
+   "first_author": "h",
+   "year": "2018",
+   "raw": "Miyakita H, Sadahiro S, Ogimi T, et al. Mucinous components assessed by magnetic resonance imaging in primary rectal cancer tissue before and after chemoradiotherapy and tumor response. Int J Colorectal Dis. 2018;33(8):1135-1138. doi:10.1007/s00384-018-3047-1",
+   "docs": [
+    "20251117直肠MA补充资料汇总"
+   ]
+  },
+  {
+   "doi": "10.1016/j.ejrad.2020.108890",
+   "first_author": "w",
+   "year": "2020",
+   "raw": "Cao W, Li B, Gong J, et al. Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous adenocarcinoma predicts tumor response to neoadjuvant therapy. Eur J Radiol. 2020;125:108890. doi:10.1016/j.ejrad.2020.108890",
+   "docs": [
+    "20251117直肠MA补充资料汇总",
+    "20251119直肠黏液腺癌资料汇总"
+   ]
+  },
+  {
+   "doi": "10.4143/crt.2018.434",
+   "first_author": "e",
+   "year": "2019",
+   "raw": "Kim E, Kim K, Kim SH, et al. Impact of Mucin Proportion in the Pretreatment MRI on the Outcomes of Rectal Cancer Patients Undergoing Neoadjuvant Chemoradiotherapy. Cancer Res Treat. 2019;51(3):1188-1197. doi:10.4143/crt.2018.434",
+   "docs": [
+    "20251119后补充文献内容"
+   ]
+  },
+  {
+   "doi": "10.1016/j.ejca.2013.12.007",
+   "first_author": "skt",
+   "year": "2014",
+   "raw": "Yu SKT, Chand M, Tait DM, Brown G. Magnetic resonance imaging defined mucinous rectal carcinoma is an independent imaging biomarker for poor prognosis and poor response to preoperative chemoradiotherapy. Eur J Cancer. 2014;50(5):920-927. doi:10.1016/j.ejca.2013.12.007",
+   "docs": [
+    "20251119后补充文献内容",
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1016/j.acra.2023.10.031",
+   "first_author": "j",
+   "year": "2024",
+   "raw": "Liu J, Miao G, Deng L, et al. Should the Baseline MRI Staging Criteria Differentiate Between Mucinous and Classical Rectal Adenocarcinoma? Acad Radiol. 2024;31(4):1378-1387. doi:10.1016/j.acra.2023.10.031",
+   "docs": [
+    "20251119后补充文献内容",
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1259/bjr.20150836",
+   "first_author": "b",
+   "year": "2017",
+   "raw": "Barbaro B, Leccisotti L, Vecchio FM, et al. The potential predictive value of MRI and PET-CT in mucinous and nonmucinous rectal cancer to identify patients at high risk of metastatic disease. Br J Radiol. 2017;90(1069):20150836. doi:10.1259/bjr.20150836",
+   "docs": [
+    "20251119后补充文献内容"
+   ]
+  },
+  {
+   "doi": "10.1016/j.ijrobp.2010.08.057",
+   "first_author": "k",
+   "year": "2012",
+   "raw": "Oberholzer K, Menig M, Kreft A, et al. Rectal cancer: mucinous carcinoma on magnetic resonance imaging indicates poor response to neoadjuvant chemoradiation. Int J Radiat Oncol Biol Phys. 2012;82(2):842-848. doi:10.1016/j.ijrobp.2010.08.057",
+   "docs": [
+    "20251119后补充文献内容",
+    "20251121文献汇报"
+   ]
+  },
+  {
+   "doi": "10.1186/s12880-025-02129-7",
+   "first_author": "s",
+   "year": "2025",
+   "raw": "Wu S, Wang Z, Qiu C, et al. Nomogram based on MRI images and clinical data for differentiating mucinous from non-mucinous rectal adenocarcinoma. BMC Med Imaging. 2025;26(1):51. doi:10.1186/s12880-025-02129-7",
+   "docs": [
+    "20251119后补充文献内容"
+   ]
+  },
+  {
+   "doi": "10.1007/s00330-026-12466-y",
+   "first_author": null,
+   "year": null,
+   "raw": "El Homsi M, Mazaheri Y, Kuten J, et al. Can ADC differentiate cellular from acellular mucin in mucinous adenocarcinoma tumor beds after treatment of rectal cancer? A multicenter study. Eur Radiol. Published online March 15, 2026. doi:10.1007/s00330-026-12466-y",
+   "docs": [
+    "20251119后补充文献内容"
+   ]
+  },
+  {
+   "doi": "10.3390/cancers18121943",
+   "first_author": null,
+   "year": null,
+   "raw": "Dell’Atti L, Kotsafti A, Galuppini F, et al. Ill Fate of Rectal Mucinous Adenocarcinoma: A Defect in Immunosurveillance or a Mucin Coating Effect?-The IMMUNOREACT 20 Study. Cancers (Basel). 2026;18(12):1943. doi:10.3390/cancers18121943",
+   "docs": [
+    "20251119后补充文献内容"
+   ]
+  },
+  {
+   "doi": "10.1148/radiology.213.1.r99se3879",
+   "first_author": "sm",
+   "year": "1999",
+   "raw": "Hussain SM, Outwater EK, Siegelman ES. Mucinous versus nonmucinous rectal carcinomas: differentiation with MR imaging. Radiology. 1999;213(1):79-85. doi:10.1148/radiology.213.1.r99se3879",
+   "docs": [
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1097/00004728-199903000-00021",
+   "first_author": "mj",
+   "year": "1999",
+   "raw": "Kim MJ, Huh YM, Park YN, et al. Colorectal mucinous carcinoma: findings on MRI. J Comput Assist Tomogr. 1999;23(2):291-296. doi:10.1097/00004728-199903000-00021",
+   "docs": [
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  },
+  {
+   "doi": "10.1097/00004728-200301000-00010",
+   "first_author": "mj",
+   "year": "2003",
+   "raw": "Kim MJ, Park JS, Park SI, et al. Accuracy in differentiation of mucinous and nonmucinous rectal carcinoma on MR imaging. J Comput Assisted Tomogr. 2003;27(1):48-55. doi:10.1097/00004728-200301000-00010",
+   "docs": [
+    "20251121文献汇报",
+    "20251125研究目的方案方法"
+   ]
+  }
+ ],
+ "missing_refs": [
+  {
+   "key": "JBYSLGJG",
+   "title": "Does stage III rectal mucinous adenocarcinoma benefit from neoadjuvant chemoradiation?",
+   "year": "2024",
+   "doi": "10.1007/s10151-024-03027-w",
+   "ref": "Schabl L, Duraes LC, Connelly T, et al. Does stage III rectal mucinous adenocarcinoma benefit from neoadjuvant chemoradiation? Tech Coloproctol. 2024;28(1):146. doi:10.1007/s10151-024-03027-w"
+  },
+  {
+   "key": "WA5UYHHN",
+   "title": "Survival Benefits of Postoperative Chemotherapy in Patients With Colorectal Mucinous Adenocarcinoma: An Analysis Utilizing Propensity Score Matching From the Surveillance, Epidemiology, and End Results Database",
+   "year": "2024",
+   "doi": "10.1177/00031348241257469",
+   "ref": "Rong J, Deng W. Survival Benefits of Postoperative Chemotherapy in Patients With Colorectal Mucinous Adenocarcinoma: An Analysis Utilizing Propensity Score Matching From the Surveillance, Epidemiology, and End Results Database. Am Surg. 2024;90(11):2969-2984. doi:10.1177/00031348241257469"
+  },
+  {
+   "key": "CSE3QYGS",
+   "title": "Diffusion-weighted imaging findings of mucinous carcinoma arising in the ano-rectal region: comparison of apparent diffusion coefficient with that of tubular adenocarcinoma",
+   "year": "2012",
+   "doi": "10.1007/s11604-011-0023-x",
+   "ref": "Nasu K, Kuroki Y, Minami M. Diffusion-weighted imaging findings of mucinous carcinoma arising in the ano-rectal region: comparison of apparent diffusion coefficient with that of tubular adenocarcinoma. Jpn J Radiol. 2012;30(2):120-127. doi:10.1007/s11604-011-0023-x"
+  },
+  {
+   "key": "9NKWEGVK",
+   "title": "Mucinous Adenocarcinoma Predicts Poor Response and Prognosis in Patients With Locally Advanced Rectal Cancer: A Pooled Analysis of Individual Participant Data From 3 Prospective Studies",
+   "year": "2021",
+   "doi": "10.1016/j.clcc.2021.06.004",
+   "ref": "Zhang J, Xie X, Wu Z, et al. Mucinous Adenocarcinoma Predicts Poor Response and Prognosis in Patients With Locally Advanced Rectal Cancer: A Pooled Analysis of Individual Participant Data From 3 Prospective Studies. Clin Colorectal Cancer. 2021;20(4):e240-e248. doi:10.1016/j.clcc.2021.06.004"
+  },
+  {
+   "key": "PPT89KCV",
+   "title": "Mucinous subtype as prognostic factor in colorectal cancer: a systematic review and meta-analysis",
+   "year": "2012",
+   "doi": "10.1136/jclinpath-2011-200340",
+   "ref": "Verhulst J, Ferdinande L, Demetter P, Ceelen W. Mucinous subtype as prognostic factor in colorectal cancer: a systematic review and meta-analysis. J Clin Pathol. 2012;65(5):381-388. doi:10.1136/jclinpath-2011-200340"
+  },
+  {
+   "key": "TVHK2K24",
+   "title": "Adjuvant Radiotherapy Is Not Necessary for Stage III Mucinous Rectal Cancer: Evidence Based on Long Survival Analysis from SEER Data",
+   "year": "2023",
+   "doi": "10.1007/s11605-023-05765-y",
+   "ref": "Liao H, Tang C, Zhou Z, et al. Adjuvant Radiotherapy Is Not Necessary for Stage III Mucinous Rectal Cancer: Evidence Based on Long Survival Analysis from SEER Data. J Gastrointest Surg. 2023;27(12):2857-2866. doi:10.1007/s11605-023-05765-y"
+  },
+  {
+   "key": "MQ4FYFIW",
+   "title": "Epidemiologic characteristics and risk factors associated with overall survival for patients with mucinous colorectal cancer: A population-based study",
+   "year": "2023",
+   "doi": "10.4251/wjgo.v15.i8.1461",
+   "ref": "Jiang J, Tang XW, Huang S, et al. Epidemiologic characteristics and risk factors associated with overall survival for patients with mucinous colorectal cancer: A population-based study. World J Gastrointest Oncol. 2023;15(8):1461-1474. doi:10.4251/wjgo.v15.i8.1461"
+  },
+  {
+   "key": "6FNXHB7K",
+   "title": "Long-term effect of neoadjuvant radiotherapy in patients with locally advanced rectal mucinous adenocarcinoma: a population-based study of 1514 patients",
+   "year": "2023",
+   "doi": "10.1038/s41598-023-38846-8",
+   "ref": "Chen C, Chen X, Jiang J. Long-term effect of neoadjuvant radiotherapy in patients with locally advanced rectal mucinous adenocarcinoma: a population-based study of 1514 patients. Sci Rep. 2023;13(1):11696. doi:10.1038/s41598-023-38846-8"
+  },
+  {
+   "key": "77FY4E2U",
+   "title": "FAP promotes metastasis and chemoresistance via regulating YAP1 and macrophages in mucinous colorectal adenocarcinoma",
+   "year": "2023",
+   "doi": "10.1016/j.isci.2023.106600",
+   "ref": "Ji D, Jia J, Cui X, Li Z, Wu A. FAP promotes metastasis and chemoresistance via regulating YAP1 and macrophages in mucinous colorectal adenocarcinoma. iScience. 2023;26(6):106600. doi:10.1016/j.isci.2023.106600"
+  },
+  {
+   "key": "CJATGFXA",
+   "title": "Mucinous Colorectal Cancer is Associated With Expression of the TIM-3 Immune Checkpoint Independently of Microsatellite Instability (MSI) Status",
+   "year": "2021",
+   "doi": "10.1245/s10434-021-09873-4",
+   "ref": "O’Connell E, Salvucci M, Reynolds IS, McNamara DA, Burke JP, Prehn JHM. Mucinous Colorectal Cancer is Associated With Expression of the TIM-3 Immune Checkpoint Independently of Microsatellite Instability (MSI) Status. Ann Surg Oncol. 2021;28(12):7999-8006. doi:10.1245/s10434-021-09873-4"
+  },
+  {
+   "key": "5ISDSI88",
+   "title": "Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous adenocarcinoma predicts tumor response to neoadjuvant therapy",
+   "year": "2020",
+   "doi": "10.1016/j.ejrad.2020.108890",
+   "ref": "Cao W, Li B, Gong J, et al. Diffusion-weighted magnetic resonance imaging of mucin pools in locally advanced rectal mucinous adenocarcinoma predicts tumor response to neoadjuvant therapy. Eur J Radiol. 2020;125:108890. doi:10.1016/j.ejrad.2020.108890"
+  },
+  {
+   "key": "V85WQL98",
+   "title": "Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoadjuvant therapy",
+   "year": "2019",
+   "doi": "10.1016/j.crad.2018.10.015",
+   "ref": "Cao W, Li Z, Mohamoud A, et al. Quantitative MRI assessment of mucinous rectal adenocarcinoma to predict tumour response after neoadjuvant therapy. Clin Radiol. 2019;74(4):278-286. doi:10.1016/j.crad.2018.10.015"
+  },
+  {
+   "key": "SYN4LR89",
+   "title": "Analysis of the MLH1, MLH2, MLH6, PMS2 genes and their correlations with clinical data in rectal mucinous adenocarcinoma",
+   "year": "2022",
+   "doi": "",
+   "ref": "Graur F, Puia A, Mois E, et al. Analysis of the MLH1, MLH2, MLH6, PMS2 genes and their correlations with clinical data in rectal mucinous adenocarcinoma. Ann Ital Chir. 2022;93:188-194."
+  },
+  {
+   "key": "3VJMUUDK",
+   "title": "Colorectal mucinous carcinoma: findings on MRI",
+   "year": "1999",
+   "doi": "10.1097/00004728-199903000-00021",
+   "ref": "Kim MJ, Huh YM, Park YN, et al. Colorectal mucinous carcinoma: findings on MRI. J Comput Assist Tomogr. 1999;23(2):291-296. doi:10.1097/00004728-199903000-00021"
+  },
+  {
+   "key": "UQIXW46C",
+   "title": "Can ADC differentiate cellular from acellular mucin in mucinous adenocarcinoma tumor beds after treatment of rectal cancer? A multicenter study",
+   "year": "2026",
+   "doi": "10.1007/s00330-026-12466-y",
+   "ref": "El Homsi M, Mazaheri Y, Kuten J, et al. Can ADC differentiate cellular from acellular mucin in mucinous adenocarcinoma tumor beds after treatment of rectal cancer? A multicenter study. Eur Radiol. Published online March 15, 2026. doi:10.1007/s00330-026-12466-y"
+  },
+  {
+   "key": "NK3CM4SP",
+   "title": "Ill Fate of Rectal Mucinous Adenocarcinoma: A Defect in Immunosurveillance or a Mucin Coating Effect?-The IMMUNOREACT 20 Study",
+   "year": "2026",
+   "doi": "10.3390/cancers18121943",
+   "ref": "Dell’Atti L, Kotsafti A, Galuppini F, et al. Ill Fate of Rectal Mucinous Adenocarcinoma: A Defect in Immunosurveillance or a Mucin Coating Effect?-The IMMUNOREACT 20 Study. Cancers (Basel). 2026;18(12):1943. doi:10.3390/cancers18121943"
+  }
+ ]
+}
