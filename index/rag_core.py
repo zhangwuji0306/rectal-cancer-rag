@@ -59,18 +59,25 @@ def _get_collection(db_dir=None):
     return _COLLECTION
 
 
-def retrieve(query, k=8, mac_only=False, db_dir=None, model_dir=None, device="cpu"):
+def retrieve(query, k=8, mac_only=False, db_dir=None, model_dir=None, device="cpu",
+             candidate_k=None):
     """Semantic search over the built index.
 
     Returns a list of dicts (rank, score, source, mac, title, year, journal,
     doi, authors, section, snippet) sorted by score descending.
     mac_only=True restricts to MAC-classified chunks (metadata filter).
+    candidate_k can be larger than k when callers need enough chunks for
+    literature-level DOI deduplication.
     """
     model = _get_model(model_dir, device)
     collection = _get_collection(db_dir)
+    count = collection.count()
+    if not count:
+        return []
+    n_results = min(max(1, candidate_k or k), count)
     q = model.encode([query], normalize_embeddings=True)
     where = {"mac": "yes"} if mac_only else None
-    res = collection.query(query_embeddings=q, n_results=k, where=where)
+    res = collection.query(query_embeddings=q, n_results=n_results, where=where)
 
     out = []
     for i, (doc, meta, dist) in enumerate(
@@ -80,18 +87,35 @@ def retrieve(query, k=8, mac_only=False, db_dir=None, model_dir=None, device="cp
             {
                 "rank": i + 1,
                 "score": round(1 - dist, 4),  # cosine similarity (normalized)
-                "source": meta["source"],
-                "mac": meta["mac"],
-                "title": meta["title"],
-                "year": meta["year"],
-                "journal": meta["journal"],
-                "doi": meta["doi"],
-                "authors": meta["authors"],
-                "section": meta["section"],
+                "source": meta.get("source", ""),
+                "mac": meta.get("mac", "unknown"),
+                "title": meta.get("title", ""),
+                "year": meta.get("year", ""),
+                "journal": meta.get("journal", ""),
+                "doi": meta.get("doi", ""),
+                "authors": meta.get("authors", ""),
+                "pub_type": meta.get("pub_type", ""),
+                "license": meta.get("license", "unverified"),
+                "section": meta.get("section", ""),
+                "chunk": meta.get("chunk", 0),
                 "snippet": doc[:400],
             }
         )
     return out
+
+
+def retrieve_literature(query, k=8, mac_only=False, db_dir=None, model_dir=None,
+                        device="cpu", candidate_k=None):
+    """Retrieve up to ``k`` DOI/source-level candidates.
+
+    Dense search first collects a larger candidate pool, then deduplicates by
+    DOI. This avoids returning eight chunks from one paper while hiding other
+    relevant papers from the caller.
+    """
+    pool = candidate_k or max(40, k * 5)
+    hits = retrieve(query, k=pool, mac_only=mac_only, db_dir=db_dir,
+                    model_dir=model_dir, device=device, candidate_k=pool)
+    return summary_list(dedupe_by_doi(hits)[:k])
 
 
 def dedupe_by_doi(results):
@@ -112,7 +136,8 @@ def dedupe_by_doi(results):
         else:
             m = merged[key]
             if r["score"] > m["score"]:
-                for f in ("title", "year", "journal", "doi", "authors", "source", "mac"):
+                for f in ("title", "year", "journal", "doi", "authors", "pub_type",
+                          "license", "source", "mac"):
                     if r.get(f):
                         m[f] = r[f]
                 m["score"] = r["score"]
@@ -136,6 +161,8 @@ def summary_list(entries):
             "doi": e["doi"],
             "authors": e["authors"],
             "mac": e["mac"],
+            "pub_type": e.get("pub_type", ""),
+            "license": e.get("license", "unverified"),
             "source": e["source"],
             "sections": e.get("sections", [e["section"]] if e.get("section") else []),
             "n_hits": e.get("n_hits", 1),

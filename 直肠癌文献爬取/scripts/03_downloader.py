@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """阶段 3：文献 PDF 下载引擎（核心）。
 
-通道链（按优先级，OA 优先）:
+通道链（默认合规 OA）:
     1. Europe PMC OA 直连（有 PMC 字段一律最优先；无 PMC 且无 DOI 时按 PMID 搜索；
        官方通道，无反爬检测）
-    2. sci-hub DOI 检索（原 DOI）
-    3. Crossref 标题反查 DOI → sci-hub（无 DOI 文献，相似度 >= 阈值才采信）
-    4. sci-hub 标题检索（最后兜底，文章页标题相似度校验防误配）
+    2. 非 OA 通道（默认关闭，须机构合规/法务批准后显式启用）
 
 注：NCBI PMC 直连（pmc.ncbi.nlm.nih.gov/.../pdf/main.pdf）已弃用——2026-08 起对
 全新会话返回 JS "Preparing to download" 中转页，requests 无法直取；由 Europe PMC
@@ -121,8 +119,8 @@ class MirrorPool:
                 self.cond.wait(self.pause_until - time.time())
         return msg
 
-    def acquire(self):
-        """取一个可用镜像（内部等待该镜像的限速槽位 + 周期防检测暂停）。"""
+    def acquire(self, preferred=None):
+        """取一个可用镜像；preferred 用于保持页面与 PDF 属于同一镜像。"""
         while True:
             msg = self._pause_gate()
             if msg:
@@ -133,6 +131,11 @@ class MirrorPool:
             with self.lock:
                 now = time.time()
                 cands = [m for m in self.mirrors if self.dead_until[m] < now]
+                if preferred:
+                    cands = [m for m in cands
+                             if m.rstrip('/').lower() == preferred.rstrip('/').lower()]
+                    if not cands:
+                        continue
                 if not cands:
                     # 全部死亡则重置，宁可慢不可停
                     self.dead_until = {m: 0.0 for m in self.mirrors}
@@ -165,28 +168,27 @@ class Crawler:
         self.limit = limit
         self.workers = workers or int(cfg.get('workers', 4))
         self.verify_ssl = bool(cfg.get('verify_ssl', True))
-        if not self.verify_ssl:
-            try:
-                import urllib3
-                urllib3.disable_warnings()
-            except Exception:
-                pass
+        self.allow_scihub = bool(cfg.get('allow_scihub', False))
+        if self.allow_scihub and not self.verify_ssl:
+            raise ValueError('allow_scihub requires verify_ssl=true')
         self.conn = connect_db(db_path)
         self.db_lock = threading.Lock()
         self.log = setup_logger('downloader', os.path.join(ROOT, 'logs', 'downloader.log'))
-        self.pool = MirrorPool(
-            cfg['mirrors'],
-            float(cfg.get('request_interval_min', 3.0)),
-            float(cfg.get('request_interval_max', 5.0)),
-            pause_after_min=int(cfg.get('pause_after_min', 200)),
-            pause_after_max=int(cfg.get('pause_after_max', 300)),
-            pause_duration_min=float(cfg.get('pause_duration_min', 120)),
-            pause_duration_max=float(cfg.get('pause_duration_max', 180)),
-            logger=self.log)
+        self.pool = None
+        if self.allow_scihub:
+            self.pool = MirrorPool(
+                cfg['mirrors'],
+                float(cfg.get('request_interval_min', 3.0)),
+                float(cfg.get('request_interval_max', 5.0)),
+                pause_after_min=int(cfg.get('pause_after_min', 200)),
+                pause_after_max=int(cfg.get('pause_after_max', 300)),
+                pause_duration_min=float(cfg.get('pause_duration_min', 120)),
+                pause_duration_max=float(cfg.get('pause_duration_max', 180)),
+                logger=self.log)
 
         # cookies 与镜像会话
         self.cookie_lock = threading.Lock()
-        self.global_cookies = {}
+        self.mirror_cookies = {}  # mirror -> cookies learned from that mirror only
         self.mirror_sessions = {}  # mirror -> [session, lock, created_at]
 
         # 挑战兜底
@@ -221,8 +223,9 @@ class Crawler:
                     'Accept-Language': 'en-US,en;q=0.9',
                 })
                 s.verify = self.verify_ssl  # 镜像自签名证书
-                if self.global_cookies:
-                    s.cookies.update(self.global_cookies)
+                cookies = self.mirror_cookies.get(mirror)
+                if cookies:
+                    s.cookies.update(cookies)
                 entry = [s, threading.Lock(), time.time()]
                 self.mirror_sessions[mirror] = entry
             return entry
@@ -236,9 +239,10 @@ class Crawler:
                 r = s.get(m + '/', timeout=30, verify=self.verify_ssl)
                 if r.status_code == 200 and not is_challenge(r.status_code, r.headers, r.text):
                     with self.cookie_lock:
-                        self.global_cookies = s.cookies.get_dict()
-                        self.mirror_sessions = {}
-                    self.log.info('cookie 刷新成功: %s（%d 个）', m, len(self.global_cookies))
+                        self.mirror_cookies[m] = s.cookies.get_dict()
+                        self.mirror_sessions.pop(m, None)
+                    self.log.info('cookie 刷新成功: %s（%d 个）', m,
+                                  len(self.mirror_cookies[m]))
                     return True
             except Exception as e:
                 self.log.warning('cookie 刷新失败 %s: %s', m, e)
@@ -264,7 +268,7 @@ class Crawler:
             self.conn.execute(
                 "UPDATE tasks SET status='pending' WHERE status='downloading' AND updated_at < ?",
                 (cutoff,))
-            sql = ("SELECT pmid, doi, pmc, year, title, title_norm, attempts "
+            sql = ("SELECT pmid, doi, pmc, year, title, title_norm, attempts, license "
                    "FROM tasks WHERE status='pending'")
             params = []
             if self.min_year is not None:
@@ -281,7 +285,9 @@ class Crawler:
                     (now_str(), row[0]))
                 self.conn.commit()
                 return {'pmid': row[0], 'doi': row[1], 'pmc': row[2], 'year': row[3],
-                        'title': row[4], 'title_norm': row[5], 'attempts': (row[6] or 0) + 1}
+                        'title': row[4], 'title_norm': row[5],
+                        'attempts': (row[6] or 0) + 1,
+                        'license': row[7] or 'unverified'}
             self.conn.commit()
             return None
 
@@ -303,23 +309,31 @@ class Crawler:
     def process(self, task):
         """通道链执行（OA 优先）：europepmc → scihub:doi/crossref → scihub:title。"""
         routes = []
-        if task['pmc']:
-            # 只要有 PMC 字段，一律最优先走 Europe PMC（OA 官方通道，无反爬）
+        if task['pmc'] or not task['doi']:
             routes.append(('europepmc:pdf', lambda: self.try_europepmc(task)))
-        elif not task['doi']:
-            # 无 PMC 且无 DOI：Europe PMC 按 PMID 搜索（无 DOI 文献的唯一 OA 机器通道）
-            routes.append(('europepmc:pdf', lambda: self.try_europepmc(task)))
-        if task['doi']:
-            routes.append(('scihub:doi', lambda: self._scihub_by_key(task['doi'], task, False)))
-        else:
-            cdoi = None
-            try:
-                cdoi = self.crossref_lookup(task['title'], task['year'])
-            except Exception as e:
-                self.log.warning('crossref 查询异常 PMID %s: %s', task['pmid'], e)
-            if cdoi:
-                routes.append(('crossref:scihub', lambda: self._scihub_by_key(cdoi, task, True)))
-        routes.append(('scihub:title', lambda: self._scihub_by_key(task['title_norm'], task, True)))
+
+        # Non-OA sources remain disabled until institutional/legal review has
+        # approved the channel and a verified license policy is in place.
+        if self.allow_scihub:
+            if task['doi']:
+                routes.append(('scihub:doi',
+                               lambda: self._scihub_by_key(task['doi'], task, True)))
+            else:
+                cdoi = None
+                try:
+                    cdoi = self.crossref_lookup(task['title'], task['year'])
+                except Exception as e:
+                    self.log.warning('crossref 查询异常 PMID %s: %s', task['pmid'], e)
+                if cdoi:
+                    routes.append(('crossref:scihub',
+                                   lambda: self._scihub_by_key(cdoi, task, True)))
+            routes.append(('scihub:title',
+                           lambda: self._scihub_by_key(task['title_norm'], task, True)))
+
+        if not routes:
+            return self._finish(
+                task, 'not_found', route='policy:official-oa-only',
+                error='No approved open-access source; non-OA channel disabled')
 
         last_exc = None
         last_error = None
@@ -443,13 +457,22 @@ class Crawler:
             last = NotfoundError('页面无 PDF 链接')
         raise last or NotfoundError('sci-hub 无结果')
 
+    def _mirror_for_url(self, url):
+        parsed = urllib.parse.urlsplit(url)
+        origin = f'{parsed.scheme}://{parsed.netloc}'.rstrip('/').lower()
+        for mirror in self.cfg['mirrors']:
+            if mirror.rstrip('/').lower() == origin:
+                return mirror
+        return None
+
     def download_pdf(self, url, pmid):
-        """下载 PDF 并校验；返回落盘路径。"""
+        """下载页面所属镜像的 PDF，并校验完整 PDF 结构。"""
+        mirror = self._mirror_for_url(url)
+        if mirror is None:
+            raise PdfInvalidError(f'拒绝下载未配置镜像的 PDF URL: {url}')
         last = None
         for _ in range(2):
-            mirror = self.pool.acquire()
-            if mirror is None:
-                raise DownloadError('无可用镜像')
+            self.pool.acquire(preferred=mirror)
             entry = self.session_for(mirror)
             try:
                 with entry[1]:
@@ -458,9 +481,14 @@ class Crawler:
             except requests.RequestException as e:
                 last = NetworkError(f'pdf 下载网络错误: {e}')
                 continue
-            if validate_pdf(data, self.cfg['min_pdf_size']):
+            content_type = (r.headers.get('Content-Type') or '').lower()
+            if r.status_code == 200 and validate_pdf(data, self.cfg['min_pdf_size']):
+                if content_type and 'text/html' in content_type:
+                    last = PdfInvalidError('PDF URL 返回 HTML')
+                    continue
                 return self._save_pdf(pmid, data)
-            last = PdfInvalidError(f'pdf 无效或过小（{len(data)}B）')
+            last = PdfInvalidError(
+                f'pdf 无效（http {r.status_code}, {len(data)}B, {content_type or "无类型"}）')
         raise last or PdfInvalidError('pdf 下载失败')
 
     def crossref_lookup(self, title, year):
@@ -590,8 +618,8 @@ class Crawler:
                     continue
                 if cookies:
                     with self.cookie_lock:
-                        self.global_cookies.update(cookies)
-                        self.mirror_sessions = {}
+                        self.mirror_cookies[m] = dict(cookies)
+                        self.mirror_sessions.pop(m, None)
                     self.log.warning('selenium 收割 %s cookies 成功（%d 个）', m, len(cookies))
                     return
             self.log.warning('selenium 兜底未取得任何 cookies')
@@ -603,9 +631,10 @@ class Crawler:
     def _finish(self, task, status, route=None, error=None, pdf_path=None):
         with self.db_lock:
             self.conn.execute(
-                'UPDATE tasks SET status=?, attempts=?, route=?, last_error=?, pdf_path=?, updated_at=? '
-                'WHERE pmid=?',
-                (status, task['attempts'], route, error, pdf_path, now_str(), task['pmid']))
+                'UPDATE tasks SET status=?, attempts=?, route=?, last_error=?, pdf_path=?, '
+                'license=?, updated_at=? WHERE pmid=?',
+                (status, task['attempts'], route, error, pdf_path,
+                 task.get('license') or 'unverified', now_str(), task['pmid']))
             self.conn.commit()
         with self.stats_lock:
             self.stats[status] = self.stats.get(status, 0) + 1
@@ -623,9 +652,10 @@ class Crawler:
     def run(self):
         self.log.info('启动下载引擎: workers=%d, pdf_dir=%s, db=%s',
                       self.workers, self.pdf_dir, self.db_path)
-        if not self.refresh_cookies_once():
-            self.log.warning('初始 cookie 刷新失败，仍将尝试直接请求')
-        threading.Thread(target=self._cookie_loop, daemon=True).start()
+        if self.allow_scihub:
+            if not self.refresh_cookies_once():
+                self.log.warning('初始 cookie 刷新失败，仍将尝试直接请求')
+            threading.Thread(target=self._cookie_loop, daemon=True).start()
         threads = [threading.Thread(target=self._worker, args=(i,), daemon=True)
                    for i in range(self.workers)]
         for t in threads:

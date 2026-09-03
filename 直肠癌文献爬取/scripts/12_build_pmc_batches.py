@@ -29,10 +29,10 @@ def main():
                     help='批次起始编号（续跑时用，如 3 表示从 b3 开始命名）')
     args = ap.parse_args()
 
-    con = sqlite3.connect(args.src)
+    con = connect_db(args.src)
     con.row_factory = sqlite3.Row
     pool = con.execute(
-        "SELECT pmid, doi, pmc, year, title, status FROM tasks "
+        "SELECT pmid, doi, pmc, year, title, status, license FROM tasks "
         "WHERE year>=2000 AND status!='archived' AND pmc IS NOT NULL AND pmc!='' "
         "AND status IN ('pending','not_found','failed') "
         "ORDER BY year DESC, pmid DESC").fetchall()
@@ -56,12 +56,8 @@ def main():
             existing_lines = list(csv.reader(f))
     with open(manifest, 'w', encoding='utf-8-sig', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['Batch', 'PMID', 'Year', 'DOI', 'PMC', 'Status', 'Title'])
-        seen = set()
-        for row in existing_lines:
-            if len(row) > 1 and (row[0], row[1]) not in seen:
-                seen.add((row[0], row[1]))
-                w.writerow(row)
+        w.writerow(['Batch', 'PMID', 'Year', 'DOI', 'PMC', 'Status', 'Title', 'License'])
+        # Generated snapshot: never retain stale headers or prior batch rows.
         for i, batch in enumerate(batches, args.first_batch):
             db = os.path.join(ROOT, f'tasks_pmc_b{i}.sqlite')
             if os.path.exists(db):
@@ -69,11 +65,12 @@ def main():
             conn = connect_db(db)
             for r in batch:
                 conn.execute(
-                    'INSERT INTO tasks (pmid, doi, pmc, year, title, title_norm, status, attempts, updated_at) '
-                    'VALUES (?,?,?,?,?,?,?,?,?)',
+                    'INSERT INTO tasks (pmid, doi, pmc, year, title, title_norm, status, attempts, license, updated_at) '
+                    'VALUES (?,?,?,?,?,?,?,?,?,?)',
                     (r['pmid'], r['doi'], r['pmc'], r['year'], r['title'],
-                     norm_text(r['title']), 'pending', 0, now_str()))
-                w.writerow([f'b{i}'] + [r['pmid'], r['year'], r['doi'], r['pmc'], r['status'], r['title']])
+                     norm_text(r['title']), 'pending', 0, r['license'] or 'unverified', now_str()))
+                w.writerow([f'b{i}'] + [r['pmid'], r['year'], r['doi'], r['pmc'], r['status'],
+                                        r['title'], r['license'] or 'unverified'])
             conn.commit()
             counts = dict(conn.execute('SELECT status, COUNT(*) FROM tasks GROUP BY status').fetchall())
             conn.close()

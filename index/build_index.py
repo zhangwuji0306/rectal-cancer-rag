@@ -1,4 +1,4 @@
-"""Build a local Chroma vector index over converted/*.md.
+"""Build a local Chroma vector index over converted Markdown.
 
 Embeddings : BAAI/bge-m3 (local, CPU), markdown-heading-aware chunking.
 Storage    : Chroma persistent DB at index/chroma_db, collection "papers".
@@ -6,7 +6,8 @@ Metadata   : merged from .claude/tmp/mapping.json (Zotero/CSV) + alias table
              for known supplementary / split files.
 
 Idempotent: files whose sha256 is unchanged are skipped (incremental).
-Rebuild all with --force.
+Both converted/*.md and converted/已入库/*.md are inputs; the archive move does
+not cause a second conversion or embedding pass.  Rebuild all with --force.
 
 Usage:
     python index/build_index.py            # incremental
@@ -24,6 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONVERTED = ROOT / "converted"
+ARCHIVE = CONVERTED / "已入库"
 INDEX_DIR = ROOT / "index"
 CHROMA_DIR = INDEX_DIR / "chroma_db"
 MANIFEST_PATH = INDEX_DIR / "manifest.json"
@@ -104,6 +106,8 @@ def meta_for(rel_name, by_stem, by_folder, by_doi):
         "journal": "",
         "doi": "",
         "authors": "",
+        "pub_type": "",
+        "license": "unverified",
         "mac": "unknown",
         "folder": "",
         "evidence": "",
@@ -117,6 +121,8 @@ def _entry_meta(f):
         "journal": f.get("journal") or "",
         "doi": f.get("doi") or "",
         "authors": f.get("author") or "",
+        "pub_type": f.get("pub_type") or f.get("pubtype") or "",
+        "license": f.get("license") or "unverified",
         "mac": "yes" if f.get("mac") else "no",
         "folder": f.get("folder") or "",
         "evidence": f.get("evidence") or "",
@@ -131,15 +137,41 @@ def chunk_markdown(text, tokenizer, max_tokens=CHUNK_MAX_TOKENS, overlap=CHUNK_O
     def count_tokens(s):
         return len(tokenizer.encode(s, add_special_tokens=False))
 
+    def split_token_windows(value):
+        """Split an overlong unit by token windows without dropping its tail."""
+        token_ids = tokenizer.encode(value, add_special_tokens=False)
+        if len(token_ids) <= max_tokens:
+            return [value]
+        step = max_tokens - overlap
+        if step <= 0:
+            raise ValueError("overlap must be smaller than max_tokens")
+        out = []
+        start = 0
+        while start < len(token_ids):
+            end = min(start + max_tokens, len(token_ids))
+            piece = tokenizer.decode(
+                token_ids[start:end],
+                skip_special_tokens=True,
+                clean_up_tokenization_spaces=False,
+            ).strip()
+            if piece:
+                out.append(piece)
+            if end == len(token_ids):
+                break
+            start += step
+        return out
+
     def split_sentences(para):
         units = [u.strip() for u in re.split(r"(?<=[.!?])\s+|\n", para) if u.strip()]
         out, buf, bt = [], [], 0
         for u in units:
             ut = count_tokens(u)
-            while ut > max_tokens:  # pathological: iteratively cut to token budget
-                cpt = max(1.0, len(u) / max(1, ut))  # chars per token estimate
-                u = u[: int(max_tokens * cpt * 0.9)]
-                ut = count_tokens(u)
+            if ut > max_tokens:
+                if buf:
+                    out.append(" ".join(buf))
+                    buf, bt = [], 0
+                out.extend(split_token_windows(u))
+                continue
             if buf and bt + ut > max_tokens:
                 out.append(" ".join(buf))
                 buf, bt = [], 0
@@ -215,6 +247,74 @@ def chunk_markdown(text, tokenizer, max_tokens=CHUNK_MAX_TOKENS, overlap=CHUNK_O
     return chunks
 
 
+def markdown_files():
+    """Return one path per Markdown filename; top-level wins on collision."""
+    by_name = {}
+    for base in (CONVERTED, ARCHIVE):
+        if not base.exists():
+            continue
+        for path in sorted(base.glob("*.md")):
+            by_name.setdefault(path.name, path)
+    return [(name, by_name[name]) for name in sorted(by_name)]
+
+
+def _source_ids(collection, source):
+    rows = collection.get(where={"source": source}, include=["metadatas"])
+    return list(rows.get("ids") or [])
+
+
+def replace_source(collection, source, ids, documents, metadatas, embeddings):
+    """Write new chunks before removing stale ones for this source.
+
+    If embedding or the write fails, the previous chunks remain available.  A
+    deterministic id plus ``upsert`` also makes an interrupted retry repair
+    the harmless duplicate-free state.
+    """
+    old_ids = _source_ids(collection, source)
+    if documents:
+        collection.upsert(
+            ids=ids,
+            documents=documents,
+            metadatas=metadatas,
+            embeddings=embeddings,
+        )
+        stale_ids = [item for item in old_ids if item not in set(ids)]
+    else:
+        stale_ids = old_ids
+    if stale_ids:
+        collection.delete(ids=stale_ids)
+
+
+def collection_sources(collection):
+    """Return all source names currently present in Chroma."""
+    count = collection.count()
+    if not count:
+        return set()
+    rows = collection.get(limit=count, include=["metadatas"])
+    return {
+        (meta or {}).get("source")
+        for meta in (rows.get("metadatas") or [])
+        if (meta or {}).get("source")
+    }
+
+
+def clear_collection(collection):
+    """Delete every row in a collection in bounded batches."""
+    while True:
+        rows = collection.get(limit=10000, include=["metadatas"])
+        ids = rows.get("ids") or []
+        if not ids:
+            return
+        collection.delete(ids=ids)
+
+
+def write_manifest_atomic(manifest):
+    """Atomically publish the manifest after all Chroma writes succeed."""
+    tmp = MANIFEST_PATH.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(tmp, MANIFEST_PATH)
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -228,18 +328,19 @@ def main():
 
     INDEX_DIR.mkdir(exist_ok=True)
     manifest = {"version": 1, "model": MODEL_NAME, "files": {}}
-    if MANIFEST_PATH.exists():
+    if MANIFEST_PATH.exists() and not args.force:
         manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest.setdefault("files", {})
 
     torch.set_num_threads(max(1, os.cpu_count() or 8))
     print(f"torch threads: {torch.get_num_threads()}")
 
     by_stem, by_folder, by_doi = load_meta()
-    md_files = sorted(CONVERTED.glob("*.md"))
+    file_items = markdown_files()
+    current_names = {name for name, _ in file_items}
     todo = []
     skipped = 0
-    for md in md_files:
-        rel = md.name
+    for rel, md in file_items:
         h = hashlib.sha256(md.read_bytes()).hexdigest()
         if not args.force and manifest["files"].get(rel, {}).get("sha256") == h:
             skipped += 1
@@ -247,7 +348,8 @@ def main():
         todo.append((md, h))
     if args.limit:
         todo = todo[: args.limit]
-    if not todo:
+    stale_manifest = set(manifest["files"]) - current_names
+    if not todo and not stale_manifest and not args.force:
         print(f"No new files ({skipped} already indexed). Use --force to rebuild.")
         return
 
@@ -271,6 +373,21 @@ def main():
         "papers", metadata={"hnsw:space": "cosine"}
     )
 
+    if args.force:
+        clear_collection(collection)
+        manifest = {"version": 1, "model": MODEL_NAME, "files": {}}
+        todo = [(md, hashlib.sha256(md.read_bytes()).hexdigest())
+                for _, md in file_items]
+        if args.limit:
+            todo = todo[: args.limit]
+    else:
+        # Remove manifest entries and Chroma rows whose Markdown source was
+        # removed.  Archive moves retain the filename and therefore remain
+        # the same logical source.
+        for source in sorted(stale_manifest | (collection_sources(collection) - current_names)):
+            replace_source(collection, source, [], [], [], None)
+            manifest["files"].pop(source, None)
+
     t0 = time.time()
     total_chunks = 0
     done_chunks = 0
@@ -280,6 +397,7 @@ def main():
         text = md.read_text(encoding="utf-8", errors="replace")
         chunks = chunk_markdown(text, tokenizer)
         if not chunks:
+            replace_source(collection, rel, [], [], [], None)
             print(f"  SKIP (no text): {rel}")
             manifest["files"][rel] = {"sha256": h, "chunks": 0, "mac": meta["mac"]}
             continue
@@ -291,10 +409,9 @@ def main():
             m = dict(meta)
             m.update({"source": rel, "section": sections[i], "chunk": i, "supp": "yes" if is_alias else "no"})
             metas.append(m)
-        collection.delete(where={"source": rel})  # replace stale chunks of this file
         batch = 16 if device == "cuda" else 48
         embeddings = model.encode(docs, batch_size=batch, normalize_embeddings=True, show_progress_bar=False)
-        collection.add(ids=ids, documents=docs, metadatas=metas, embeddings=embeddings)
+        replace_source(collection, rel, ids, docs, metas, embeddings)
         manifest["files"][rel] = {"sha256": h, "chunks": len(chunks), "mac": meta["mac"]}
         total_chunks += len(chunks)
         done_chunks += len(chunks)
@@ -302,8 +419,10 @@ def main():
         print(f"  {tag} {rel}  -> {len(chunks)} chunks (cum {done_chunks})", flush=True)
 
     manifest["built_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
-    manifest["total_chunks"] = total_chunks
-    MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    manifest["total_chunks"] = sum(
+        item.get("chunks", 0) for item in manifest["files"].values()
+    )
+    write_manifest_atomic(manifest)
     print(f"\nDone: {len(todo)} files, {total_chunks} chunks, {skipped} skipped, "
           f"{time.time() - t0:.0f}s. Index at {CHROMA_DIR}")
 

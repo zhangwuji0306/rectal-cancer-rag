@@ -1,6 +1,11 @@
 .venv/
 .model-cache/
 
+# Local vector database may contain complete document chunks; never publish it.
+/index/chroma_db/
+/index/chroma_db.*/
+.claude/tmp/chroma-backups/
+
 **/__pycache__/
 *.py[cod]
 
@@ -12,6 +17,7 @@
 .claude/settings.local.json
 .claude/tmp/crawler-backups/
 .claude/tmp/manifest-backups/
+.claude/tmp/github-backups/
 
 .env
 .env.*

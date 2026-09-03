@@ -2,8 +2,9 @@
 import sys, time, os
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-os.environ.setdefault("HF_HOME", r"E:\writing-rag\.model-cache")
-os.environ.setdefault("TRANSFORMERS_CACHE", r"E:\writing-rag\.model-cache\huggingface")
+ROOT = Path(__file__).resolve().parent.parent
+os.environ.setdefault("HF_HOME", str(ROOT / ".model-cache"))
+os.environ.setdefault("TRANSFORMERS_CACHE", str(ROOT / ".model-cache" / "huggingface"))
 
 import torch
 torch.set_num_threads(8)
@@ -13,7 +14,7 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 
-MODEL_DIR = r"E:\writing-rag\.model-cache\BAAI__bge-m3"
+MODEL_DIR = ROOT / ".model-cache" / "BAAI__bge-m3"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 t0 = time.time()
 model = SentenceTransformer(MODEL_DIR, device=device)
@@ -40,7 +41,7 @@ dt = time.time() - t0
 print(f"encode 20 chunks: {dt:.1f}s -> {dt/20*1000:.0f} ms/chunk ({20/dt:.2f} chunks/s)", flush=True)
 
 # chroma part
-client = chromadb.PersistentClient(path=r"E:\writing-rag\index\_bench_db", settings=ChromaSettings(anonymized_telemetry=False))
+client = chromadb.PersistentClient(path=str(ROOT / "index" / "_bench_db"), settings=ChromaSettings(anonymized_telemetry=False))
 col = client.get_or_create_collection("bench", metadata={"hnsw:space": "cosine"})
 t0 = time.time()
 col.add(ids=[f"b{i}" for i in range(20)], documents=texts,

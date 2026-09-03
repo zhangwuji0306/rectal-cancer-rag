@@ -40,7 +40,7 @@ BATCHES = [
     ('pmc_b5',      'tasks_pmc_b5.sqlite'),
 ]
 TASKS_COLS = ['pmid', 'doi', 'pmc', 'year', 'title', 'title_norm', 'status',
-              'attempts', 'route', 'last_error', 'pdf_path', 'updated_at']
+              'attempts', 'route', 'last_error', 'pdf_path', 'license', 'updated_at']
 ARCHIVE_NOTE = '2000年前，封存不爬取'
 MERGED_DIR = os.path.join(ROOT, 'pdfs_merged')
 
@@ -50,6 +50,8 @@ def read_batch(db_path):
     cur = conn.cursor()
     cols = [r[1] for r in cur.execute('PRAGMA table_info(tasks)').fetchall()]
     rows = [dict(zip(cols, r)) for r in cur.execute('SELECT * FROM tasks').fetchall()]
+    for row in rows:
+        row.setdefault('license', 'unverified')
     conn.close()
     return rows
 
@@ -63,6 +65,7 @@ def load_run_rows():
             rows = []
             for r in rd:
                 d = {k: (None if v == '' else v) for k, v in r.items() if k != 'Run'}
+                d.setdefault('license', 'unverified')
                 for col in ('pmid', 'year'):
                     if d.get(col) is not None:
                         d[col] = int(d[col])
@@ -91,11 +94,14 @@ def main():
     # 2) 读取旧 tasks.sqlite 作为基础行
     old = os.path.join(ROOT, 'tasks.sqlite')
     conn = sqlite3.connect(old)
+    existing_cols = {row[1] for row in conn.execute('PRAGMA table_info(tasks)')}
+    if 'license' not in existing_cols:
+        conn.execute("ALTER TABLE tasks ADD COLUMN license TEXT NOT NULL DEFAULT 'unverified'")
+        conn.commit()
     base = [dict(zip(TASKS_COLS, r)) for r in conn.execute(
         f'SELECT {",".join(TASKS_COLS)} FROM tasks').fetchall()]
     conn.close()
     print('tasks.sqlite 基础行:', len(base))
-
     # 3) 推导当前状态
     by_pmid = {}
     for run, r in run_rows:
@@ -108,25 +114,26 @@ def main():
     def derive(r):
         pmid = r['pmid']
         if r['year'] < 2000:
-            return 'archived', None, None, ARCHIVE_NOTE, 0, None
+            return 'archived', None, None, ARCHIVE_NOTE, 0, None, r.get('license') or 'unverified'
         runs = by_pmid.get(pmid, [])
         if not runs:
-            return 'pending', None, None, None, 0, None
+            return 'pending', None, None, None, 0, None, r.get('license') or 'unverified'
         attempts = sum((rr['attempts'] or 0) for _, rr in runs)
         upd = max((rr['updated_at'] or '' for _, rr in runs), default=None)
         for run, rr in runs:                       # 任一 done → done
             if rr['status'] == 'done':
                 pdf = merged_pdf.get(pmid) or rr['pdf_path']
-                return 'done', rr['route'], pdf, None, attempts, upd
+                return 'done', rr['route'], pdf, None, attempts, upd, rr.get('license') or r.get('license') or 'unverified'
         latest = max(runs, key=lambda x: x[1]['updated_at'] or '')   # 最近一次运行
         run, rr = latest
-        return rr['status'], rr['route'], rr['pdf_path'], rr['last_error'], attempts, upd
+        return rr['status'], rr['route'], rr['pdf_path'], rr['last_error'], attempts, upd, rr.get('license') or r.get('license') or 'unverified'
 
     derived = []
     for r in base:
-        st, route, pdf, err, att, upd = derive(r)
+        st, route, pdf, err, att, upd, license = derive(r)
         r.update({'status': st, 'route': route, 'pdf_path': pdf,
-                  'last_error': err, 'attempts': att, 'updated_at': upd})
+                  'last_error': err, 'attempts': att, 'license': license,
+                  'updated_at': upd})
         derived.append(r)
 
     dist = {}
@@ -144,18 +151,18 @@ def main():
     conn.execute(f'''CREATE TABLE tasks (
         pmid INTEGER PRIMARY KEY, doi TEXT, pmc TEXT, year INTEGER, title TEXT,
         title_norm TEXT, status TEXT, attempts INTEGER, route TEXT,
-        last_error TEXT, pdf_path TEXT, updated_at TEXT)''')
+        last_error TEXT, pdf_path TEXT, license TEXT, updated_at TEXT)''')
     conn.execute('''CREATE TABLE run_history (
         run TEXT, pmid INTEGER, doi TEXT, pmc TEXT, year INTEGER, title TEXT,
         title_norm TEXT, status TEXT, attempts INTEGER, route TEXT,
-        last_error TEXT, pdf_path TEXT, updated_at TEXT)''')
+        last_error TEXT, pdf_path TEXT, license TEXT, updated_at TEXT)''')
     conn.execute('CREATE INDEX idx_history_pmid ON run_history(pmid)')
     conn.executemany(
         f'INSERT INTO tasks ({",".join(TASKS_COLS)}) VALUES '
         f'({",".join("?" * len(TASKS_COLS))})',
         [tuple(r[c] for c in TASKS_COLS) for r in derived])
     conn.executemany(
-        'INSERT INTO run_history VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        'INSERT INTO run_history VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
         [tuple([run] + [r[c] for c in TASKS_COLS]) for run, r in run_rows])
     conn.commit()
     new_dist = dict(conn.execute('SELECT status, COUNT(*) FROM tasks GROUP BY status').fetchall())

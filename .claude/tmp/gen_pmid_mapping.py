@@ -23,7 +23,7 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-ROOT = Path("E:/writing-rag")
+ROOT = Path(__file__).resolve().parents[2]
 CRAWLER_ROOT = ROOT / "直肠癌文献爬取"
 CSV_PATH = CRAWLER_ROOT / "索引信息.csv"
 OUT_PATH = ROOT / ".claude" / "tmp" / "mapping_pmid.json"
@@ -79,6 +79,8 @@ for pmid in sorted(stems, key=int):
         "journal": (row.get("Journal") or "").strip(),
         "doi": (row.get("DOI") or "").strip(),
         "author": (row.get("FirstAuthor") or "").strip(),
+        "license": (row.get("License") or "unverified").strip() or "unverified",
+        "pub_type": (row.get("PubType") or "").strip(),
     })
 
 OUT_PATH.write_text(json.dumps({"files": files}, ensure_ascii=False, indent=1), encoding="utf-8")

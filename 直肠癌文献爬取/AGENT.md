@@ -53,14 +53,14 @@ E:\writing-rag\直肠癌文献爬取\
 ## 当前爬取方案
 
 - **范围**：`03_downloader.py --min-year 2000`（不设上限）；`02_build_queue.py` 默认只入队 2000 年及以后且跳过 Status=archived（封存不会复活）。
-- **通道链（OA 优先）**：**Europe PMC OA 直连**（有 PMC 字段一律最优先；无 PMC 且无 DOI 时按 PMID 搜索；官方通道无反爬）→ sci-hub DOI → Crossref 反查 DOI → sci-hub 标题搜索。NCBI PMC 直连已弃用（2026-08 起对全新会话返回 JS "Preparing to download" 中转页）。
+- **默认通道链（合规 OA 优先）**：**Europe PMC OA 直连**（有 PMC 字段一律最优先；无 PMC 且无 DOI 时按 PMID 搜索；官方通道无反爬）。Sci-Hub/非 OA 通道默认关闭，只有机构合规与法务批准后才可显式开启。NCBI PMC 直连已弃用（2026-08 起对全新会话返回 JS "Preparing to download" 中转页）。
 - **PMC 优先分批（当前主策略）**：有 PMC 且未完成（pending+not_found+failed）按 **year DESC 每 400 篇一批**（12）→ 03 下载 → 13→11→05→14 同步后跑下一批。批次库内 status 一律重置 pending（引擎只处理 pending；not_found/failed 即重试对象）。
-- **镜像**：sci-hub.st 主力（高负载会转入 Altcha 挑战模式，引擎可自动 PoW 解算绕过）；sci-hub.ee 备选（Cloudflare 挑战弱，超时拖速，易致 failed）。
+- **镜像**：仅在合规批准并显式开启非 OA 通道时使用 sci-hub.st / sci-hub.ee；默认不访问镜像。
 - **引擎要点**：
   - 限速：每镜像请求间隔 3.0–5.0s 均匀随机，workers=3；
   - **周期防检测暂停**：连续镜像访问累计 200–300 次（每轮随机）→ 全池暂停 120–180s（每轮随机）；
   - **Altcha PoW 解算**：challenge=sha256(salt+str(n)) 暴力遍历 + `base64(JSON{...,took})` payload POST `/captcha/solution/<id>`，串行化；失败才走 Selenium 兜底；
-  - `verify_ssl=false`（镜像自签名证书）；cookie 启动 + 每 30min 刷新；
+  - `verify_ssl=true`（TLS 校验不可关闭）；Sci-Hub 默认不创建镜像会话；显式开启时 cookie 按镜像隔离并每 30min 刷新；
   - 挑战识别含 PDF 链接守卫（正常文章页模板常驻 altcha-widget，勿误判）；
   - PDF 校验：`%PDF` 头 + ≥30KB；状态机 `pending→downloading→done/failed/not_found`；`downloading` 超 15min 自动回收；
 - **监测约定**：预估用时内不监测；超时后每 t=预估/10 检查一次。
@@ -88,14 +88,14 @@ UPDATE tasks SET status='pending' WHERE year < 2000;
 
 - **pdfs_merged 共 2422 篇**（3867.8 MB，全部有效）；覆盖率 2422/7589 ≈ 31.9%；
 - 待办（tasks.sqlite）：done 2419 / not_found 1075 / failed 21 / pending 4074；
-- **PMC 优先批次 b1–b5 已完成**（共 2000 篇，从新到旧覆盖 2026~2020）：done 228+247+198+249+248 = **1170（58.5%）**，主要通道 europepmc:pdf（其余为 sci-hub 兜底）；重试策略有效（b1/b2 未命中的新文献数日后由 Europe PMC 补回索引）；
+- **PMC 优先批次 b1–b5 已完成**（共 2000 篇，从新到旧覆盖 2026~2020）：done 228+247+198+249+248 = **1170（58.5%）**，主要通道 europepmc:pdf；重试策略有效（b1/b2 未命中的新文献数日后由 Europe PMC 补回索引）；
 - **剩余 PMC 队列：1313 篇**（pending 724 + not_found 578 + failed 11；2026 77 / 2025 67 / 2024 82 / 2023 96 / 2022 88 / 2021 71 / 2020 140 / 2019 132 / 2018 88 / 2017 83 / 更早 389），从 `--first-batch 6` 继续；
-- 无 PMC 文献（约 4600 篇未处理）仍靠 sci-hub 兜底（低成功属预期）。
+- 无 PMC 文献（约 4600 篇未处理）等待已批准的官方 OA 来源或人工授权来源。
 
 ## 已知限制
 
-- 无 DOI 文献成功率极低；DOI 多源反查已停用（实测命中率约 2% 且命中文献多未收录）——备选：人工核对/馆藏、Unpaywall；
-- 镜像状态随负载波动：运行结束后 .st 可能重新进入 Altcha 门控（引擎可自解，但会显著拖慢）；sci-hub.ee 连接超时易致 failed；
+- 无 DOI 文献成功率极低；非 OA 下载通道默认关闭。DOI 多源反查已停用（实测命中率约 2% 且命中文献多未收录）——备选：人工核对/馆藏、Unpaywall；
+- 镜像通道默认关闭；显式启用前必须完成机构合规/法务审批，并保持 TLS 校验。
 - Europe PMC 对最新文献（如 2026）索引可能滞后（PMC 字段在但搜索无记录），数日后重试可补回；Unpaywall 通道未启用（API 强制要求真实邮箱，如日后启用需在 config 加 unpaywall_email）；
 - `config.json` 的 `crossref_mailto` 建议换真实邮箱（进入 polite pool 提高限流额度）；
-- 下载行为涉及版权，仅限个人学术研究用途。
+- 下载行为涉及版权；许可证必须逐条记录，发布或扩大使用范围前由机构合规/法务确认。

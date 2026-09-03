@@ -16,7 +16,7 @@ from common import ROOT
 
 CSV_COLUMNS = ['PMID', 'Title', 'Abstract', 'Authors', 'FirstAuthor', 'Journal',
                'ISSN', 'Year', 'Volume', 'Issue', 'Pages', 'DOI', 'PMC', 'MeSH',
-               'PubType', 'Language', 'Status', 'PDFPath', 'Note']
+               'PubType', 'Language', 'Status', 'PDFPath', 'Note', 'License']
 
 # 多值字段（每行一个值）与标量字段（续行拼接）——仅用于 CSV 输出选择；
 # 解析时不做白名单限制（nbib 中任何 XXXX- 形式行均为字段行，续行以 6 空格开头）
@@ -88,7 +88,8 @@ def to_row(rec):
     pubtype = '; '.join(f.get('PT', []))
     language = clean(' '.join(f.get('LA', [])))
     return [pmid, title, abstract, authors, first_author, journal, issn, year,
-            volume, issue, pages, doi, pmc, mesh, pubtype, language, 'pending', '', '']
+            volume, issue, pages, doi, pmc, mesh, pubtype, language, 'pending', '', '',
+            'unverified']
 
 
 def main():

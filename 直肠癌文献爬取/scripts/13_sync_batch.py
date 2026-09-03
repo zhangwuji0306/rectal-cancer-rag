@@ -16,10 +16,10 @@ import sqlite3
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import ROOT
+from common import ROOT, connect_db
 
 COLS = ['pmid', 'doi', 'pmc', 'year', 'title', 'title_norm', 'status',
-        'attempts', 'route', 'last_error', 'pdf_path', 'updated_at']
+        'attempts', 'route', 'last_error', 'pdf_path', 'license', 'updated_at']
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     args = ap.parse_args()
 
     db = args.db if os.path.isabs(args.db) else os.path.join(ROOT, args.db)
-    conn = sqlite3.connect(db)
+    conn = connect_db(db)
     rows = conn.execute(f'SELECT {",".join(COLS)} FROM tasks').fetchall()
     conn.close()
     print(f'{args.run}: 批次库 {len(rows)} 行')
@@ -43,6 +43,10 @@ def main():
     else:
         header = ['Run'] + COLS
         existing = []
+    if 'license' not in header:
+        header.insert(header.index('updated_at'), 'license')
+        for row in existing:
+            row['license'] = row.get('license') or 'unverified'
     # 同 run 替换（先删旧行）
     kept = [r for r in existing if r.get('Run') != args.run]
     removed = len(existing) - len(kept)

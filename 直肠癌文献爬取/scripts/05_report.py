@@ -16,7 +16,7 @@ import sqlite3
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import ROOT, load_config
+from common import ROOT, connect_db, load_config, validate_pdf
 
 
 def main():
@@ -30,9 +30,9 @@ def main():
     cfg = load_config()
     min_size = int(cfg.get('min_pdf_size', 30720))
 
-    conn = sqlite3.connect(args.db)
+    conn = connect_db(args.db)
     rows = conn.execute(
-        'SELECT pmid, doi, pmc, year, title, status, route, attempts, last_error, pdf_path '
+        'SELECT pmid, doi, pmc, year, title, status, route, attempts, last_error, pdf_path, license '
         'FROM tasks').fetchall()
     conn.close()
     total = len(rows)
@@ -54,9 +54,9 @@ def main():
             continue
         done_pdfs += 1
         p = r[9] or os.path.join(args.pdf_dir, f'PMID_{r[0]}.pdf')
-        if os.path.exists(p) and os.path.getsize(p) >= min_size:
+        if os.path.exists(p):
             with open(p, 'rb') as f:
-                if f.read(5) == b'%PDF-':
+                if validate_pdf(f.read(), min_size):
                     valid_pdfs += 1
                     continue
         invalid.append(r[0])
@@ -66,10 +66,10 @@ def main():
     with open(report_csv, 'w', encoding='utf-8-sig', newline='') as f:
         w = csv.writer(f)
         w.writerow(['PMID', 'Year', 'DOI', 'PMC', 'Title', 'Status', 'Route',
-                    'Attempts', 'Error', 'PDFPath'])
+                    'Attempts', 'Error', 'PDFPath', 'License'])
         for r in rows:
             w.writerow([r[0], r[3], r[1] or '', r[2] or '', r[4], r[5],
-                        r[6] or '', r[7], r[8] or '', r[9] or ''])
+                        r[6] or '', r[7], r[8] or '', r[9] or '', r[10] or 'unverified'])
 
     # 汇总
     summary = [
@@ -105,6 +105,11 @@ def main():
                 continue
             target['Status'] = status_map.get(r[5], r[5])
             target['PDFPath'] = r[9] or ''
+            if 'License' not in header:
+                header.append('License')
+                for line in lines:
+                    line['License'] = line.get('License') or 'unverified'
+            target['License'] = r[10] or 'unverified'
             note = (r[8] or '') if r[5] != 'done' else (f'通道: {r[6]}' if r[6] else '')
             target['Note'] = note
         with open(args.csv, 'w', encoding='utf-8-sig', newline='') as f:
@@ -112,6 +117,16 @@ def main():
             w.writeheader()
             w.writerows(lines)
         print(f'已回写 {args.csv}')
+
+    license_csv = os.path.join(args.out, 'source_licenses.csv')
+    with open(license_csv, 'w', encoding='utf-8-sig', newline='') as f:
+        w = csv.writer(f)
+        w.writerow(['PMID', 'SourceRoute', 'License', 'LicenseStatus'])
+        for r in rows:
+            license_value = r[10] or 'unverified'
+            status = 'recorded' if license_value != 'unverified' else 'unverified'
+            w.writerow([r[0], r[6] or '', license_value, status])
+    print(f'许可证来源清单: {license_csv}')
 
     print('\n'.join(summary))
     print(f'明细: {report_csv}')

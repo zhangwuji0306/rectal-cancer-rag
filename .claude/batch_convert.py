@@ -3,8 +3,8 @@
 """Batch convert papers PDF/DOCX -> Markdown using MinerU.
 
 Enhanced version:
-- Idempotent by output stem: if converted/<stem>.md already exists -> skip
-  (immune to Zotero re-export path changes)
+- Idempotent by output stem: if converted/<stem>.md or converted/已入库/<stem>.md
+  already exists -> skip (immune to Zotero re-export path changes and archive moves)
 - Files > 10 MB use `extract` mode (requires MINERU_TOKEN env or --token)
 - flash-extract failure is retried once with `extract` mode
 - Known duplicates / already-covered documents are skipped (see SKIP_PREFIXES)
@@ -27,7 +27,7 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-PROJECT = Path("E:/writing-rag")
+PROJECT = Path(__file__).resolve().parents[1]
 SOURCE = PROJECT / "papers"
 OUTPUT = PROJECT / "converted"
 FAILED = PROJECT / "flash-failed"
@@ -100,7 +100,8 @@ skipped_failed = []
 skipped_known = []
 for f in files_to_convert:
     rel = str(f.relative_to(PROJECT).as_posix())
-    if (OUTPUT / f"{f.stem}.md").exists():
+    if ((OUTPUT / f"{f.stem}.md").exists()
+            or (ARCHIVE / f"{f.stem}.md").exists()):
         skipped_converted.append(f)
     elif rel in tracker["failed"]:
         skipped_failed.append(f)
@@ -226,6 +227,7 @@ class Ingestor(threading.Thread):
         self.skipped = 0
         self.moved = 0
         self.prescan_done = threading.Event()  # set after pre-scan finishes enqueueing
+        self.startup_error = None
 
     def run(self):
         try:
@@ -258,7 +260,11 @@ class Ingestor(threading.Thread):
             print("[INGEST] ready", flush=True)
 
             if not self.live_only:
-                for md in sorted(OUTPUT.glob("*.md")):  # top-level only (archive = done)
+                for _, md in bi.markdown_files():
+                    # Archived files are already represented by the manifest;
+                    # only top-level files are eligible for a move into archive.
+                    if md.parent != OUTPUT:
+                        continue
                     if self.limit and self.enqueued >= self.limit:
                         break
                     rel = md.name
@@ -281,12 +287,12 @@ class Ingestor(threading.Thread):
             manifest["total_chunks"] = sum(
                 f.get("chunks", 0) for f in manifest["files"].values()
             )
-            bi.MANIFEST_PATH.write_text(
-                json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8"
-            )
+            bi.write_manifest_atomic(manifest)
             print(f"[INGEST] finished: ingested={self.ingested} moved={self.moved} "
                   f"skipped={self.skipped} failed={self.failed}", flush=True)
         except Exception as e:  # noqa: BLE001 - never kill the conversion thread
+            self.startup_error = str(e)
+            self.prescan_done.set()
             print(f"[INGEST] FATAL: {e}", flush=True)
 
     def _ingest_one(self, md, bi, collection, model, tokenizer, manifest,
@@ -308,6 +314,7 @@ class Ingestor(threading.Thread):
             text = md.read_text(encoding="utf-8", errors="replace")
             chunks = bi.chunk_markdown(text, tokenizer)
             if not chunks:
+                bi.replace_source(collection, rel, [], [], [], None)
                 manifest["files"][rel] = {"sha256": h, "chunks": 0, "mac": meta["mac"]}
                 self.skipped += 1
                 print(f"[INGEST] SKIP (no text): {rel}", flush=True)
@@ -321,11 +328,10 @@ class Ingestor(threading.Thread):
                 m.update({"source": rel, "section": sections[i], "chunk": i,
                           "supp": "yes" if is_alias else "no"})
                 metas.append(m)
-            collection.delete(where={"source": rel})  # replace stale chunks
             batch = 16 if str(model.device).startswith("cuda") else 48
             embeddings = model.encode(docs, batch_size=batch,
                                       normalize_embeddings=True, show_progress_bar=False)
-            collection.add(ids=ids, documents=docs, metadatas=metas, embeddings=embeddings)
+            bi.replace_source(collection, rel, ids, docs, metas, embeddings)
             manifest["files"][rel] = {"sha256": h, "chunks": len(chunks), "mac": meta["mac"]}
             self.ingested += 1
             tag = f"[{meta['mac']}]" if meta["mac"] != "unknown" else "[?]"
@@ -347,7 +353,7 @@ if INGEST:
     ingestor = Ingestor(INGEST_QUEUE, limit=INGEST_LIMIT, live_only=INGEST_LIVE_ONLY)
     ingestor.start()
     if INGEST_ONLY:
-        ingestor.prescan_done.wait(timeout=900)  # sentinel must trail pre-scan items
+        ingestor.prescan_done.wait()  # sentinel must trail pre-scan items
         INGEST_QUEUE.put(None)
         ingestor.join()
         print(f"[INGEST-ONLY] done: ingested={ingestor.ingested} moved={ingestor.moved} "
@@ -417,6 +423,11 @@ for i, f in enumerate(new_files):
     TRACKER_PATH.write_text(json.dumps(tracker, indent=2, ensure_ascii=False), encoding="utf-8")
 
 if INGEST:
+    # The pre-scan runs after model loading.  Keep the sentinel behind it even
+    # in the ordinary conversion+ingestion flow.
+    ingestor.prescan_done.wait()
+    if ingestor.startup_error:
+        print(f"[INGEST] ERROR: {ingestor.startup_error}")
     INGEST_QUEUE.put(None)
     ingestor.join()
 

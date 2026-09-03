@@ -18,12 +18,12 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import ROOT, load_config
+from common import ROOT, load_config, validate_pdf
 
 DEST = os.path.join(ROOT, 'pdfs_merged')
 NAME_RE = re.compile(r'^PMID_(\d+)\.pdf$')
 META_COLS = ['PMID', 'Year', 'Title', 'Authors', 'FirstAuthor', 'Journal', 'ISSN',
-             'Volume', 'Issue', 'Pages', 'DOI', 'PMC', 'Language', 'PubType',
+             'Volume', 'Issue', 'Pages', 'DOI', 'PMC', 'License', 'Language', 'PubType',
              '文件名', '大小KB', '来源批次', '校验', '备注']
 
 
@@ -64,10 +64,8 @@ def main():
         p = pdfs[pmid]
         r = idx.get(pmid, {})
         o = old.get(pmid, {})
-        ok = os.path.getsize(p) >= min_size
-        if ok:
-            with open(p, 'rb') as f:
-                ok = f.read(5) == b'%PDF-'
+        with open(p, 'rb') as f:
+            ok = validate_pdf(f.read(), min_size)
         if ok:
             valid += 1
         rows.append([
@@ -75,7 +73,8 @@ def main():
             r.get('Year', ''), r.get('Title', ''), r.get('Authors', ''),
             r.get('FirstAuthor', ''), r.get('Journal', ''), r.get('ISSN', ''),
             r.get('Volume', ''), r.get('Issue', ''), r.get('Pages', ''),
-            r.get('DOI', ''), r.get('PMC', ''), r.get('Language', ''), r.get('PubType', ''),
+            r.get('DOI', ''), r.get('PMC', ''), r.get('License', 'unverified') or 'unverified',
+            r.get('Language', ''), r.get('PubType', ''),
             f'PMID_{pmid}.pdf',
             round(os.path.getsize(p) / 1024, 1),
             o.get('来源批次', '') or args.batch_label,

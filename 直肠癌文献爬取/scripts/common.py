@@ -52,16 +52,22 @@ def connect_db(db_path):
         route TEXT,
         last_error TEXT,
         pdf_path TEXT,
+        license TEXT NOT NULL DEFAULT 'unverified',
         updated_at TEXT
     )''')
+    columns = {row[1] for row in conn.execute('PRAGMA table_info(tasks)')}
+    if 'license' not in columns:
+        conn.execute("ALTER TABLE tasks ADD COLUMN license TEXT NOT NULL DEFAULT 'unverified'")
     conn.execute('CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)')
     conn.commit()
     return conn
 
 
 def validate_pdf(data, min_size=30720):
-    """校验 PDF 字节流：%PDF 头 + 最小体积。"""
-    return bool(data) and data[:5] == b'%PDF-' and len(data) >= min_size
+    """校验 PDF 字节流：PDF 头、EOF 标记与最小体积。"""
+    if not data or data[:5] != b'%PDF-' or len(data) < min_size:
+        return False
+    return b'%%EOF' in data[-8192:]
 
 
 CHALLENGE_MARKERS = (

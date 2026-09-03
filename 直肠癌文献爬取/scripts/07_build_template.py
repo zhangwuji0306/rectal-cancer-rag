@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import ROOT, connect_db
 
 COLS = ['pmid', 'doi', 'pmc', 'year', 'title', 'title_norm', 'status',
-        'attempts', 'route', 'last_error', 'pdf_path', 'updated_at']
+        'attempts', 'route', 'last_error', 'pdf_path', 'license', 'updated_at']
 
 
 def load(db_path):

@@ -25,7 +25,7 @@ def read_rows(csv_path):
 
 
 def build(db_path, rows, fresh=False):
-    """把行列表写入任务队列；fresh=True 时重建表。INSERT OR IGNORE 保持幂等（保留旧状态）。"""
+    """把行列表写入任务队列；更新元数据但保留下载状态。"""
     conn = sqlite3.connect(db_path)
     if fresh:
         conn.execute('DROP TABLE IF EXISTS tasks')
@@ -34,11 +34,17 @@ def build(db_path, rows, fresh=False):
 
     conn = connect_db(db_path)
     for r in rows:
-        conn.execute(
-            'INSERT OR IGNORE INTO tasks (pmid, doi, pmc, year, title, title_norm, status, updated_at) '
-            'VALUES (?,?,?,?,?,?,?,?)',
-            (int(r['PMID']), r['DOI'] or None, r['PMC'] or None, int(r['Year']),
-             r['Title'], norm_text(r['Title']), 'pending', now_str()))
+        pmid = int(r['PMID'])
+        values = (r['DOI'] or None, r['PMC'] or None, int(r['Year']),
+                  r['Title'], norm_text(r['Title']), r.get('License') or 'unverified')
+        updated = conn.execute(
+            'UPDATE tasks SET doi=?, pmc=?, year=?, title=?, title_norm=?, license=? '
+            'WHERE pmid=?', values + (pmid,)).rowcount
+        if not updated:
+            conn.execute(
+                'INSERT INTO tasks (pmid, doi, pmc, year, title, title_norm, status, license, updated_at) '
+                'VALUES (?,?,?,?,?,?,?,?,?)',
+                (pmid,) + values[:5] + ('pending', values[5], now_str()))
     conn.commit()
     counts = dict(conn.execute('SELECT status, COUNT(*) FROM tasks GROUP BY status').fetchall())
     conn.close()
