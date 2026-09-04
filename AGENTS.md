@@ -7,11 +7,14 @@ RAG document ingestion pipeline: retrieves papers, converts academic papers (PDF
 - 直肠癌文献爬取/ — managed upstream retrieval/downloader project (NBIB, task queue, reports, and PDF corpus); agents may maintain its scripts and state within this workspace
 - `papers/` — containing downstream PDF inputs; `papers/索引信息.csv` is a legacy compatibility copy (canonical metadata is `直肠癌文献爬取/索引信息.csv`)
 - `converted/` — flat output of `.md` files (never nested); `converted/已入库/` — archive of ingested md (moved after RAG ingestion; top-level `converted/` only holds not-yet-ingested files); `mucinous/` — MAC corpus copies (legacy phase artifact, kept as-is); `flash-failed/` — sources that failed conversion
-- `index/` — vector search: `build_index.py` (chunk + embed + store), `retrieve.py` (query), `reconcile_manifest.py` (rebuild manifest from Chroma), `chroma_db/`, `manifest.json`
+- `index/` — vector search: `build_index.py` (chunk + embed + store), `retrieve.py` (query), `reconcile_manifest.py` (rebuild manifest from Chroma), `manifest.json`；另有 `bench.py` / `test_chunking.py`（编码与分块基准）、`evaluate_retrieval.py`（检索评估，配 `evaluation/`）。`chroma_db/` 向量实库（2026-09-03 复位，见「本地向量库位置与恢复」）
 - `.model-cache/BAAI__bge-m3/` — local bge-m3 model copy (must exist before build_index/retrieve run)
 - `.venv/` — Python venv; always run Python via `.venv/Scripts/python`
 - `.claude/batch_convert.py` — conversion script (supports parallel RAG ingestion, see Commands); `.claude/conversion-tracker.json` — conversion state (don't hand-edit)
-- `.claude/tmp/` — analysis scripts: `analyze.py` (classification → `mapping.json`), `gen_pmid_mapping.py` (PMID batch metadata → `mapping_pmid.json`, from `直肠癌文献爬取/索引信息.csv`), `gen_excel.py` (report → root `MAC文献分类与转换报告.xlsx`), `sync_mucinous.py`, `final_check.py`
+- `.claude/tmp/` — analysis scripts: `analyze.py` (classification → `mapping.json`), `gen_pmid_mapping.py` (PMID batch metadata → `mapping_pmid.json`, from `直肠癌文献爬取/索引信息.csv`), `gen_excel.py` (report → root `MAC文献分类与转换报告.xlsx`), `sync_mucinous.py`, `final_check.py`；另含备份目录（勿删）：`chroma-backups/`（向量库合规备份/离线副本）、`manifest-backups/`、`crawler-backups/`、`github-backups/`（代码发布用远端仓备份）
+- `tests/` — 流水线离线回归测试 `test_pipeline.py`（PDF 校验 / 队列刷新 / 索引替换顺序）
+- `evaluation/` — 检索评估：人工标注 qrels `queries.jsonl`（模板 `queries.example.jsonl`）及用法说明 `README.md`
+- `docs/` — `数据合规与发布清单.md`：语料与向量库的合规边界、发布前检查清单
 
 ## Vector index (RAG retrieval)
 ```bash
@@ -25,6 +28,11 @@ RAG document ingestion pipeline: retrieves papers, converts academic papers (PDF
 - `manifest.json` is a per-source SHA-256/chunk ledger. It can be reconciled from the actual Chroma `papers` collection with `index/reconcile_manifest.py`; do not run concurrent Chroma writers, because stale in-memory manifests can overwrite newer entries.
 - Chunks: heading-aware, ~800 tokens, overlap 80, min 16 tokens; bge-m3 (CPU, normalized, cosine via Chroma).
 - Stage-2 answer generation uses DeepSeek (`DEEPSEEK_API_KEY` env) — not yet implemented.
+
+### 本地向量库位置与恢复
+- 现状：实库位于 `index/chroma_db/`（2026-09-03 已从 `.claude/tmp/chroma-backups/` 移回复位；collection `papers` 与 manifest 账实一致，56,179 chunks）。`chroma-backups/` 保存合规流程下的离线副本。
+- ⚠️ 若 `index/chroma_db` 缺失（按合规流程移出后未复位），先把它放回原位再运行 build/retrieve/reconcile 或跨项目 `rag_core`；缺失状态下增量 `build_index.py` 会新建空库并把 manifest 当作已同步，造成账实严重不符。
+- 目录位置若再次变动，请同步更新本节与「当前语料状态」两处文字。
 
 ### Reuse from another project (same machine, no copying)
 `index/rag_core.py` is the importable core (paths default to writing-rag, overridable via `--db/--model` in CLI or args in code). Other projects query the live index directly:
@@ -41,6 +49,11 @@ for r in summary_list(refs):    # title/journal/year/doi/authors/mac/sections/n_
 - Must run under `E:\writing-rag\.venv\Scripts\python` (deps: sentence-transformers, chromadb).
 - Cross-machine: copy `index/chroma_db/` + `.model-cache/BAAI__bge-m3/` + `index/rag_core.py` (index is portable; ~2.3 GB model).
 - Different corpus: parameterize `build_index.py` (--converted/--db/--model) and generate a project-specific mapping.json.
+
+## 当前语料状态（2026-09-04 核对；批量操作后需更新本节）
+- 转换/入库：`converted/已入库/` 2499 篇 md（= 2492 份唯一内容），`converted/` 顶层为空；`papers/` 已清空 —— 454 篇 PDF 于 2026-09-04 全部处理：成功 450（已入库），失败 4 篇移入 `flash-failed/` 且 tracker 记 failed：PMID_41723209 / 41821894 / 41910447 / 42065055（多为 extract 下载超时；重试需移回 `papers/` 并清除 tracker 对应 failed 条目）。
+- 索引：向量库正常，manifest 与 Chroma 账实一致 —— 2499 个 md / 72,344 chunks（built 2026-09-04 19:16）。5 组 sha 重复文件按去重规则只以 canonical 名（`PMID_*` 优先）入库，其余文件保留但记 chunks=0 的 `dup_of` 条目（规则见 `index/build_index.py` 与 Gotchas）。
+- 下载：done 2419 / pending 4074 / not_found 1075 / failed 21 / archived 1582（与 9/1 22:03 summary.txt 一致）；语料自 2026-08-24（PMC b5）后无新增，b6 未建立。详见 `直肠癌文献爬取/AGENT.md`。
 
 ## Commands
 ```bash
@@ -59,6 +72,8 @@ PYTHONIOENCODING=utf-8 python .claude/batch_convert.py   # convert new papers (i
 #   (this project is kept fully offline — never upload project data)
 python .claude/tmp/gen_pmid_mapping.py                  # regenerate mapping_pmid.json from 直肠癌文献爬取/索引信息.csv
 python .claude/tmp/sync_mucinous.py                      # copy converted MAC md -> mucinous/ (idempotent)
+.venv/Scripts/python tests/test_pipeline.py               # 离线回归测试（tests/，unittest）
+.venv/Scripts/python index/evaluate_retrieval.py --qrels evaluation/queries.jsonl --k 5,10   # 检索评估（qrels 编制见 evaluation/README.md）
 ```
 文献爬取子项目（在其目录内运行，详见 直肠癌文献爬取/AGENT.md）：
 ```powershell
@@ -94,4 +109,7 @@ python scripts\14_refresh_corpus_meta.py --batch-label pmc_bN-YYYYMMDD
 - Known intentional gaps (do not re-flag): 16 refs without PDFs (skip); `papers/XRLR7M9W` Melis 2010 is a confirmed duplicate of `CL55BBYQ` (keep, never convert); 4 orphaned old conversions in `converted/` (keep).
 - CSV storage keys are 8-char IDs found inside `storage\<key>\` paths in the `File Attachments` column (CSV `Key` column differs from storage key).
 - When extracting reference lists from the user's Word docs, take the LAST consecutive numbered block (some docs number body items too).
+- 向量库不在 `index/chroma_db` 时，`retrieve.py`/`rag_core` 直接报错，增量 `build_index.py` 可能静默新建空库 —— 先按「本地向量库位置与恢复」复位再运行；`.claude/tmp/chroma-backups/` 是合规备份目录，勿删。
+- 已入库含 5 组 sha 内容重复文件（PMID_25409311≡26164435；PMID_33446352≡33926780≡33971571≡34466668；PMID_34421090≡Zhang 等-2022-Quantitative-T2-Mapping；PMID_36388693≡jgo-13-05-2366；PMID_41449349≡Wu 等-2025-Nomogram）：全部文件保留（勿删、勿当漏检重复补录），索引只认 `PMID_*` canonical 名，其余文件 manifest 记 chunks=0 + `dup_of`；若 reconcile 把零条目并入重写，下次增量 build 会按去重规则自动补回，无需处理。
+- 本工作目录无 `.git`（非仓库）；代码发布走独立远端仓流程，发布边界与检查清单见 `docs/数据合规与发布清单.md`。`.gitignore` 已排除语料正文与向量库；`converted/`、`papers/`、`pdfs_merged/`、`.claude/tmp/*-backups/` 等内容一律不得进入任何发布物。
 

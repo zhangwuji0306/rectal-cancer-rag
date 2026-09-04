@@ -9,6 +9,15 @@ Idempotent: files whose sha256 is unchanged are skipped (incremental).
 Both converted/*.md and converted/已入库/*.md are inputs; the archive move does
 not cause a second conversion or embedding pass.  Rebuild all with --force.
 
+Duplicate content policy: md files that are sha-identical (e.g. one paper
+converted under both a PMID_* name and a legacy Zotero/Word name, or the same
+article downloaded under several PMIDs) hold identical deterministic chunk
+ids, so Chroma can physically store them only once.  Each duplicate group is
+indexed under one canonical name (PMID_* names preferred, else the smallest
+name); the other files of the group get a chunks=0 ledger entry (``dup_of``)
+and are never upserted.  Manifest totals therefore equal real Chroma rows even
+on a --force rebuild.
+
 Usage:
     python index/build_index.py            # incremental
     python index/build_index.py --force    # full rebuild
@@ -258,6 +267,16 @@ def markdown_files():
     return [(name, by_name[name]) for name in sorted(by_name)]
 
 
+def _canonical_key(name):
+    """Duplicate-group ordering: PMID_* names win, then plain lexicographic."""
+    return (0 if name.startswith("PMID_") else 1, name)
+
+
+def canonical_rel(group):
+    """Pick the canonical filename of a sha-identical duplicate group."""
+    return sorted(group, key=_canonical_key)[0]
+
+
 def _source_ids(collection, source):
     rows = collection.get(where={"source": source}, include=["metadatas"])
     return list(rows.get("ids") or [])
@@ -290,12 +309,17 @@ def collection_sources(collection):
     count = collection.count()
     if not count:
         return set()
-    rows = collection.get(limit=count, include=["metadatas"])
-    return {
-        (meta or {}).get("source")
-        for meta in (rows.get("metadatas") or [])
-        if (meta or {}).get("source")
-    }
+    sources = set()
+    batch = 10000
+    # A single get(limit=count) exceeds SQLite's variable limit on large
+    # collections (56k+ chunks); page through offsets like reconcile_manifest.
+    for offset in range(0, count, batch):
+        rows = collection.get(limit=batch, offset=offset, include=["metadatas"])
+        for meta in (rows.get("metadatas") or []):
+            source = (meta or {}).get("source")
+            if source:
+                sources.add(source)
+    return sources
 
 
 def clear_collection(collection):
@@ -338,11 +362,42 @@ def main():
     by_stem, by_folder, by_doi = load_meta()
     file_items = markdown_files()
     current_names = {name for name, _ in file_items}
+
+    # One pass over the corpus: group files by content sha so duplicate
+    # content is never upserted twice (identical content -> identical chunk
+    # ids -> the second write would silently re-own the first file's rows).
+    file_hash = {}
+    group_by_sha = {}
+    for rel, md in file_items:
+        h = hashlib.sha256(md.read_bytes()).hexdigest()
+        file_hash[rel] = h
+        group_by_sha.setdefault(h, []).append(rel)
+    dup_skips = set()
+    canonical_of = {}
+    for h, rels in group_by_sha.items():
+        if len(rels) < 2:
+            continue
+        canon = canonical_rel(rels)
+        canonical_of[h] = canon
+        dup_skips.update(r for r in rels if r != canon)
+
     todo = []
     skipped = 0
     for rel, md in file_items:
-        h = hashlib.sha256(md.read_bytes()).hexdigest()
-        if not args.force and manifest["files"].get(rel, {}).get("sha256") == h:
+        h = file_hash[rel]
+        entry = manifest["files"].get(rel, {})
+        if not args.force and entry.get("sha256") == h:
+            if rel in dup_skips and entry.get("chunks", 0) != 0:
+                # Duplicate content lives under its canonical twin; keep this
+                # entry so the sha skip stays idempotent, but stop counting
+                # phantom chunks in the manifest ledger.
+                meta, _ = meta_for(rel, by_stem, by_folder, by_doi)
+                manifest["files"][rel] = {
+                    "sha256": h,
+                    "chunks": 0,
+                    "mac": meta["mac"],
+                    "dup_of": canonical_of[h],
+                }
             skipped += 1
             continue
         todo.append((md, h))
@@ -376,8 +431,8 @@ def main():
     if args.force:
         clear_collection(collection)
         manifest = {"version": 1, "model": MODEL_NAME, "files": {}}
-        todo = [(md, hashlib.sha256(md.read_bytes()).hexdigest())
-                for _, md in file_items]
+        todo = [(md, file_hash[rel])
+                for rel, md in file_items]
         if args.limit:
             todo = todo[: args.limit]
     else:
@@ -393,6 +448,16 @@ def main():
     done_chunks = 0
     for md, h in todo:
         rel = md.name
+        if rel in dup_skips:
+            meta, is_alias = meta_for(rel, by_stem, by_folder, by_doi)
+            manifest["files"][rel] = {
+                "sha256": h,
+                "chunks": 0,
+                "mac": meta["mac"],
+                "dup_of": canonical_of[h],
+            }
+            print(f"  DUP (indexed as {canonical_of[h]}): {rel}", flush=True)
+            continue
         meta, is_alias = meta_for(rel, by_stem, by_folder, by_doi)
         text = md.read_text(encoding="utf-8", errors="replace")
         chunks = chunk_markdown(text, tokenizer)

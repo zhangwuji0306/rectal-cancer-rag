@@ -1,6 +1,6 @@
 # AGENT.md — 直肠癌文献爬取项目
 
-> 更新日期：2026-08-28（已纳入 E:\writing-rag 主项目的一体化维护）。本文档只保留最新爬取方案与要点；历史明细见 reports 各 CSV。
+> 更新日期：2026-09-03（已纳入 E:\writing-rag 主项目的一体化维护）。本文档只保留最新爬取方案与要点；历史明细见 reports 各 CSV。任务状态以 2026-09-01 22:03 再生成的 summary.txt / download_report.csv / 索引信息.csv 为准（见「当前语料状态」）。
 
 ## 项目目标
 
@@ -84,13 +84,15 @@ UPDATE tasks SET status='pending' WHERE status IN ('not_found','failed');
 UPDATE tasks SET status='pending' WHERE year < 2000;
 ```
 
-## 当前语料状态（2026-08-24）
+## 当前语料状态（2026-09-03；核对于 2026-09-01 22:03 报告再生成）
 
-- **pdfs_merged 共 2422 篇**（3867.8 MB，全部有效）；覆盖率 2422/7589 ≈ 31.9%；
-- 待办（tasks.sqlite）：done 2419 / not_found 1075 / failed 21 / pending 4074；
+- **pdfs_merged 共 2422 个 PDF**（3867.8 MB，与 语料元数据.csv 2422 行一致）；覆盖率 2422/7589 ≈ 31.9%；自 b5（2026-08-24）后无新下载；
+- 任务状态（tasks.sqlite / summary.txt）：done 2419 / not_found 1075 / failed 21 / pending 4074 / archived 1582；落盘校验 2418/2419 有效，**PMID 31567929 校验未通过**（其 PDF 已移至上级 `flash-failed/`，跳过）；
+- 2026-09-01 22:03 曾做一致性维护：11_merge 重建 tasks.sqlite，05_report / 14_refresh_corpus_meta 再生成 download_report.csv / source_licenses.csv / summary.txt / 索引信息.csv —— 状态分布与 8/24 相同（无新下载、无新失败）；
 - **PMC 优先批次 b1–b5 已完成**（共 2000 篇，从新到旧覆盖 2026~2020）：done 228+247+198+249+248 = **1170（58.5%）**，主要通道 europepmc:pdf；重试策略有效（b1/b2 未命中的新文献数日后由 Europe PMC 补回索引）；
-- **剩余 PMC 队列：1313 篇**（pending 724 + not_found 578 + failed 11；2026 77 / 2025 67 / 2024 82 / 2023 96 / 2022 88 / 2021 71 / 2020 140 / 2019 132 / 2018 88 / 2017 83 / 更早 389），从 `--first-batch 6` 继续；
-- 无 PMC 文献（约 4600 篇未处理）等待已批准的官方 OA 来源或人工授权来源。
+- **剩余 PMC 队列：1313 篇**（pending 724 + not_found 578 + failed 11；2026 77 / 2025 67 / 2024 82 / 2023 96 / 2022 88 / 2021 71 / 2020 140 / 2019 132 / 2018 88 / 2017 83 / 更早 389），从 `--first-batch 6` 继续；**自 2026-08-28 起未再建新批次（b6 尚未生成）**；
+- 无 PMC 文献（约 4600 篇未处理）等待已批准的官方 OA 来源或人工授权来源；
+- config.json：`allow_scihub=false`（2026-09-01 复核），镜像通道保持关闭，与上文「默认通道链」口径一致。
 
 ## 已知限制
 
