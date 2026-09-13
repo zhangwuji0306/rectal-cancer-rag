@@ -1,0 +1,190 @@
+{
+  "stage": "A0",
+  "base_commit": "b2ce508bce49f181e64917bb3a4e049b758bc3fe",
+  "current_state": {
+    "CURRENT_PHASE": "A",
+    "CURRENT_STAGE": "A0",
+    "REVIEW_STATUS": "NOT_STARTED",
+    "NEXT_ALLOWED_STAGE": "A1 after independent review approval"
+  },
+  "execution_started_at": "2026-09-13T03:03:53.082795+00:00",
+  "captured_at": "2026-09-13T03:04:03.308835+00:00",
+  "inputs": {
+    "tasks.sqlite": "直肠癌文献爬取\\tasks.sqlite",
+    "索引信息.csv": "直肠癌文献爬取\\索引信息.csv",
+    "reports/run_history.csv": "直肠癌文献爬取\\reports\\run_history.csv",
+    "config.json": "直肠癌文献爬取\\config.json",
+    "index/manifest.json": "index\\manifest.json",
+    "pdfs_merged": "直肠癌文献爬取\\pdfs_merged",
+    "converted": "converted",
+    "index/chroma_db": "index\\chroma_db"
+  },
+  "database": {
+    "path": "直肠癌文献爬取\\tasks.sqlite",
+    "integrity_check": "ok",
+    "tables": [
+      "tasks",
+      "run_history"
+    ],
+    "tasks_schema_sha256": "cfce849513db9dc8ecaea2e3f4a137cb4697475a98a73838ca6e0f1d247ffd17",
+    "run_history_schema_sha256": "317ffae051ef51e7645a3bf0140f0df7cc1d620955b487a390d92b32f89913fa",
+    "run_history_rows": 5336
+  },
+  "metrics": {
+    "total_pmid": 9171,
+    "distinct_pmid": 9171,
+    "pmid_unique": true,
+    "status_distribution": {
+      "archived": 1582,
+      "done": 2419,
+      "failed": 21,
+      "not_found": 1075,
+      "pending": 4074
+    },
+    "doi_count": 7906,
+    "doi_coverage": 0.8620652055391996,
+    "pmcid_count": 3001,
+    "pmcid_coverage": 0.32722712899356665,
+    "pdf_count": 2422,
+    "valid_pdf_count": 2421,
+    "invalid_pdf_files": [
+      "直肠癌文献爬取\\pdfs_merged\\PMID_31567929.pdf"
+    ],
+    "converted_markdown_count": 2499,
+    "manifest_entries": 2499,
+    "indexed_documents_manifest": 2492,
+    "indexed_documents_chroma": 2492,
+    "manifest_chunks": 72344,
+    "chroma_chunks": 72344,
+    "manifest_chroma_chunk_delta": 0
+  },
+  "backup": {
+    "directory": "backups\\20260913-110353",
+    "files": [
+      {
+        "source": "直肠癌文献爬取\\tasks.sqlite",
+        "backup": "backups\\20260913-110353\\tasks.sqlite",
+        "sha256": "bdb61bc23b0f368c33b1bfab950d4938adac5bdb82091d63584788622f353120",
+        "backup_sha256": "bdb61bc23b0f368c33b1bfab950d4938adac5bdb82091d63584788622f353120",
+        "verified_equal": true,
+        "bytes": 5963776,
+        "line_count": null,
+        "row_count": {
+          "tasks": 9171,
+          "run_history": 5336
+        }
+      },
+      {
+        "source": "直肠癌文献爬取\\索引信息.csv",
+        "backup": "backups\\20260913-110353\\索引信息.csv",
+        "sha256": "a575d2006bdd9c9c3071650d113e12a53beb45fe1d52273be403c1f8a0df1c8e",
+        "backup_sha256": "a575d2006bdd9c9c3071650d113e12a53beb45fe1d52273be403c1f8a0df1c8e",
+        "verified_equal": true,
+        "bytes": 19948473,
+        "line_count": 9172,
+        "row_count": 9171
+      },
+      {
+        "source": "直肠癌文献爬取\\reports\\run_history.csv",
+        "backup": "backups\\20260913-110353\\run_history.csv",
+        "sha256": "d054a552fb3129598300f9852416625afc36c35a182cae9a84ec9500c335922c",
+        "backup_sha256": "d054a552fb3129598300f9852416625afc36c35a182cae9a84ec9500c335922c",
+        "verified_equal": true,
+        "bytes": 2116654,
+        "line_count": 5337,
+        "row_count": 5336
+      },
+      {
+        "source": "直肠癌文献爬取\\config.json",
+        "backup": "backups\\20260913-110353\\config.json",
+        "sha256": "8c6a25a9fbd06d97d2a01fac59c36e7eff0037a9be31e05e617dba4af3579402",
+        "backup_sha256": "8c6a25a9fbd06d97d2a01fac59c36e7eff0037a9be31e05e617dba4af3579402",
+        "verified_equal": true,
+        "bytes": 878,
+        "line_count": 31,
+        "row_count": 26
+      },
+      {
+        "source": "index\\manifest.json",
+        "backup": "backups\\20260913-110353\\manifest.json",
+        "sha256": "cf0b848457733c9adf2a9b7bb7d4b3b1239d749d323dc4a7b82e56b213147947",
+        "backup_sha256": "cf0b848457733c9adf2a9b7bb7d4b3b1239d749d323dc4a7b82e56b213147947",
+        "verified_equal": true,
+        "bytes": 375663,
+        "line_count": 12511,
+        "row_count": 2499
+      }
+    ],
+    "all_hashes_verified": true
+  },
+  "compliance_scan": {
+    "scanned_files": 79,
+    "absolute_path_matches": 6634,
+    "absolute_path_examples": [
+      {
+        "file": "AGENTS.md",
+        "line": 41
+      },
+      {
+        "file": "AGENTS.md",
+        "line": 49
+      },
+      {
+        "file": "AGENTS.md",
+        "line": 80
+      },
+      {
+        "file": "AGENTS.md",
+        "line": 99
+      },
+      {
+        "file": "智能体手册-RAG语料库使用.md",
+        "line": 16
+      },
+      {
+        "file": "智能体手册-RAG语料库使用.md",
+        "line": 35
+      },
+      {
+        "file": "智能体手册-RAG语料库使用.md",
+        "line": 40
+      },
+      {
+        "file": "智能体操作手册：文献获取、格式转换、入库与项目管理.md",
+        "line": 5
+      },
+      {
+        "file": "智能体操作手册：文献获取、格式转换、入库与项目管理.md",
+        "line": 40
+      },
+      {
+        "file": "智能体操作手册：文献获取、格式转换、入库与项目管理.md",
+        "line": 48
+      },
+      {
+        "file": "智能体操作手册：文献获取、格式转换、入库与项目管理.md",
+        "line": 60
+      },
+      {
+        "file": "智能体操作手册：文献获取、格式转换、入库与项目管理.md",
+        "line": 957
+      }
+    ],
+    "credential_value_matches": 0,
+    "credential_value_examples": [],
+    "email_matches": 1,
+    "email_paths": [
+      "直肠癌文献爬取\\config.json"
+    ],
+    "private_endpoint_matches": 0,
+    "private_endpoint_examples": []
+  },
+  "verification": {
+    "sqlite_open": true,
+    "sqlite_integrity_check_ok": true,
+    "pmid_unique": true,
+    "backup_hashes_match": true,
+    "manifest_chroma_chunks_match": true
+  },
+  "scope_note": "Read-only capture plus required metadata backup. No downloader, schema, status, route, or retrieval changes were made; no downloads were started."
+}

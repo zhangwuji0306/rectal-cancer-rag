@@ -21,6 +21,9 @@
 .claude/tmp/manifest-backups/
 .claude/tmp/github-backups/
 
+# A0 restore points are local-only and must not enter the public repository.
+/backups/
+
 .env
 .env.*
 !.env.example
