@@ -4,7 +4,7 @@
 
 - Stage: A0 — current-state freeze and complete backup
 - Base commit: `b2ce508bce49f181e64917bb3a4e049b758bc3fe` (candidate supplied for the current `main` baseline)
-- End commit: pending; will be recorded in the local A0 Git commit
+- End commit: `68c9e527284bd7ff63cb343145a43f5315ff0bed`
 - Date: 2026-09-13
 - Executor: Codex
 
