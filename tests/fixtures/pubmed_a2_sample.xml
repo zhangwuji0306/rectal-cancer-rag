@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PubmedArticleSet xmlns="https://www.ncbi.nlm.nih.gov/pubmed/">
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">1001</PMID>
+      <Article PubModel="Electronic">
+        <ArticleTitle>Magnetic <i>resonance</i> imaging in rectal cancer: a pilot study.</ArticleTitle>
+        <Journal>
+          <ISSN IssnType="Electronic">2045-2322</ISSN>
+          <JournalIssue CitedMedium="Internet">
+            <Volume>12</Volume>
+            <Issue>3</Issue>
+            <PubDate><Year>2024</Year><Month>Apr</Month><Day>5</Day></PubDate>
+          </JournalIssue>
+          <Title>Scientific Reports</Title>
+          <ISOAbbreviation>Sci Rep</ISOAbbreviation>
+        </Journal>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+        </PublicationTypeList>
+        <AuthorList CompleteYN="Y">
+          <Author ValidYN="Y"><LastName>Smith</LastName><ForeName>Andrew B</ForeName><Initials>AB</Initials></Author>
+          <Author ValidYN="Y"><LastName>Jones</LastName><ForeName>Li</ForeName><Initials>L</Initials></Author>
+        </AuthorList>
+        <ELocationID EIdType="doi" ValidYN="Y">10.1038/s41598-024-12345-6</ELocationID>
+      </Article>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">1001</ArticleId>
+        <ArticleId IdType="doi">10.1038/s41598-024-12345-6</ArticleId>
+        <ArticleId IdType="pmc">PMC1234567</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="Publisher" Owner="NLM">
+      <PMID Version="1">1002</PMID>
+      <Article PubModel="Electronic">
+        <ArticleTitle>Second article with incomplete optional identifiers.</ArticleTitle>
+        <Journal>
+          <ISSN IssnType="Print">1234-5678</ISSN>
+          <JournalIssue><PubDate><MedlineDate>2023 Jan-Feb</MedlineDate></PubDate></JournalIssue>
+          <ISOAbbreviation>Example J</ISOAbbreviation>
+        </Journal>
+        <Language>eng</Language>
+        <PublicationTypeList><PublicationType>Review</PublicationType></PublicationTypeList>
+        <AuthorList CompleteYN="Y">
+          <Author ValidYN="Y"><LastName>Lee</LastName><Initials>JY</Initials></Author>
+        </AuthorList>
+      </Article>
+    </MedlineCitation>
+    <PubmedData/>
+  </PubmedArticle>
+</PubmedArticleSet>
