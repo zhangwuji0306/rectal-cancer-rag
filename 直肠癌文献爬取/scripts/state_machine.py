@@ -419,7 +419,9 @@ def derive_document_status(
     if current == "excluded":
         return "excluded"
     if not rows:
-        return "metadata_only" if metadata_available else "pending"
+        if current == "fulltext_ready":
+            return "metadata_only" if metadata_available else "pending"
+        return current
     if any(_attempt_is_success(attempt) for attempt in rows):
         return "fulltext_ready"
     if any(

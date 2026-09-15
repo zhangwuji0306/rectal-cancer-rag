@@ -233,6 +233,23 @@ class A3StateMachineTests(unittest.TestCase):
             "metadata_only",
         )
 
+    def test_zero_attempts_preserve_activity_state(self):
+        for current_status in (
+            "metadata_ready",
+            "oa_resolved",
+            "fetching",
+            "retryable_error",
+        ):
+            with self.subTest(current_status=current_status):
+                self.assertEqual(
+                    state.derive_document_status(
+                        [],
+                        current_status=current_status,
+                        metadata_available=True,
+                    ),
+                    current_status,
+                )
+
     def test_current_fulltext_http_200_without_validation_degrades_to_metadata_only(self):
         self.assertEqual(
             state.derive_document_status(
