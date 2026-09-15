@@ -115,7 +115,7 @@ class A3StateMachineTests(unittest.TestCase):
             )
             attempt = self.fetch_attempt(db, result["attempt_id"])
             row = self.task(db, 3001)
-            self.assertEqual(attempt["outcome"], "success")
+            self.assertEqual(attempt["outcome"], state.PERSISTED_FULLTEXT_OUTCOME)
             self.assertIsNone(attempt["error_class"])
             self.assertEqual(attempt["retryable"], 0)
             self.assertEqual(row["status"], "fulltext_ready")
@@ -188,18 +188,141 @@ class A3StateMachineTests(unittest.TestCase):
             self.make_db(db, status="metadata_ready", metadata=True)
             with self.assertRaises(state.StateTransitionError):
                 state.transition_task_status(
-                    3001, "fulltext_ready", db_path=db
+                    3001,
+                    "fulltext_ready",
+                    db_path=db,
+                    file_valid=True,
+                    bibliographic_match=True,
                 )
             self.assertEqual(self.task(db, 3001)["status"], "metadata_ready")
-            result = state.transition_task_status(
+            state.record_fetch_attempt(
                 3001,
-                "fulltext_ready",
+                "source-a",
                 db_path=db,
+                http_status=200,
+                outcome="success",
                 file_valid=True,
                 bibliographic_match=True,
             )
+            result = state.transition_task_status(
+                3001, "fulltext_ready", db_path=db
+            )
             self.assertEqual(result["to"], "fulltext_ready")
             self.assertEqual(self.task(db, 3001)["status"], "fulltext_ready")
+
+    def test_fulltext_self_transition_requires_dual_validation(self):
+        self.assertFalse(
+            state.can_transition("fulltext_ready", "fulltext_ready")
+        )
+        with self.assertRaises(state.StateTransitionError):
+            state.transition_status("fulltext_ready", "fulltext_ready")
+        self.assertTrue(
+            state.can_transition(
+                "fulltext_ready",
+                "fulltext_ready",
+                file_valid=True,
+                bibliographic_match=True,
+            )
+        )
+
+    def test_current_fulltext_without_attempts_degrades_to_metadata_only(self):
+        self.assertEqual(
+            state.derive_document_status(
+                [], current_status="fulltext_ready", metadata_available=True
+            ),
+            "metadata_only",
+        )
+
+    def test_current_fulltext_http_200_without_validation_degrades_to_metadata_only(self):
+        self.assertEqual(
+            state.derive_document_status(
+                [
+                    {
+                        "http_status": 200,
+                        "outcome": "success",
+                        "error_class": None,
+                    }
+                ],
+                current_status="fulltext_ready",
+                metadata_available=True,
+            ),
+            "metadata_only",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db, status="fulltext_ready", metadata=True)
+            result = state.record_fetch_attempt(
+                3001,
+                "source-a",
+                db_path=db,
+                http_status=200,
+                outcome="success",
+            )
+            self.assertEqual(result["status"], "metadata_only")
+            self.assertEqual(self.task(db, 3001)["status"], "metadata_only")
+
+    def test_current_fulltext_with_dual_validation_remains_fulltext_ready(self):
+        self.assertEqual(
+            state.derive_document_status(
+                [
+                    {
+                        "http_status": 200,
+                        "outcome": "success",
+                        "error_class": None,
+                        "file_valid": True,
+                        "bibliographic_match": True,
+                    }
+                ],
+                current_status="fulltext_ready",
+                metadata_available=True,
+            ),
+            "fulltext_ready",
+        )
+
+    def test_dual_validation_round_trips_through_sqlite(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db, status="fetching", metadata=True)
+            result = state.record_fetch_attempt(
+                3001,
+                "source-a",
+                db_path=db,
+                http_status=200,
+                outcome="success",
+                file_valid=True,
+                bibliographic_match=True,
+            )
+            attempt = self.fetch_attempt(db, result["attempt_id"])
+            self.assertEqual(attempt["outcome"], state.PERSISTED_FULLTEXT_OUTCOME)
+
+            # record_fetch_attempt has closed its write connection. This new
+            # read proves derivation uses the persisted marker, not call-local
+            # validation flags or the current task status.
+            conn = sqlite3.connect(db)
+            conn.execute(
+                "UPDATE tasks SET status='metadata_only' WHERE pmid=?", (3001,)
+            )
+            conn.commit()
+            conn.close()
+            self.assertEqual(
+                state.derive_task_status(3001, db_path=db), "fulltext_ready"
+            )
+
+    def test_direct_fulltext_transition_cannot_use_caller_flags_as_proof(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db, status="fulltext_ready", metadata=True)
+            self.assertEqual(
+                state.derive_task_status(3001, db_path=db), "metadata_only"
+            )
+            with self.assertRaises(state.StateTransitionError):
+                state.transition_task_status(
+                    3001,
+                    "fulltext_ready",
+                    db_path=db,
+                    file_valid=True,
+                    bibliographic_match=True,
+                )
 
     def test_failure_fetch_attempt_is_written_and_marks_retryable_error(self):
         with tempfile.TemporaryDirectory() as tmp:

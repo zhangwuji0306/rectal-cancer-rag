@@ -100,14 +100,23 @@ class ErrorTaxonomyError(ValueError):
 
 # The transition table permits direct observations from a source request while
 # retaining terminal-state protection. A later source success can therefore
-# promote a metadata-only task, while archived/excluded tasks cannot silently
-# re-enter acquisition.
+# promote a metadata-only task, while an unverified derivation can conservatively
+# downgrade a stale fulltext_ready state.
 STATE_TRANSITIONS = {
     "pending": frozenset(CANONICAL_STATES),
     "metadata_ready": frozenset(CANONICAL_STATES),
     "oa_resolved": frozenset(CANONICAL_STATES),
     "fetching": frozenset(CANONICAL_STATES),
-    "fulltext_ready": frozenset({"fulltext_ready", "archived"}),
+    "fulltext_ready": frozenset(
+        {
+            "fulltext_ready",
+            "metadata_only",
+            "retryable_error",
+            "pending",
+            "excluded",
+            "archived",
+        }
+    ),
     "metadata_only": frozenset(CANONICAL_STATES),
     "retryable_error": frozenset(CANONICAL_STATES),
     "excluded": frozenset({"excluded", "archived"}),
@@ -142,6 +151,11 @@ HTTP_ERROR_MAPPING = {
 # tests and downstream callers without duplicating the taxonomy definition.
 CANONICAL_ERROR_CLASSES = ERROR_CLASSES
 HTTP_MAPPING = HTTP_ERROR_MAPPING
+
+# `fetch_attempts` is A1-owned and intentionally has no validation columns.
+# This outcome is therefore the durable A3 marker emitted only after the
+# caller supplies both validation results for a successful source request.
+PERSISTED_FULLTEXT_OUTCOME = "fulltext_ready"
 
 
 def is_state(value: str) -> bool:
@@ -272,7 +286,6 @@ def can_transition(
     validate_state(new)
     if (
         new == "fulltext_ready"
-        and current != "fulltext_ready"
         and not _has_fulltext_validation(file_valid, bibliographic_match)
     ):
         return False
@@ -296,7 +309,7 @@ def transition_status(
         file_valid=file_valid,
         bibliographic_match=bibliographic_match,
     ):
-        if new == "fulltext_ready" and current != "fulltext_ready":
+        if new == "fulltext_ready":
             raise StateTransitionError(
                 "fulltext_ready requires file_valid=True and "
                 "bibliographic_match=True"
@@ -342,13 +355,19 @@ def _attempt_has_fulltext_validation(attempt: Mapping[str, Any]) -> bool:
 
 
 def _attempt_is_success(attempt: Mapping[str, Any]) -> bool:
+    outcome = str(_attempt_value(attempt, "outcome", "") or "").strip().lower()
+    if outcome == PERSISTED_FULLTEXT_OUTCOME:
+        # The marker is written by record_fetch_attempt only after dual
+        # validation. Reject malformed rows that also carry an error.
+        return _attempt_error_class(attempt) is None and not _truthy(
+            _attempt_value(attempt, "retryable")
+        )
     # A source-level 2xx response is only a fetched response. A document-level
     # fulltext_ready state requires both validation results, which are supplied
     # by the A6 caller and intentionally not computed here.
     if not _attempt_has_fulltext_validation(attempt):
         return False
-    outcome = str(_attempt_value(attempt, "outcome", "") or "").strip().lower()
-    if outcome in {"success", "succeeded", "fulltext_ready"}:
+    if outcome in {"success", "succeeded"}:
         return True
     status = _attempt_value(attempt, "http_status")
     return isinstance(status, int) and 200 <= status < 300 and not _attempt_value(
@@ -399,10 +418,8 @@ def derive_document_status(
         return "archived"
     if current == "excluded":
         return "excluded"
-    if current == "fulltext_ready":
-        return "fulltext_ready"
     if not rows:
-        return current
+        return "metadata_only" if metadata_available else "pending"
     if any(_attempt_is_success(attempt) for attempt in rows):
         return "fulltext_ready"
     if any(
@@ -461,6 +478,19 @@ def _transition_in_connection(
     if row is None:
         raise ValueError(f"task PMID {pmid} does not exist")
     current = _canonical_current_status(row["status"])
+    if new_status == "fulltext_ready":
+        attempts = conn.execute(
+            "SELECT * FROM fetch_attempts WHERE pmid=? ORDER BY started_at, attempt_id",
+            (pmid,),
+        ).fetchall()
+        if not any(_attempt_is_success(attempt) for attempt in attempts):
+            raise StateTransitionError(
+                "fulltext_ready requires a persisted dual-validated fetch_attempt"
+            )
+        # The persisted qualifying attempt is the source of truth for this
+        # database transition; caller flags cannot be the sole proof.
+        file_valid = True
+        bibliographic_match = True
     transition_status(
         current,
         new_status,
@@ -582,6 +612,14 @@ def record_fetch_attempt(
     )
     stored_outcome = classification.outcome
     stored_error_class = classification.error_class
+    if (
+        classification.outcome == "success"
+        and classification.error_class is None
+        and _has_fulltext_validation(file_valid, bibliographic_match)
+    ):
+        # Persist the document-level acceptance result in the existing A1
+        # outcome column so it survives closing and reopening SQLite.
+        stored_outcome = PERSISTED_FULLTEXT_OUTCOME
     if error_detail is None and exception is not None:
         error_detail = str(exception)
     started_at = started_at or utc_now()
@@ -633,31 +671,20 @@ def record_fetch_attempt(
             (pmid,),
         ).fetchall()
         # Schema v2 intentionally remains A1-owned and has no validation
-        # columns. Keep the current caller-supplied evidence attached in
-        # memory for this atomic derivation; an unannotated stored success is
-        # therefore never treated as validated on a later derivation.
+        # columns. The newly inserted row carries the durable fulltext marker
+        # when, and only when, the caller supplied dual validation.
         attempts = [dict(row) for row in attempt_rows]
-        for attempt in attempts:
-            if attempt.get("attempt_id") == attempt_id:
-                attempt["file_valid"] = file_valid
-                attempt["bibliographic_match"] = bibliographic_match
         new_status = derive_document_status(
             attempts,
             current_status=task["status"],
             metadata_available=_task_has_metadata(task),
         )
         current_status = _canonical_current_status(task["status"])
-        validated_attempt = next(
-            (attempt for attempt in attempts if _attempt_is_success(attempt)),
-            None,
-        )
         transition_status(
             current_status,
             new_status,
-            file_valid=_attempt_value(validated_attempt, "file_valid"),
-            bibliographic_match=_attempt_value(
-                validated_attempt, "bibliographic_match"
-            ),
+            file_valid=True if new_status == "fulltext_ready" else None,
+            bibliographic_match=True if new_status == "fulltext_ready" else None,
         )
         timestamp = finished_at
         conn.execute(
