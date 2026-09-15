@@ -11,8 +11,9 @@ Phase: Phase A
 Depends on: A2 ACCEPT_WITH_FINDINGS（依赖满足）
 Base commit: fac2182a6b877466c1376c445d16a5788b44e9a9
 Remediation commit: f82e66399c1fad693c3fd54fe283593959b880c1
-End commit: f82e66399c1fad693c3fd54fe283593959b880c1
-END_COMMIT: f82e66399c1fad693c3fd54fe283593959b880c1
+End commit: HEAD（最终报告交接提交）
+END_COMMIT: HEAD
+Post-commit verification: `git rev-parse --verify HEAD` 在提交本报告后解析为最终交接提交的完整 commit ID；本报告使用 `HEAD` 符号引用以避免自引用哈希。
 Date: 2026-09-15
 Executor: Independent final A3 Worker（Luna / XHigh）
 Review status: PAUSED FOR INDEPENDENT REVIEW
