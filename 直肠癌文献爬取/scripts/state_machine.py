@@ -4,6 +4,8 @@
 This module owns document-level state derivation and source-level request
 classification. It deliberately does not discover OA sources, perform HTTP
 requests, download content, validate content, or implement retry orchestration.
+Full-text readiness consumes explicit validation evidence from the caller; it
+never treats a source-level HTTP success as content acceptance.
 """
 
 from __future__ import annotations
@@ -117,7 +119,9 @@ STATE_TRANSITIONS = {
 # emitted as canonical states and do not change the source_not_found rule.
 _LEGACY_STATUS_ALIASES = {
     "downloading": "fetching",
-    "done": "fulltext_ready",
+    # Legacy ``done`` has no A6 validation evidence. Keep it conservative
+    # rather than treating an unverified historical success as ready content.
+    "done": "metadata_only",
     "failed": "retryable_error",
     "not_found": "metadata_only",
 }
@@ -257,18 +261,46 @@ def classify_request(
     return _classification_for_error("unknown", outcome="failure")
 
 
-def can_transition(current: str, new: str) -> bool:
+def can_transition(
+    current: str,
+    new: str,
+    *,
+    file_valid: Any = None,
+    bibliographic_match: Any = None,
+) -> bool:
     validate_state(current)
     validate_state(new)
+    if (
+        new == "fulltext_ready"
+        and current != "fulltext_ready"
+        and not _has_fulltext_validation(file_valid, bibliographic_match)
+    ):
+        return False
     return new in STATE_TRANSITIONS[current]
 
 
-def transition_status(current: str, new: str) -> str:
+def transition_status(
+    current: str,
+    new: str,
+    *,
+    file_valid: Any = None,
+    bibliographic_match: Any = None,
+) -> str:
     """Validate and return a canonical state transition."""
 
     validate_state(current)
     validate_state(new)
-    if not can_transition(current, new):
+    if not can_transition(
+        current,
+        new,
+        file_valid=file_valid,
+        bibliographic_match=bibliographic_match,
+    ):
+        if new == "fulltext_ready" and current != "fulltext_ready":
+            raise StateTransitionError(
+                "fulltext_ready requires file_valid=True and "
+                "bibliographic_match=True"
+            )
         raise StateTransitionError(f"invalid state transition: {current} -> {new}")
     return new
 
@@ -293,7 +325,28 @@ def _truthy(value: Any) -> bool:
     return bool(value)
 
 
+def _has_fulltext_validation(
+    file_valid: Any,
+    bibliographic_match: Any,
+) -> bool:
+    """Return whether the caller supplied both required validation results."""
+
+    return _truthy(file_valid) and _truthy(bibliographic_match)
+
+
+def _attempt_has_fulltext_validation(attempt: Mapping[str, Any]) -> bool:
+    return _has_fulltext_validation(
+        _attempt_value(attempt, "file_valid"),
+        _attempt_value(attempt, "bibliographic_match"),
+    )
+
+
 def _attempt_is_success(attempt: Mapping[str, Any]) -> bool:
+    # A source-level 2xx response is only a fetched response. A document-level
+    # fulltext_ready state requires both validation results, which are supplied
+    # by the A6 caller and intentionally not computed here.
+    if not _attempt_has_fulltext_validation(attempt):
+        return False
     outcome = str(_attempt_value(attempt, "outcome", "") or "").strip().lower()
     if outcome in {"success", "succeeded", "fulltext_ready"}:
         return True
@@ -400,12 +453,20 @@ def _transition_in_connection(
     conn: sqlite3.Connection,
     pmid: int,
     new_status: str,
+    *,
+    file_valid: Any = None,
+    bibliographic_match: Any = None,
 ) -> tuple[str, str]:
     row = conn.execute("SELECT status FROM tasks WHERE pmid=?", (pmid,)).fetchone()
     if row is None:
         raise ValueError(f"task PMID {pmid} does not exist")
     current = _canonical_current_status(row["status"])
-    transition_status(current, new_status)
+    transition_status(
+        current,
+        new_status,
+        file_valid=file_valid,
+        bibliographic_match=bibliographic_match,
+    )
     return current, new_status
 
 
@@ -415,15 +476,23 @@ def transition_task_status(
     *,
     db_path: str | Path = DEFAULT_DB_PATH,
     updated_at: str | None = None,
+    file_valid: Any = None,
+    bibliographic_match: Any = None,
 ) -> dict[str, Any]:
-    """Apply one explicit canonical document-level state transition."""
+    """Apply one explicit state transition with a readiness precondition."""
 
     _require_pmid(pmid)
     validate_state(new_status)
     conn = _connect(db_path)
     try:
         conn.execute("BEGIN IMMEDIATE")
-        current, target = _transition_in_connection(conn, pmid, new_status)
+        current, target = _transition_in_connection(
+            conn,
+            pmid,
+            new_status,
+            file_valid=file_valid,
+            bibliographic_match=bibliographic_match,
+        )
         timestamp = updated_at or utc_now()
         conn.execute(
             "UPDATE tasks SET status=?, updated_at=? WHERE pmid=?",
@@ -491,12 +560,16 @@ def record_fetch_attempt(
     content_length: int | None = None,
     worker_id: str | None = None,
     attempt_id: str | None = None,
+    file_valid: Any = None,
+    bibliographic_match: Any = None,
 ) -> dict[str, Any]:
     """Record one source request and atomically update document status.
 
     Both successful and failed requests insert a row. The request's error
     class and source-level nature remain in fetch_attempts; the task's
     canonical status is separately derived from the complete attempt history.
+    ``file_valid`` and ``bibliographic_match`` are caller-provided A6 evidence;
+    omitted or false evidence can never promote the task to fulltext_ready.
     """
 
     _require_pmid(pmid)
@@ -555,17 +628,37 @@ def record_fetch_attempt(
                 worker_id,
             ),
         )
-        attempts = conn.execute(
+        attempt_rows = conn.execute(
             "SELECT * FROM fetch_attempts WHERE pmid=? ORDER BY started_at, attempt_id",
             (pmid,),
         ).fetchall()
+        # Schema v2 intentionally remains A1-owned and has no validation
+        # columns. Keep the current caller-supplied evidence attached in
+        # memory for this atomic derivation; an unannotated stored success is
+        # therefore never treated as validated on a later derivation.
+        attempts = [dict(row) for row in attempt_rows]
+        for attempt in attempts:
+            if attempt.get("attempt_id") == attempt_id:
+                attempt["file_valid"] = file_valid
+                attempt["bibliographic_match"] = bibliographic_match
         new_status = derive_document_status(
             attempts,
             current_status=task["status"],
             metadata_available=_task_has_metadata(task),
         )
         current_status = _canonical_current_status(task["status"])
-        transition_status(current_status, new_status)
+        validated_attempt = next(
+            (attempt for attempt in attempts if _attempt_is_success(attempt)),
+            None,
+        )
+        transition_status(
+            current_status,
+            new_status,
+            file_valid=_attempt_value(validated_attempt, "file_valid"),
+            bibliographic_match=_attempt_value(
+                validated_attempt, "bibliographic_match"
+            ),
+        )
         timestamp = finished_at
         conn.execute(
             """UPDATE tasks SET status=?, attempt_count=COALESCE(attempt_count, 0)+1,
@@ -591,6 +684,8 @@ def record_fetch_attempt(
             "retryable": classification.retryable,
             "source_level": classification.source_level,
             "retry_policy": classification.retry_policy,
+            "file_valid": _truthy(file_valid),
+            "bibliographic_match": _truthy(bibliographic_match),
         }
     except Exception:
         if conn.in_transaction:

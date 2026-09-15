@@ -110,6 +110,8 @@ class A3StateMachineTests(unittest.TestCase):
                 url="https://example.invalid/a",
                 content_type="application/pdf",
                 content_length=123,
+                file_valid=True,
+                bibliographic_match=True,
             )
             attempt = self.fetch_attempt(db, result["attempt_id"])
             row = self.task(db, 3001)
@@ -119,6 +121,85 @@ class A3StateMachineTests(unittest.TestCase):
             self.assertEqual(row["status"], "fulltext_ready")
             self.assertEqual(row["attempt_count"], 1)
             self.assertIsNone(row["last_error_class"])
+            self.assertTrue(result["file_valid"])
+            self.assertTrue(result["bibliographic_match"])
+
+    def test_http_200_without_dual_validation_does_not_promote_fulltext(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db, status="fetching", metadata=True)
+            result = state.record_fetch_attempt(
+                3001,
+                "source-a",
+                db_path=db,
+                http_status=200,
+                outcome="success",
+                url="https://example.invalid/a",
+                content_type="application/pdf",
+                content_length=123,
+            )
+            self.assertEqual(result["outcome"], "success")
+            self.assertFalse(result["file_valid"])
+            self.assertFalse(result["bibliographic_match"])
+            self.assertEqual(result["status"], "metadata_only")
+            self.assertNotEqual(self.task(db, 3001)["status"], "fulltext_ready")
+
+    def test_http_200_enters_fulltext_ready_only_when_both_validations_are_true(self):
+        base_attempt = {
+            "http_status": 200,
+            "outcome": "success",
+            "error_class": None,
+        }
+        for file_valid, bibliographic_match in (
+            (False, True),
+            (True, False),
+            (None, None),
+        ):
+            attempt = {
+                **base_attempt,
+                "file_valid": file_valid,
+                "bibliographic_match": bibliographic_match,
+            }
+            self.assertNotEqual(
+                state.derive_document_status(
+                    [attempt], current_status="fetching", metadata_available=True
+                ),
+                "fulltext_ready",
+            )
+
+        self.assertEqual(
+            state.derive_document_status(
+                [
+                    {
+                        **base_attempt,
+                        "file_valid": True,
+                        "bibliographic_match": True,
+                    }
+                ],
+                current_status="fetching",
+                metadata_available=True,
+            ),
+            "fulltext_ready",
+        )
+
+    def test_direct_fulltext_transition_requires_dual_validation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db, status="metadata_ready", metadata=True)
+            with self.assertRaises(state.StateTransitionError):
+                state.transition_task_status(
+                    3001, "fulltext_ready", db_path=db
+                )
+            self.assertEqual(self.task(db, 3001)["status"], "metadata_ready")
+            result = state.transition_task_status(
+                3001,
+                "fulltext_ready",
+                db_path=db,
+                file_valid=True,
+                bibliographic_match=True,
+            )
+            self.assertEqual(result["to"], "fulltext_ready")
+            self.assertEqual(self.task(db, 3001)["status"], "fulltext_ready")
 
     def test_failure_fetch_attempt_is_written_and_marks_retryable_error(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -148,7 +229,13 @@ class A3StateMachineTests(unittest.TestCase):
     def test_mixed_source_404_and_success_derives_fulltext_ready(self):
         attempts = [
             {"outcome": "not_found", "error_class": "source_not_found", "retryable": 0},
-            {"outcome": "success", "error_class": None, "retryable": 0},
+            {
+                "outcome": "success",
+                "error_class": None,
+                "retryable": 0,
+                "file_valid": True,
+                "bibliographic_match": True,
+            },
         ]
         self.assertEqual(
             state.derive_document_status(
@@ -185,10 +272,27 @@ class A3StateMachineTests(unittest.TestCase):
         self.assertEqual(len(state.CANONICAL_STATES), 9)
         self.assertEqual(len(state.ERROR_CLASSES), 15)
         self.assertTrue(state.can_transition("pending", "metadata_ready"))
-        self.assertTrue(state.can_transition("fetching", "fulltext_ready"))
+        self.assertFalse(state.can_transition("fetching", "fulltext_ready"))
+        self.assertTrue(
+            state.can_transition(
+                "fetching",
+                "fulltext_ready",
+                file_valid=True,
+                bibliographic_match=True,
+            )
+        )
         self.assertFalse(state.can_transition("archived", "pending"))
         with self.assertRaises(state.StateTransitionError):
             state.transition_status("archived", "pending")
+        self.assertFalse(state.can_transition("metadata_ready", "fulltext_ready"))
+        self.assertTrue(
+            state.can_transition(
+                "metadata_ready",
+                "fulltext_ready",
+                file_valid=True,
+                bibliographic_match=True,
+            )
+        )
         snapshot = state.taxonomy_snapshot()
         self.assertEqual(snapshot["http_mapping"]["404"]["error_class"], "source_not_found")
         self.assertTrue(snapshot["http_mapping"]["503"]["retryable"])
