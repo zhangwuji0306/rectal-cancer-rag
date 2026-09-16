@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+import importlib.util
 import io
 import json
 import logging
@@ -23,6 +25,7 @@ import fetch_fulltext as fetch  # noqa: E402
 import fulltext_client as client_module  # noqa: E402
 import ingest_pmids as ingest  # noqa: E402
 import oa_resolver as oa  # noqa: E402
+import pubmed_metadata as pubmed  # noqa: E402
 
 
 class A5FullTextTests(unittest.TestCase):
@@ -375,6 +378,211 @@ class A5FullTextTests(unittest.TestCase):
             line = next(line for line in env_lines if line.startswith(f"{key}="))
             self.assertEqual(line.split("=", 1)[1], "")
         self.assertNotIn("research@example.com", "\n".join(env_lines))
+
+
+    def test_each_fetch_attempt_keeps_its_own_error_detail(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, _ = self.sequence_transport([
+                self.response(503, headers={"Content-Type": "text/plain"}),
+                TimeoutError("second attempt read timeout"),
+            ])
+            result = self.make_client(db, transport, max_attempts=2).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://aws.example/PMC5001.xml",
+            )
+            self.assertFalse(result.ok)
+            conn = sqlite3.connect(db)
+            try:
+                rows = conn.execute(
+                    "SELECT http_status, error_class, error_detail "
+                    "FROM fetch_attempts ORDER BY rowid"
+                ).fetchall()
+            finally:
+                conn.close()
+            self.assertEqual(
+                rows,
+                [
+                    (503, "server_error", "HTTP 503"),
+                    (None, "timeout", "second attempt read timeout"),
+                ],
+            )
+            self.assertEqual(self.task(db)["last_error_detail"], "second attempt read timeout")
+
+    def test_raw_directory_write_and_publish_failures_leave_no_orphans(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            raw_root = Path(tmp) / "corpus_raw"
+            writer = fetch.RawCorpusWriter(raw_root)
+            candidate = {
+                "source": oa.PMC_AWS,
+                "url": "https://aws.example/PMC5001.xml",
+                "format": "xml",
+                "pmcid": "PMC5001",
+                "license": "CC BY 4.0",
+            }
+            response = self.response(200, b"<article>fault injection</article>")
+            for patch_target, message in (
+                ("_atomic_write_text", "source.json write failed"),
+                ("_publish_directory", "raw directory publish failed"),
+            ):
+                with self.subTest(failure=patch_target):
+                    with patch.object(
+                        fetch.RawCorpusWriter, patch_target,
+                        side_effect=OSError(message),
+                    ):
+                        with self.assertRaisesRegex(OSError, message):
+                            writer.write(
+                                pmid=self.pmid,
+                                task={"doi": "10.1000/a5"},
+                                candidate=candidate,
+                                response=response,
+                            )
+                    target = raw_root / f"PMID_{self.pmid}"
+                    self.assertFalse(target.exists())
+                    if raw_root.exists():
+                        self.assertEqual(list(raw_root.iterdir()), [])
+
+    def test_fetch_cli_builds_shared_client_from_configured_policy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            raw_root = Path(tmp) / "corpus_raw"
+            self.make_db(db)
+            conn = sqlite3.connect(db)
+            conn.execute(
+                "INSERT INTO source_candidates "
+                "(pmid, source, url, format, version, license, priority, resolved_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    self.pmid, oa.PMC_AWS, "https://aws.example/PMC5001.xml", "xml",
+                    "publishedVersion", "CC BY 4.0", 1, "2026-09-16T00:00:00+00:00",
+                ),
+            )
+            conn.commit()
+            conn.close()
+            config = {
+                "user_agent": "configured-a5-agent",
+                "retry": {
+                    "max_attempts": 1,
+                    "connect_timeout": 17.0,
+                    "read_timeout": 19.0,
+                    "backoff_base_seconds": 0.0,
+                    "backoff_max_seconds": 0.0,
+                    "jitter_seconds": 0.0,
+                },
+            }
+            transport, calls = self.sequence_transport([
+                self.response(200, b"<article>entrypoint</article>"),
+            ])
+            built_configs = []
+            original_from_config = client_module.UnifiedHttpClient.from_config
+
+            def build_client(received_config, **kwargs):
+                built_configs.append(received_config)
+                return original_from_config(
+                    received_config,
+                    transport=transport,
+                    sleeper=lambda _seconds: None,
+                    random_value=lambda: 0.0,
+                    **kwargs,
+                )
+
+            with patch.object(fetch, "load_project_config", return_value=config), \
+                 patch.object(fetch.UnifiedHttpClient, "from_config", side_effect=build_client), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                exit_code = fetch.run_cli([
+                    str(self.pmid), "--db", str(db), "--raw-root", str(raw_root),
+                ])
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(built_configs, [config])
+            self.assertEqual(calls[0][1]["connect_timeout"], 17.0)
+            self.assertEqual(calls[0][1]["read_timeout"], 19.0)
+            self.assertEqual(
+                json.loads(
+                    (raw_root / f"PMID_{self.pmid}" / "source.json").read_text(
+                        encoding="utf-8"
+                    )
+                )["source"],
+                oa.PMC_AWS,
+            )
+
+    def test_ncbi_email_is_not_loaded_from_legacy_environment(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, calls = self.sequence_transport([self.response(200, b"<PubmedArticleSet/>")])
+            shared_client = self.make_client(db, transport, max_attempts=1)
+            with patch.dict(os.environ, {"NCBI_EMAIL": "legacy-secret@example.org"}, clear=False):
+                pubmed.PubMedClient(http_client=shared_client, db_path=db).fetch([self.pmid])
+            self.assertEqual(len(calls), 1)
+            self.assertNotIn("legacy-secret@example.org", calls[0][0])
+            self.assertNotIn("email=", calls[0][0])
+
+    def test_legacy_downloader_official_paths_use_shared_configured_client(self):
+        spec = importlib.util.spec_from_file_location(
+            "a5_downloader", SCRIPTS / "03_downloader.py"
+        )
+        downloader = importlib.util.module_from_spec(spec)
+        self.assertIsNotNone(spec.loader)
+        spec.loader.exec_module(downloader)
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            pdf_dir = Path(tmp) / "pdfs"
+            self.make_db(db)
+            conn = sqlite3.connect(db)
+            conn.execute(
+                "UPDATE tasks SET pmc=?, doi=NULL WHERE pmid=?",
+                ("PMC5001", self.pmid),
+            )
+            conn.commit()
+            conn.close()
+            config = {
+                "user_agent": "configured-downloader-agent",
+                "min_pdf_size": 1,
+                "allow_scihub": False,
+                "retry": {
+                    "max_attempts": 1,
+                    "connect_timeout": 23.0,
+                    "read_timeout": 29.0,
+                    "backoff_base_seconds": 0.0,
+                    "backoff_max_seconds": 0.0,
+                    "jitter_seconds": 0.0,
+                },
+            }
+            transport, calls = self.sequence_transport([
+                self.response(200, b"%PDF-1.4\\n%%EOF", {"Content-Type": "application/pdf"}),
+            ])
+            built_configs = []
+            original_from_config = downloader.UnifiedHttpClient.from_config
+
+            def build_client(received_config, **kwargs):
+                built_configs.append(received_config)
+                return original_from_config(
+                    received_config,
+                    transport=transport,
+                    sleeper=lambda _seconds: None,
+                    random_value=lambda: 0.0,
+                    **kwargs,
+                )
+
+            with patch.object(downloader, "setup_logger", return_value=logging.getLogger("a5-downloader-test")), \
+                 patch.object(downloader.UnifiedHttpClient, "from_config", side_effect=build_client):
+                crawler = downloader.Crawler(
+                    config, str(db), str(pdf_dir), workers=1
+                )
+            try:
+                path = crawler.try_europepmc({"pmid": self.pmid, "pmc": "PMC5001"})
+            finally:
+                crawler.conn.close()
+            self.assertEqual(built_configs, [config])
+            self.assertEqual(calls[0][1]["connect_timeout"], 23.0)
+            self.assertEqual(calls[0][1]["read_timeout"], 29.0)
+            self.assertTrue(Path(path).exists())
+            attempt = self.attempts(db)[0]
+            self.assertEqual(attempt["source"], "EuropePMC")
+            self.assertEqual(attempt["route"], "legacy:03:europepmc:pdf")
 
 
 if __name__ == "__main__":

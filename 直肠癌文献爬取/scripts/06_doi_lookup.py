@@ -19,6 +19,7 @@
 """
 
 import argparse
+import json
 import os
 import re
 import sqlite3
@@ -26,10 +27,9 @@ import sys
 import time
 import urllib.parse
 
-import requests
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import ROOT, load_config, similarity, now_str
+from fulltext_client import UnifiedHttpClient, UnifiedHttpError
 
 EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
 OPENALEX = 'https://api.openalex.org/works'
@@ -53,12 +53,16 @@ def _main_title(t):
 
 
 class Lookup:
-    def __init__(self, cfg):
+    def __init__(self, cfg, *, http_client=None, db_path=None):
         self.cfg = cfg
         self.min_sc = float(cfg.get('crossref_similarity', 0.85))
         mailto = os.environ.get('CROSSREF_MAILTO', '')
         self.ua = {'User-Agent': f'RectalCorpusBuilder/1.0 (mailto:{mailto})'}
         self.pubmed_cache = {}
+        self.http_client = http_client or UnifiedHttpClient.from_config(
+            cfg, db_path=db_path or os.path.join(ROOT, 'tasks.sqlite')
+        )
+        self.ncbi_api_key = os.environ.get('NCBI_API_KEY')
 
     # ------------------------------------------------------------ 校验
 
@@ -79,16 +83,36 @@ class Lookup:
 
     # ------------------------------------------------------------ 各来源
 
-    def esummary_meta(self, pmid):
+    def _json_request(self, pmid, endpoint, params, route, source, *, evidence_pmid=None):
+        evidence_pmid = pmid if evidence_pmid is None else evidence_pmid
+        if evidence_pmid is None:
+            raise ValueError("pmid is required for durable request evidence")
+        query = urllib.parse.urlencode(params)
+        result = self.http_client.get(
+            pmid=int(evidence_pmid), source=source,
+            url=f"{endpoint}?{query}" if query else endpoint,
+            route=route, identifier=str(pmid), headers=self.ua,
+            success_handler=lambda response: json.loads(response.body.decode("utf-8")),
+        )
+        if not result.ok:
+            raise UnifiedHttpError(result)
+        return result.artifact
+
+    def esummary_meta(self, pmid, *, evidence_pmid=None):
         """esummary 元数据（标题/作者/年份/DOI），带缓存。"""
         if pmid in self.pubmed_cache:
             return self.pubmed_cache[pmid]
         meta = None
         try:
-            r = requests.get(f'{EUTILS}/esummary.fcgi',
-                             params={'db': 'pubmed', 'id': pmid, 'retmode': 'json'},
-                             timeout=30, headers=self.ua)
-            res = r.json().get('result', {}).get(str(pmid), {})
+            params = {'db': 'pubmed', 'id': pmid, 'retmode': 'json'}
+            if self.ncbi_api_key:
+                params['api_key'] = self.ncbi_api_key
+            payload = self._json_request(
+                pmid, f"{EUTILS}/esummary.fcgi", params,
+                "doi_lookup:ncbi:esummary", "NCBI",
+                evidence_pmid=evidence_pmid,
+            )
+            res = payload.get('result', {}).get(str(pmid), {})
             doi = ''
             for a in res.get('articleids', []):
                 if a.get('idtype') == 'doi' and a.get('value'):
@@ -102,29 +126,33 @@ class Lookup:
         self.pubmed_cache[pmid] = meta
         return meta
 
-    def esearch_hits(self, title):
+    def esearch_hits(self, title, *, pmid=None):
         """PubMed 标题检索 → 候选 PMID 列表。"""
         try:
             term = '"' + title.replace('"', ' ') + '"[Title]'
-            r = requests.get(f'{EUTILS}/esearch.fcgi',
-                             params={'db': 'pubmed', 'term': term, 'retmode': 'json', 'retmax': 5},
-                             timeout=30, headers=self.ua)
-            if r.status_code != 200:
-                return []
-            return r.json().get('esearchresult', {}).get('idlist', [])[:3]
+            params = {'db': 'pubmed', 'term': term, 'retmode': 'json', 'retmax': 5}
+            if self.ncbi_api_key:
+                params['api_key'] = self.ncbi_api_key
+            payload = self._json_request(
+                pmid, f"{EUTILS}/esearch.fcgi", params,
+                "doi_lookup:ncbi:esearch", "NCBI"
+            )
+            return payload.get('esearchresult', {}).get('idlist', [])[:3]
         except Exception:
             return []
 
-    def openalex_hits(self, title):
+    def openalex_hits(self, title, *, pmid=None):
         """OpenAlex 标题检索 → [(doi, title, year, authors)]（多变体查询去重）。"""
         out = {}
         for q in {title, _main_title(title)}:
             try:
-                r = requests.get(OPENALEX,
-                                 params={'filter': 'title.search:' + q, 'per-page': 8,
-                                         'select': 'doi,title,publication_year,authorships'},
-                                 timeout=30, headers=self.ua)
-                items = r.json().get('results', [])
+                payload = self._json_request(
+                    pmid, OPENALEX,
+                    {'filter': 'title.search:' + q, 'per-page': 8,
+                     'select': 'doi,title,publication_year,authorships'},
+                    "doi_lookup:openalex:works", "OpenAlex"
+                )
+                items = payload.get('results', [])
             except Exception:
                 items = []
             for it in items:
@@ -138,15 +166,15 @@ class Lookup:
             time.sleep(0.2)
         return list(out.values())
 
-    def crossref_hits(self, title):
+    def crossref_hits(self, title, *, pmid=None):
         """Crossref 标题反查 → [(doi, title, year, authors)]。"""
         try:
-            r = requests.get(CROSSREF,
-                             params={'query.bibliographic': title, 'rows': 8},
-                             timeout=30, headers=self.ua)
-            if r.status_code != 200:
-                return []
-            items = r.json().get('message', {}).get('items', [])
+            payload = self._json_request(
+                pmid, CROSSREF,
+                {'query.bibliographic': title, 'rows': 8},
+                "doi_lookup:crossref:works", "Crossref"
+            )
+            items = payload.get('message', {}).get('items', [])
         except Exception:
             return []
         out = []
@@ -158,7 +186,6 @@ class Lookup:
             authors = [a.get('family', '') for a in it.get('author', [])]
             out.append((doi, ct, cy, authors))
         return out
-
     # ------------------------------------------------------------ 主流程
 
     def lookup(self, pmid, title, year, authors):
@@ -168,8 +195,8 @@ class Lookup:
         if meta['doi']:
             return meta['doi'], 'esummary(PMID)', '同记录，直接采信'
         # 2) esearch 标题匹配（PubMed 库内）
-        for pid in self.esearch_hits(title):
-            m = self.esummary_meta(pid)
+        for pid in self.esearch_hits(title, pmid=pmid):
+            m = self.esummary_meta(pid, evidence_pmid=pmid)
             if not m['doi']:
                 continue
             ok, why = self.verify(m['title'], m['year'], m['authors'], title, year, authors)
@@ -177,13 +204,13 @@ class Lookup:
                 return m['doi'], f'esearch[Title](PMID {pid})', why
             time.sleep(0.3)
         # 3) OpenAlex
-        for doi, ct, cy, ca in self.openalex_hits(title):
+        for doi, ct, cy, ca in self.openalex_hits(title, pmid=pmid):
             ok, why = self.verify(ct, cy, ca, title, year, authors)
             if ok:
                 return re.sub(r'^https?://doi\.org/', '', doi), 'OpenAlex', why
             time.sleep(0.3)
         # 4) Crossref
-        for doi, ct, cy, ca in self.crossref_hits(title):
+        for doi, ct, cy, ca in self.crossref_hits(title, pmid=pmid):
             ok, why = self.verify(ct, cy, ca, title, year, authors)
             if ok:
                 return doi, 'Crossref', why
@@ -201,7 +228,7 @@ def main():
     args = ap.parse_args()
 
     cfg = load_config()
-    lu = Lookup(cfg)
+    lu = Lookup(cfg, db_path=args.db)
 
     conn = sqlite3.connect(args.db)
     rows = conn.execute("SELECT pmid, title, year FROM tasks WHERE doi IS NULL OR doi=''").fetchall()

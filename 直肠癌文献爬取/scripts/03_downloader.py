@@ -25,6 +25,7 @@
 
 import argparse
 import html
+import json
 import os
 import random
 import re
@@ -39,6 +40,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (ROOT, abs_url, connect_db, is_challenge, load_config, now_str,
                     setup_logger, similarity, validate_pdf)
 from altcha_solver import solve_altcha
+from fulltext_client import UnifiedHttpClient, UnifiedHttpError
 
 NOT_FOUND_MARKERS = ('article not found', 'ничего не найдено', 'no paper found',
                      'не найдена', 'not found', 'нет статьи')
@@ -172,6 +174,7 @@ class Crawler:
         if self.allow_scihub and not self.verify_ssl:
             raise ValueError('allow_scihub requires verify_ssl=true')
         self.conn = connect_db(db_path)
+        self.http_client = UnifiedHttpClient.from_config(cfg, db_path=db_path)
         self.db_lock = threading.Lock()
         self.log = setup_logger('downloader', os.path.join(ROOT, 'logs', 'downloader.log'))
         self.pool = None
@@ -321,7 +324,9 @@ class Crawler:
             else:
                 cdoi = None
                 try:
-                    cdoi = self.crossref_lookup(task['title'], task['year'])
+                    cdoi = self.crossref_lookup(
+                        task['title'], task['year'], pmid=task['pmid']
+                    )
                 except Exception as e:
                     self.log.warning('crossref 查询异常 PMID %s: %s', task['pmid'], e)
                 if cdoi:
@@ -358,6 +363,13 @@ class Crawler:
 
     # ---------------------------------------------------------------- 通道实现
 
+    @staticmethod
+    def _official_failure(result, label):
+        error = UnifiedHttpError(result)
+        if error.error_class == 'source_not_found':
+            raise NotfoundError(f'{label}: {error}')
+        raise NetworkError(f'{label}: {error}')
+
     def try_europepmc(self, task):
         """Europe PMC OA 全文 PDF（官方通道，无反爬）。
 
@@ -374,15 +386,29 @@ class Crawler:
         pmcid = task['pmc']
         if not pmcid:
             try:
-                r = requests.get(
-                    'https://www.ebi.ac.uk/europepmc/webservices/rest/search',
-                    params={'query': f'EXT_ID:{task["pmid"]}', 'format': 'json',
-                            'resultType': 'core'},
-                    timeout=30, headers={'User-Agent': self.cfg['user_agent']})
-                res = r.json().get('resultList', {}).get('result', []) if r.status_code == 200 else []
-            except requests.RequestException as e:
-                raise NetworkError(f'europepmc network: {e}')
-            except ValueError:
+                query = urllib.parse.urlencode({
+                    'query': f'EXT_ID:{task["pmid"]}',
+                    'format': 'json',
+                    'resultType': 'core',
+                })
+                result = self.http_client.get(
+                    pmid=int(task['pmid']),
+                    source='EuropePMC',
+                    url=f'https://www.ebi.ac.uk/europepmc/webservices/rest/search?{query}',
+                    route='legacy:03:europepmc:search',
+                    identifier=str(task['pmid']),
+                    headers={'User-Agent': self.cfg['user_agent'],
+                             'Accept': 'application/json'},
+                    success_handler=lambda response: json.loads(
+                        response.body.decode('utf-8')
+                    ),
+                )
+                if not result.ok:
+                    self._official_failure(result, 'europepmc search')
+                res = result.artifact.get('resultList', {}).get('result', [])
+            except (NetworkError, NotfoundError):
+                raise
+            except (TypeError, ValueError, json.JSONDecodeError):
                 res = []
             if not res:
                 raise NotfoundError('europepmc 未收录')
@@ -395,17 +421,27 @@ class Crawler:
 
         url = f'https://europepmc.org/articles/{pmcid}?pdf=render'
         try:
-            r = requests.get(url, timeout=int(self.cfg.get('download_timeout', 90)),
-                             headers={'User-Agent': self.cfg['user_agent'],
-                                      'Accept': 'application/pdf,*/*'})
-            data = r.content
-        except requests.RequestException as e:
-            raise NetworkError(f'europepmc pdf 网络错误: {e}')
+            result = self.http_client.get(
+                pmid=int(task['pmid']),
+                source='EuropePMC',
+                url=url,
+                route='legacy:03:europepmc:pdf',
+                identifier=str(pmcid),
+                headers={'User-Agent': self.cfg['user_agent'],
+                         'Accept': 'application/pdf,*/*'},
+                success_handler=lambda response: response.body,
+            )
+            if not result.ok:
+                self._official_failure(result, 'europepmc pdf')
+            data = bytes(result.artifact)
+            response_status = result.response.status_code if result.response else 200
+        except (NetworkError, NotfoundError):
+            raise
         if validate_pdf(data, self.cfg['min_pdf_size']):
             return self._save_pdf(task['pmid'], data)
-        if r.status_code == 500:
+        if response_status == 500:
             raise NotfoundError('europepmc 非 OA（render 500）')
-        raise NotfoundError(f'europepmc 非 PDF（http {r.status_code}, {len(data)}B）')
+        raise NotfoundError(f'europepmc 非 PDF（http {response_status}, {len(data)}B）')
 
     def _scihub_by_key(self, key, task, verify_title):
         """按 DOI 或标题检索 sci-hub 并下载。verify_title=True 时校验文章页标题。"""
@@ -491,7 +527,7 @@ class Crawler:
                 f'pdf 无效（http {r.status_code}, {len(data)}B, {content_type or "无类型"}）')
         raise last or PdfInvalidError('pdf 下载失败')
 
-    def crossref_lookup(self, title, year):
+    def crossref_lookup(self, title, year, *, pmid=None):
         """Crossref 标题反查 DOI；相似度 >= crossref_similarity 才采信。"""
         with self.crossref_lock:
             wait = 1.0 - (time.time() - self.crossref_last)
@@ -503,10 +539,23 @@ class Crawler:
         mailto = os.environ.get('CROSSREF_MAILTO', '')
         ua = f'RectalCorpusBuilder/1.0 (mailto:{mailto})'
         try:
-            r = requests.get(url, params=params, timeout=30, headers={'User-Agent': ua})
-            if r.status_code != 200:
+            if pmid is None:
+                raise ValueError('pmid is required for durable request evidence')
+            query = urllib.parse.urlencode(params)
+            result = self.http_client.get(
+                pmid=int(pmid),
+                source='Crossref',
+                url=f'{url}?{query}',
+                route='legacy:03:crossref:works',
+                identifier=str(pmid),
+                headers={'User-Agent': ua, 'Accept': 'application/json'},
+                success_handler=lambda response: json.loads(
+                    response.body.decode('utf-8')
+                ),
+            )
+            if not result.ok:
                 return None
-            items = r.json().get('message', {}).get('items', [])
+            items = result.artifact.get('message', {}).get('items', [])
         except Exception as e:
             self.log.warning('crossref 请求失败: %s', e)
             return None

@@ -12,15 +12,14 @@ import json
 import os
 import re
 import unicodedata
-import urllib.error
 import urllib.parse
-import urllib.request
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from a1_schema import DEFAULT_DB_PATH, _connect, migrate_to_v2, utc_now
+from fulltext_client import UnifiedHttpClient, UnifiedHttpError, load_project_config
 from ingest_pmids import normalize_pmids
 
 
@@ -365,14 +364,20 @@ class PubMedClient:
         self,
         *,
         endpoint: str = PUBMED_EFETCH_URL,
-        timeout: float = 30.0,
+        timeout: float | None = None,
         email: str | None = None,
         api_key: str | None = None,
+        http_client: UnifiedHttpClient | None = None,
+        config: Mapping[str, Any] | None = None,
+        db_path: str | Path = DEFAULT_DB_PATH,
     ) -> None:
         self.endpoint = endpoint
         self.timeout = timeout
-        self.email = email or os.environ.get("NCBI_EMAIL")
+        self.email = email
         self.api_key = api_key or os.environ.get("NCBI_API_KEY")
+        self.http_client = http_client or UnifiedHttpClient.from_config(
+            config if config is not None else load_project_config(), db_path=db_path
+        )
 
     def fetch(self, pmids: Sequence[int]) -> bytes:
         query: dict[str, str] = {
@@ -384,15 +389,21 @@ class PubMedClient:
             query["email"] = self.email
         if self.api_key:
             query["api_key"] = self.api_key
-        request = urllib.request.Request(
-            f"{self.endpoint}?{urllib.parse.urlencode(query)}",
+        if not pmids:
+            raise ValueError("at least one PMID is required")
+        result = self.http_client.get(
+            pmid=int(pmids[0]),
+            source="NCBI",
+            url=f"{self.endpoint}?{urllib.parse.urlencode(query)}",
+            route="metadata:pubmed:efetch",
+            identifier=",".join(str(pmid) for pmid in pmids),
             headers={"User-Agent": "writing-rag-pubmed-metadata/1.0"},
+            success_handler=lambda response: response.body,
         )
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                return response.read()
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            raise PubMedFetchError(f"PubMed EFetch failed: {exc}") from exc
+        if not result.ok:
+            error = UnifiedHttpError(result)
+            raise PubMedFetchError(str(error)) from error
+        return bytes(result.artifact)
 
 
 def _call_fetcher(fetcher: Any, batch: list[int]) -> str | bytes:
@@ -441,7 +452,7 @@ def refresh_pubmed_metadata(
     db_path: str | Path = DEFAULT_DB_PATH,
     fetcher: Any | None = None,
     batch_size: int = DEFAULT_BATCH_SIZE,
-    timeout: float = 30.0,
+    timeout: float | None = None,
     email: str | None = None,
     api_key: str | None = None,
 ) -> dict[str, Any]:
@@ -456,7 +467,7 @@ def refresh_pubmed_metadata(
     if not isinstance(batch_size, int) or isinstance(batch_size, bool) or batch_size <= 0:
         raise ValueError("batch_size must be a positive integer")
     migrate_to_v2(db_path)
-    client = fetcher or PubMedClient(timeout=timeout, email=email, api_key=api_key)
+    client = fetcher or PubMedClient(timeout=timeout, email=email, api_key=api_key, db_path=db_path)
     result: dict[str, Any] = {
         "requested": len(normalized),
         "batches": 0,
@@ -553,7 +564,7 @@ def run_cli(argv: Sequence[str] | None = None, *, fetcher: Any | None = None) ->
     modes.add_argument("--all", action="store_true", help="explicitly refresh every PMID in tasks")
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH), help="SQLite database path")
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
-    parser.add_argument("--timeout", type=float, default=30.0)
+    parser.add_argument("--timeout", type=float)
     parser.add_argument("--email")
     parser.add_argument("--api-key")
     args = parser.parse_args(argv)

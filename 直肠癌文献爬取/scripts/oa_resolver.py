@@ -8,15 +8,14 @@ import json
 import os
 import re
 import sqlite3
-import urllib.error
 import urllib.parse
-import urllib.request
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from a1_schema import DEFAULT_DB_PATH, _connect, migrate_to_v2, utc_now
 from ingest_pmids import normalize_pmids
+from fulltext_client import UnifiedHttpClient, UnifiedHttpError, load_project_config
 from state_machine import classify_exception, classify_request, transition_task_status
 
 
@@ -443,13 +442,27 @@ class PmcAwsInventoryProvider:
         return result
 
 
-def _metadata_json(url: str, *, timeout: float = 30.0) -> Any:
-    request = urllib.request.Request(
-        url,
-        headers={"Accept": "application/json", "User-Agent": "writing-rag-oa-resolver/1.0"},
+def _metadata_json(
+    url: str,
+    *,
+    http_client: UnifiedHttpClient,
+    pmid: int,
+    source: str,
+    route: str,
+    identifier: str | None,
+) -> Any:
+    result = http_client.get(
+        pmid=pmid,
+        source=source,
+        url=url,
+        route=route,
+        identifier=identifier,
+        headers={"Accept": "application/json"},
+        success_handler=lambda response: json.loads(response.body.decode("utf-8")),
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        return json.loads(response.read().decode("utf-8"))
+    if not result.ok:
+        raise UnifiedHttpError(result)
+    return result.artifact
 
 
 def _result_payload(payload: Any) -> Any:
@@ -491,11 +504,15 @@ class EuropePmcClient:
         *,
         fetcher: Callable[[Mapping[str, Any]], Any] | None = None,
         endpoint: str = EUROPE_PMC_SEARCH_URL,
-        timeout: float = 30.0,
+        http_client: UnifiedHttpClient | None = None,
+        config: Mapping[str, Any] | None = None,
+        db_path: str | Path = DEFAULT_DB_PATH,
     ) -> None:
         self.fetcher = fetcher
         self.endpoint = endpoint
-        self.timeout = timeout
+        self.http_client = http_client or UnifiedHttpClient.from_config(
+            config if config is not None else load_project_config(), db_path=db_path
+        )
 
     def resolve(self, task: Mapping[str, Any]) -> list[dict[str, Any]]:
         pmcid = _pmcid(task)
@@ -510,7 +527,14 @@ class EuropePmcClient:
                 "resultType": "core",
                 "pageSize": "1",
             })
-            payload = _metadata_json(f"{self.endpoint}?{query}", timeout=self.timeout)
+            payload = _metadata_json(
+                f"{self.endpoint}?{query}",
+                http_client=self.http_client,
+                pmid=int(task["pmid"]),
+                source=EUROPE_PMC,
+                route="oa:europepmc:search",
+                identifier=pmcid,
+            )
         result: list[dict[str, Any]] = []
         for entry in _fulltext_xml_entries(payload):
             url = entry.get("url") or entry.get("fullTextXML")
@@ -544,12 +568,16 @@ class UnpaywallClient:
         email: str | None = None,
         fetcher: Callable[[Mapping[str, Any]], Any] | None = None,
         endpoint: str = UNPAYWALL_API_URL,
-        timeout: float = 30.0,
+        http_client: UnifiedHttpClient | None = None,
+        config: Mapping[str, Any] | None = None,
+        db_path: str | Path = DEFAULT_DB_PATH,
     ) -> None:
         self.email = email or os.environ.get("UNPAYWALL_EMAIL")
         self.fetcher = fetcher
         self.endpoint = endpoint
-        self.timeout = timeout
+        self.http_client = http_client or UnifiedHttpClient.from_config(
+            config if config is not None else load_project_config(), db_path=db_path
+        )
 
     def resolve(self, task: Mapping[str, Any]) -> list[dict[str, Any]]:
         doi = _text(task.get("doi"))
@@ -565,7 +593,12 @@ class UnpaywallClient:
             encoded_doi = urllib.parse.quote(doi, safe="")
             query = urllib.parse.urlencode({"email": self.email})
             payload = _metadata_json(
-                f"{self.endpoint}/{encoded_doi}?{query}", timeout=self.timeout
+                f"{self.endpoint}/{encoded_doi}?{query}",
+                http_client=self.http_client,
+                pmid=int(task["pmid"]),
+                source=UNPAYWALL,
+                route="oa:unpaywall:metadata",
+                identifier=doi,
             )
         if not isinstance(payload, Mapping):
             raise ValueError("Unpaywall response must be a JSON object")
@@ -619,8 +652,11 @@ class StaticSourceProvider:
 
 
 def _provider_failure(source: str, exc: BaseException) -> dict[str, Any]:
+    error_class = getattr(exc, "error_class", None)
     status = getattr(exc, "code", None)
-    if isinstance(status, int):
+    if error_class is not None:
+        classification = classify_request(error_class=error_class)
+    elif isinstance(status, int):
         classification = classify_request(http_status=status)
     else:
         classification = classify_exception(exc)
@@ -808,11 +844,19 @@ class OAResolver:
         unpaywall: Any | None = None,
         publisher: Any | None = None,
         institutional_repository: Any | None = None,
+        http_client: UnifiedHttpClient | None = None,
+        config: Mapping[str, Any] | None = None,
+        db_path: str | Path = DEFAULT_DB_PATH,
     ) -> None:
+        shared_client = http_client
+        if shared_client is None and (europe_pmc is None or unpaywall is None):
+            shared_client = UnifiedHttpClient.from_config(
+                config if config is not None else load_project_config(), db_path=db_path
+            )
         self.providers = {
             PMC_AWS: pmc_aws if pmc_aws is not None else PmcAwsInventoryProvider(),
-            EUROPE_PMC: europe_pmc if europe_pmc is not None else EuropePmcClient(),
-            UNPAYWALL: unpaywall if unpaywall is not None else UnpaywallClient(),
+            EUROPE_PMC: europe_pmc if europe_pmc is not None else EuropePmcClient(http_client=shared_client, db_path=db_path),
+            UNPAYWALL: unpaywall if unpaywall is not None else UnpaywallClient(http_client=shared_client, db_path=db_path),
             PUBLISHER: publisher,
             INSTITUTIONAL_REPOSITORY: institutional_repository,
         }
@@ -992,6 +1036,8 @@ def resolve_oa(
     publisher: Any | None = None,
     institutional_repository: Any | None = None,
     content_fetcher: Any | None = None,
+    http_client: UnifiedHttpClient | None = None,
+    config: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Public A4 entry point. All content acquisition remains out of scope."""
 
@@ -1001,6 +1047,9 @@ def resolve_oa(
         unpaywall=unpaywall,
         publisher=publisher,
         institutional_repository=institutional_repository,
+        http_client=http_client,
+        config=config,
+        db_path=db_path,
     )
     return resolver.resolve_pmids(
         pmids,
@@ -1067,7 +1116,6 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
     modes.add_argument("--all", action="store_true")
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH))
     parser.add_argument("--pmc-aws-inventory", type=Path)
-    parser.add_argument("--unpaywall-email")
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -1086,9 +1134,12 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
         PmcAwsInventoryProvider(inventory_path=args.pmc_aws_inventory)
         if args.pmc_aws_inventory else PmcAwsInventoryProvider()
     )
+    http_client = UnifiedHttpClient.from_config(
+        load_project_config(), db_path=args.db
+    )
     resolver = OAResolver(
         pmc_aws=pmc_provider,
-        unpaywall=UnpaywallClient(email=args.unpaywall_email),
+        http_client=http_client,
     )
     result = resolver.resolve_pmids(
         selected,

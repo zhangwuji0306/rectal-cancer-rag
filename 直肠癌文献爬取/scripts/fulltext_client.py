@@ -31,6 +31,15 @@ SENSITIVE_QUERY_KEYS = frozenset({
     "ncbi_api_key", "password", "secret", "token", "access_token",
 })
 SECRET_ENV_NAMES = ("CROSSREF_MAILTO", "UNPAYWALL_EMAIL", "NCBI_API_KEY")
+DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config.json"
+
+def load_project_config(config_path: str | Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
+    """Load the repository's canonical acquisition configuration."""
+    with Path(config_path).open(encoding="utf-8") as handle:
+        config = json.load(handle)
+    if not isinstance(config, dict):
+        raise ValueError("project config must be a JSON object")
+    return config
 
 
 def redact_text(value: Any) -> str | None:
@@ -142,6 +151,17 @@ class FetchResult:
     error_detail: str | None = None
     retry_after: str | None = None
     artifact: Any = None
+
+
+class UnifiedHttpError(RuntimeError):
+    """Expose a failed shared request without changing A3's taxonomy."""
+
+    def __init__(self, result: FetchResult) -> None:
+        self.result = result
+        self.error_class = result.error_class or "unknown"
+        self.code = result.response.status_code if result.response is not None else None
+        detail = result.error_detail or self.error_class
+        super().__init__(f"unified HTTP request failed ({self.error_class}): {detail}")
 
 
 Transport = Callable[..., HttpResponse]
@@ -264,6 +284,12 @@ class UnifiedHttpClient:
             **kwargs,
         )
 
+    @classmethod
+    def from_project_config(
+        cls, *, config_path: str | Path = DEFAULT_CONFIG_PATH, **kwargs: Any
+    ) -> "UnifiedHttpClient":
+        return cls.from_config(load_project_config(config_path), **kwargs)
+
     def _log(self, event: str, **fields: Any) -> None:
         payload = {"event": event, **fields}
         if "url" in payload:
@@ -309,15 +335,18 @@ class UnifiedHttpClient:
         url: str,
         route: str | None = None,
         identifier: str | None = None,
+        headers: Mapping[str, str] | None = None,
         success_handler: SuccessHandler | None = None,
     ) -> FetchResult:
         """Fetch one candidate and persist evidence for every transport call."""
         route = route or "fulltext"
         safe_url = redact_url(url)
-        headers = {
+        request_headers = {
             "Accept": "application/xml, text/xml, text/plain, text/html, application/pdf;q=0.9, */*;q=0.1",
             "User-Agent": self.user_agent,
         }
+        if headers:
+            request_headers.update({str(key): str(value) for key, value in headers.items()})
         last_response: HttpResponse | None = None
         last_error_class: str | None = None
         last_error_detail: str | None = None
@@ -330,13 +359,14 @@ class UnifiedHttpClient:
             retry_after: str | None = None
             classification = None
             artifact = None
+            attempt_error_detail: str | None = None
             try:
                 response = _coerce_response(
                     self.transport(
                         url,
                         connect_timeout=self.settings.connect_timeout,
                         read_timeout=self.settings.read_timeout,
-                        headers=headers,
+                        headers=request_headers,
                     ), url,
                 )
                 last_response = response
@@ -347,12 +377,12 @@ class UnifiedHttpClient:
                         try:
                             artifact = success_handler(response)
                         except Exception as write_error:
-                            error_detail = redact_text(str(write_error))
+                            attempt_error_detail = redact_text(str(write_error))
                             self._record(
                                 pmid=pmid, source=source, route=route, identifier=identifier,
                                 url=url, started_at=started_at, finished_at=utc_now(),
                                 response=response, outcome="failure", error_class="storage_error",
-                                error_detail=error_detail, exception=None,
+                                error_detail=attempt_error_detail, exception=None,
                                 retry_after=retry_after, next_retry_at=None,
                             )
                             self._log(
@@ -363,7 +393,7 @@ class UnifiedHttpClient:
                             )
                             return FetchResult(
                                 ok=False, response=response, attempts=attempt_number,
-                                error_class="storage_error", error_detail=error_detail,
+                                error_class="storage_error", error_detail=attempt_error_detail,
                                 retry_after=retry_after,
                             )
                     self._record(
@@ -381,13 +411,16 @@ class UnifiedHttpClient:
                     return FetchResult(
                         ok=True, response=response, attempts=attempt_number, artifact=artifact,
                     )
+                attempt_error_detail = f"HTTP {response.status_code}"
             except Exception as caught:
+                last_response = None
                 exception = _unwrap_exception(caught)
                 classification = classify_exception(exception)
-                last_error_detail = redact_text(str(exception))
+                attempt_error_detail = redact_text(str(exception))
 
             assert classification is not None
             last_error_class = classification.error_class
+            last_error_detail = attempt_error_detail
             last_retry_after = retry_after
             can_retry = classification.retryable and attempt_number < self.settings.max_attempts
             delay = 0.0
@@ -412,7 +445,7 @@ class UnifiedHttpClient:
                 pmid=pmid, source=source, route=route, identifier=identifier, url=url,
                 started_at=started_at, finished_at=utc_now(), response=response,
                 outcome="failure", error_class=classification.error_class,
-                error_detail=last_error_detail, exception=exception,
+                error_detail=attempt_error_detail, exception=exception,
                 retry_after=retry_after, next_retry_at=next_retry_at,
             )
             self._log(

@@ -1,101 +1,104 @@
-# STAGE A5 EXECUTION REPORT
+# STAGE A5 REMEDIATION EXECUTION REPORT
 
-> Governing protocol: [00-总控与执行报告.md](../../整改手册/任务书/00-总控与执行报告.md#全局阶段执行协议)。本报告只记录 A5 执行证据。
+> Governing protocol: [00-总控与执行报告.md](../../整改手册/任务书/00-总控与执行报告.md#全局阶段执行协议)。本报告只记录 A5 remediation 当前确认状态。
 
-## 1. Stage Information
+## 1. Stage information and remediation baseline
 
 ~~~
-Stage: A5 — 正文获取与统一 Retry Client
-Phase: Phase A
-Base commit: 7d543a55ee58f6e4a511124e774c2a8cf9d6b4fb
-End commit: a12b6b7b0619aa20d229519064800ea7f29117db
-Date: 2026-09-16
-Executor: New independent Worker (Luna/XHigh)
-Review status at start: A4 ACCEPT_WITH_FINDINGS; no blocker; A5 IN PROGRESS
-Next allowed stage: A6, only after independent review approval
+CURRENT_PHASE: Phase A
+CURRENT_STAGE: A5 remediation — 正文获取与统一 Retry Client
+BASE_COMMIT: 91031a7286ee77e41be1bb084da23fcc99d03560
+END_COMMIT: ad2a45f284d1418b33232850b20d78ff5b89c267
+DATE: 2026-09-16
+START_TIME: 2026-09-16, before the first README read
+EXECUTOR: New independent Worker (Luna/XHigh)
+REVIEW_STATUS: prior A5 review rejected; this remediation addresses the two blocking findings
+BLOCKING_FINDINGS: 03_downloader official API path was not unified; raw publication could leave an orphan article.xml; per-attempt detail could be stale
+NEXT_ALLOWED_STAGE: A6, only after independent review approval
 ~~~
+
+The remediation baseline is the supplied `BASE_COMMIT` plus the pre-existing uncommitted A5 partial work. The final A5 implementation has one shared retry policy/client for the actual full-text and official metadata paths, directory-level raw publication, and attempt-local error details.
 
 ## 2. Scope
 
 ### Allowed changes
 
-- 为 A5 建立统一 `UnifiedHttpClient`：connect/read timeout、429、Retry-After、5xx、指数退避、jitter、最大尝试次数、结构化日志和秘密脱敏。
-- 从 A4 `source_candidates` 按 PMC AWS XML → Europe PMC XML → PMC AWS TXT → 合法 OA HTML/XML → 合法 OA PDF 获取单个 PMID。
-- 在 `corpus_raw/PMID_<pmid>/` 原子写入正文和完整 `source.json`，并为每个 request 委托 A3 写入 `fetch_attempts`。
-- 迁移 retry 配置为一个 `retry` policy，并让 Crossref contact 只从 `CROSSREF_MAILTO` 环境变量读取；仓库仅保留空值 `.env.example`。
-- 增加完全离线的 A5 专项测试。
+- `UnifiedHttpClient`: connect/read timeout, 429, Retry-After, 5xx, timeout/connection classification, exponential backoff, jitter, maximum attempts, structured logs, and secret redaction.
+- A5 full-text acquisition from A4 candidates in the inherited order: PMC AWS XML → Europe PMC XML → PMC AWS TXT → legal OA HTML/XML → legal OA PDF.
+- `corpus_raw/PMID_{pmid}/` publication of article content and complete `source.json` as one directory-level operation.
+- Shared client wiring for the actual `fetch_fulltext` entrypoint, OA resolver metadata calls, PubMed EFetch, DOI lookup, and the official Europe PMC/Crossref paths in `03_downloader.py`.
+- Offline tests and this execution report.
 
 ### Forbidden changes
 
-- 不重定义 A3 error taxonomy 或 A4 source priority。
-- 不实施 A6 bibliographic validation、A7 normalization、批量/生产下载或网络调用。
-- 不修改 `tasks.sqlite`、focus 队列、Status/worklog、向量库或现有用户改动。
+- No A3 taxonomy or A4 source-priority redefinition.
+- No A6 bibliographic validation, A7 normalization, bulk acquisition, production download, network request, corpus/index update, or focus-queue work.
+- No modification of AGENTS.md, Status.md, worklog/focus files, A4/A6+ task documents, or unrelated user changes.
 
-## 3. Files Changed
+## 3. Files in the A5 remediation commit
 
-| File | Change | Reason | Behavior impact |
-|---|---|---|---|
-| `直肠癌文献爬取/scripts/fulltext_client.py` | A5 unified retry client；HTTP/异常分类委托 A3；attempt/log URL 脱敏 | 统一 source request 行为和 durable evidence | 每次 transport request 均记录；可按统一 policy 重试 |
-| `直肠癌文献爬取/scripts/fetch_fulltext.py` | 候选排序、raw writer、单 PMID acquisition | 连接 A4 候选与 `corpus_raw` | 成功 raw fetch 仅保留 A3/A6 之前状态，不伪造 `fulltext_ready` |
-| `tests/test_a5_fulltext.py` | 10 项离线专项测试 | 覆盖 A5 required tests 与 raw/status safety | transport、SQLite、writer 全部为注入/临时夹具 |
-| `直肠癌文献爬取/config.json` | 删除 split retry 和仓库 Crossref contact；加入 `retry` | 统一 retry policy、移除配置内敏感 contact | 旧 retry 字段仅由 client 的单一兼容映射读取 |
-| `.env.example` | 添加空值 `CROSSREF_MAILTO`、`UNPAYWALL_EMAIL`、`NCBI_API_KEY` | 说明环境变量入口且不保存秘密 | 实际值只来自进程环境/被忽略的本地 `.env` |
-| `直肠癌文献爬取/scripts/03_downloader.py` | Crossref contact 改从环境变量读取 | 配置迁移的必要兼容修正 | 不再从 `config.json` 读取 contact |
-| `直肠癌文献爬取/scripts/06_doi_lookup.py` | Crossref contact 改从环境变量读取 | 配置迁移的必要兼容修正 | 不再从 `config.json` 读取 contact |
-| `docs/reviews/stage-A5-execution-report.md` | A5 执行证据和交接结论 | 满足 G-04 | 仅记录当前确认状态 |
+| File | Current change and effect |
+|---|---|
+| `直肠癌文献爬取/scripts/fulltext_client.py` | Loads the canonical project config, exposes one retry policy/client, records one A3 `fetch_attempts` row per transport attempt, redacts URL/detail/identifier data, and keeps each attempt's own error detail. |
+| `直肠癌文献爬取/scripts/fetch_fulltext.py` | Constructs the client from the real project configuration in the production entry path; preserves A4 candidate order; stages article and `source.json` together and publishes/rolls back the whole PMID directory. |
+| `直肠癌文献爬取/scripts/oa_resolver.py` | Routes Europe PMC and Unpaywall metadata requests through a shared configured client while preserving A4 discovery, parsing, and source priority. |
+| `直肠癌文献爬取/scripts/pubmed_metadata.py` | Routes NCBI EFetch through the shared client and stops reading the non-contract `NCBI_EMAIL` environment variable. |
+| `直肠癌文献爬取/scripts/06_doi_lookup.py` | Routes NCBI/OpenAlex/Crossref requests through the shared client and attributes candidate lookups to the owning task PMID for durable evidence. |
+| `直肠癌文献爬取/scripts/03_downloader.py` | Minimal wiring of its Europe PMC search/PDF and Crossref official requests to the client configured at `Crawler` construction; existing bulk scheduling and non-official mirror session behavior remain unchanged. |
+| `tests/test_a5_fulltext.py` | 15 offline regressions covering policy construction through `fetch_fulltext.run_cli`, legacy downloader wiring, retry behavior, redaction, attempts, source JSON, directory fault cleanup, status safety, source order, and NCBI parameter provenance. |
+| `docs/reviews/stage-A5-execution-report.md` | This current A5 execution evidence and handoff. |
 
-## 4. Database or Index Changes
+No `config.json` or `.env.example` change was needed in this remediation: the supplied base already contains the canonical `retry` object and empty `CROSSREF_MAILTO`, `UNPAYWALL_EMAIL`, and `NCBI_API_KEY` declarations. The client retains only a compatibility mapping from legacy retry counts into the single `max_attempts` setting.
 
-无生产数据库、索引、语料或 raw corpus 变更。A5 测试在临时目录创建 SQLite 数据库；`fetch_attempts` 证据由 A3 schema 在临时库中验证。没有运行生产 fetch，也没有写入网络来源。回滚使用本提交的 `git revert <end-commit>`；如未来已有 raw 数据，按 PMID 目录保留并按 G-07 使用可解释的 git/备份恢复，不删除未知数据。
+## 4. Database, raw corpus, and index changes
 
-## 5. Tests
+No production database, raw corpus, index, task queue, PDF corpus, or vector store was changed. Tests create only temporary SQLite databases and temporary raw/PDF directories. No network client was allowed to reach an external endpoint.
 
-| Command | Exit status | Result | Evidence |
-|---|---:|---|---|
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m py_compile 直肠癌文献爬取/scripts/fulltext_client.py 直肠癌文献爬取/scripts/fetch_fulltext.py 直肠癌文献爬取/scripts/03_downloader.py 直肠癌文献爬取/scripts/06_doi_lookup.py tests/test_a5_fulltext.py` | 0 | PASS | `py_compile_exit=0` |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_a5_fulltext.py' -v` | 0 | PASS | 10 tests: mock success, 429, 5xx, timeout, Retry-After, max attempts, source priority, source.json, redaction, raw-write/status safety |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_a1_schema.py' -v` | 0 | PASS | 6 A1 tests |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_a2_metadata.py' -v` | 0 | PASS | 9 A2 tests |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_a3_state_machine.py' -v` | 0 | PASS | 20 A3 tests |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_a4_oa_resolver.py' -v` | 0 | PASS | 6 A4 tests |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -p 'test_pipeline.py' -v` | 0 | PASS | 3 offline pipeline tests |
-| `PYTHONIOENCODING=utf-8 .venv/Scripts/python -m unittest discover -s tests -q` | 0 | PASS | 54 tests total; `OK` |
-| `git diff --check` | 0 | PASS | no whitespace errors |
+Rollback is a normal `git revert` of the final A5 remediation commit. The raw writer's failure path removes staged/published new artifacts; an existing PMID directory is restored from its temporary backup if replacement publication fails. Existing A3 `fetch_attempts` rows are retained by the database transaction model.
 
-All A5 tests inject transport/provider/writer behavior and use temporary SQLite/raw paths. No default Europe PMC, PMC AWS, publisher, repository, or other network client was invoked.
+## 5. Tests and exact results
 
-## 6. Acceptance Criteria
+| Exact command | Exit status | Result |
+|---|---:|---|
+| `$env:PYTHONIOENCODING = 'utf-8'; .\.venv\Scripts\python -m unittest discover -s tests -v` | 0 | Baseline before the final additions: 54 tests passed, `OK`. |
+| `$env:PYTHONIOENCODING = 'utf-8'; .\.venv\Scripts\python -m unittest tests.test_a5_fulltext -q` | 0 | 15 A5 tests passed, `OK`. |
+| `$env:PYTHONIOENCODING = 'utf-8'; .\.venv\Scripts\python -m py_compile '直肠癌文献爬取/scripts/fulltext_client.py' '直肠癌文献爬取/scripts/fetch_fulltext.py' '直肠癌文献爬取/scripts/03_downloader.py' '直肠癌文献爬取/scripts/06_doi_lookup.py' '直肠癌文献爬取/scripts/oa_resolver.py' '直肠癌文献爬取/scripts/pubmed_metadata.py' 'tests/test_a5_fulltext.py'` | 0 | All A5 implementation/test modules compiled. |
+| `$env:PYTHONIOENCODING = 'utf-8'; .\.venv\Scripts\python -m unittest discover -s tests -q` | 0 | Final full offline regression: 59 tests passed, `OK`. |
+| `git diff --check -- '直肠癌文献爬取/scripts/03_downloader.py' '直肠癌文献爬取/scripts/06_doi_lookup.py' '直肠癌文献爬取/scripts/fetch_fulltext.py' '直肠癌文献爬取/scripts/fulltext_client.py' '直肠癌文献爬取/scripts/oa_resolver.py' '直肠癌文献爬取/scripts/pubmed_metadata.py' 'tests/test_a5_fulltext.py'` | 0 | No whitespace errors. |
+| `git -c core.quotePath=false diff --cached --name-only` after explicit A5 staging | 0 | Staged-name check passed for exactly the 7 implementation/test files before the implementation commit. |
 
-| Criterion ID | Result | Evidence |
+The tests use injected transports, providers, writers, and temporary paths. They do not invoke default network transports, production writers, bulk workers, or acquisition commands.
+
+## 6. Acceptance criteria evidence
+
+| Criterion | Result | Evidence |
 |---|---|---|
-| A5-AC01 | PASS | `test_source_priority_matches_a5_sequence` asserts PMC AWS XML → Europe PMC XML → PMC AWS TXT → legal OA HTML/XML → legal OA PDF; legal OA TXT is excluded. |
-| A5-AC02 | PASS | `UnifiedHttpClient.get` calls A3 `record_fetch_attempt` once for every transport request; tests verify success, 429/5xx/timeout failures, source, redacted URL, status, outcome, retryability and Retry-After. |
-| A5-AC03 | PASS | `test_429_honors_retry_after_and_then_succeeds`, `test_5xx_uses_exponential_backoff_and_jitter`, `test_timeout_is_retryable`, and `test_max_attempts_stops_after_unified_limit`; injected sleeper proves no real wait. |
-| A5-AC04 | PASS | `RawCorpusWriter` writes required PMID/DOI/PMCID/source/URL/license/retrieved_at/sha256/format/version fields; source JSON, structured logs and attempt URL tests prove configured secrets are absent. |
-| A5-AC05 | PASS | `config.json` has one `retry` object and no split retry/contact keys; `retry_settings_from_config` maps legacy counts only into one `max_attempts`; `.env.example` contains empty variable declarations. |
+| A5-AC01 | PASS | `test_source_priority_matches_a5_sequence` asserts PMC AWS XML → Europe PMC XML → PMC AWS TXT → legal OA HTML/XML → legal OA PDF and excludes legal OA TXT; the A4 `_candidate_sort_key` remains the tie-break owner. |
+| A5-AC02 | PASS | `UnifiedHttpClient.get` records source, URL, identifier, result, and retry metadata for every transport attempt. Tests cover success, 429, 5xx, timeout, storage failure, and the 03 Europe PMC official path. `test_each_fetch_attempt_keeps_its_own_error_detail` proves attempt-local details. |
+| A5-AC03 | PASS | `test_429_honors_retry_after_and_then_succeeds`, `test_5xx_uses_exponential_backoff_and_jitter`, `test_timeout_is_retryable`, and `test_max_attempts_stops_after_unified_limit` prove the shared policy with an injected sleeper. Configured connect/read timeouts are asserted through the real `fetch_fulltext.run_cli` path and the wired 03 `Crawler` path. |
+| A5-AC04 | PASS | `RawCorpusWriter` emits PMID, DOI, PMCID, source, URL, license, retrieved_at, sha256, format, and version. Source JSON, structured log, and attempt URL tests prove secret redaction; the NCBI regression proves `NCBI_EMAIL` is not loaded. |
+| A5-AC05 | PASS | The canonical base config contains one `retry` object and no split retry/contact keys. `retry_settings_from_config` maps any legacy retry counts only into the single unified `max_attempts`; all actual official request paths use the shared client. |
 
 ## 7. Metrics
 
-| Metric | Before | After | Delta |
+| Metric | Before remediation | After remediation | Delta |
 |---|---:|---:|---:|
-| A5-specific offline tests | 0 | 10 | +10 |
-| Split retry keys in `config.json` | 3 | 0 | -3 |
-| Crossref contact value stored in repository config | 1 | 0 | -1 |
-| Production task/raw/index writes | 0 | 0 | 0 |
-| Full-text network requests | 0 | 0 | 0 |
+| A5专项离线测试 | 10 | 15 | +5 |
+| Full offline test suite | 54 | 59 | +5 |
+| Direct official `requests.get` call sites in `03_downloader.py` | 3 | 0 | -3 |
+| New-directory raw fault-injection cases | 0 | 2 | +2 |
+| Attempt-local error-detail regression cases | 0 | 1 | +1 |
+| Production/network acquisition runs | 0 | 0 | 0 |
 
-## 8. Known Issues
+## 8. Known issues
 
-- A5 intentionally stops before A6 validation; a raw fetch cannot produce `fulltext_ready` without the existing A3/A6 dual-validation evidence.
-- `retry_settings_from_config` retains a single compatibility mapping for legacy split retry counts; the canonical repository configuration uses only `retry`.
-- No production or bulk acquisition was performed in this stage.
+- A5 intentionally stops before A6 validation; a successful raw fetch does not create `fulltext_ready` without the existing dual validation evidence.
+- The client retains a compatibility mapping for legacy retry-count keys, but the canonical project configuration has only the unified `retry` object.
+- `03_downloader.py` still contains the pre-existing non-official mirror/session workflow; only its official Europe PMC/Crossref request paths were wired in this remediation.
 
-## 9. Out of Scope
+## 9. Out of scope
 
-- A6 content validation and bibliographic match.
-- A7 JATS/TXT/PDF normalization.
-- A8 lease/heartbeat/batch and A9 reporting.
-- Bulk/production downloads, new OA discovery, RAG/index changes, and any focus queue work.
+A6 bibliographic match and content acceptance; A7 normalization; A8 lease/heartbeat/batch; A9 reporting; all B/C/D stages; production or bulk downloads; new OA discovery; RAG/index work; focus queue/status/worklog orchestration; and unrelated user modifications.
 
 ## 10. Handoff
 

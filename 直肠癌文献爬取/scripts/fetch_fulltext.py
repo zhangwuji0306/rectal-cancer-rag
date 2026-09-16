@@ -9,6 +9,7 @@ import json
 import os
 import sys
 import tempfile
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -20,6 +21,7 @@ from fulltext_client import (
     FetchResult,
     HttpResponse,
     UnifiedHttpClient,
+    load_project_config,
     redact_text,
     redact_url,
 )
@@ -118,7 +120,7 @@ class RawArtifact:
 
 
 class RawCorpusWriter:
-    """Write article bytes and source.json atomically under corpus_raw."""
+    """Publish article bytes and source.json as one raw directory."""
 
     def __init__(self, raw_root: str | Path = RAW_ROOT) -> None:
         self.raw_root = Path(raw_root)
@@ -143,6 +145,33 @@ class RawCorpusWriter:
     @staticmethod
     def _atomic_write_text(path: Path, value: str) -> None:
         RawCorpusWriter._atomic_write_bytes(path, value.encode("utf-8"))
+
+    @staticmethod
+    def _remove_directory(path: Path) -> None:
+        if path.exists():
+            shutil.rmtree(path)
+
+    @classmethod
+    def _publish_directory(cls, staging: Path, target: Path) -> None:
+        backup: Path | None = None
+        target_existed = target.exists()
+        try:
+            if target_existed:
+                backup = Path(tempfile.mkdtemp(prefix=f".{target.name}.backup-", dir=target.parent))
+                backup.rmdir()
+                os.replace(target, backup)
+            os.replace(staging, target)
+            if backup is not None:
+                cls._remove_directory(backup)
+                backup = None
+        except Exception:
+            if target.exists():
+                cls._remove_directory(target)
+            if backup is not None and backup.exists():
+                os.replace(backup, target)
+                backup = None
+            cls._remove_directory(staging)
+            raise
 
     def write(
         self,
@@ -177,11 +206,20 @@ class RawCorpusWriter:
             key: redact_text(value) if isinstance(value, str) else value
             for key, value in record.items()
         }
-        self._atomic_write_bytes(article_path, content)
-        self._atomic_write_text(
-            source_json_path,
-            json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        )
+        self.raw_root.mkdir(parents=True, exist_ok=True)
+        staging = Path(tempfile.mkdtemp(prefix=f".{directory.name}.", dir=self.raw_root))
+        staged_article = staging / FORMAT_FILENAMES[fmt]
+        staged_source_json = staging / "source.json"
+        try:
+            self._atomic_write_bytes(staged_article, content)
+            self._atomic_write_text(
+                staged_source_json,
+                json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            )
+            self._publish_directory(staging, directory)
+        except Exception:
+            self._remove_directory(staging)
+            raise
         return RawArtifact(
             path=article_path,
             source_json=source_json_path,
@@ -292,7 +330,9 @@ def acquire_one(
             "failures": [],
         }
     transition_task_status(pmid, "fetching", db_path=db_path)
-    client = client or UnifiedHttpClient(db_path=db_path)
+    client = client or UnifiedHttpClient.from_config(
+        load_project_config(), db_path=db_path
+    )
     writer = writer or RawCorpusWriter(raw_root)
     failures: list[dict[str, Any]] = []
     attempts = 0
