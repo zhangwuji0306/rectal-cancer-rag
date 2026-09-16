@@ -872,7 +872,11 @@ class OAResolver:
         finally:
             conn.close()
 
-        target = "oa_resolved" if selected is not None else "metadata_only"
+        target = "oa_resolved" if selected is not None else (
+            "retryable_error"
+            if any(failure["retryable"] for failure in failures)
+            else METADATA_ONLY
+        )
         status = _promote_task_status(
             pmid, db_path=db_path, target=target, resolved_at=timestamp
         )
@@ -965,8 +969,9 @@ class OAResolver:
                 result["pmcid_count"] += 1
             if item["candidate_count"]:
                 result["resolved"] += 1
-            else:
+            elif item["status"] == METADATA_ONLY:
                 result["metadata_only"] += 1
+            if not item["candidate_count"]:
                 result["no_candidates"] += 1
             for candidate in item["candidates"]:
                 result[metric_keys[candidate["source"]]] += 1

@@ -206,6 +206,35 @@ class A4OAResolverTests(unittest.TestCase):
             self.assertEqual(self.task(db)["status"], "metadata_only")
             self.assertEqual(self.rows(db), [])
 
+    def test_retryable_provider_failure_without_candidate_is_not_metadata_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+
+            def europe_pmc_timeout(task):
+                raise TimeoutError("Europe PMC timed out")
+
+            result = oa.resolve_oa(
+                [4001],
+                db_path=db,
+                dry_run=True,
+                pmc_aws=lambda task: [],
+                europe_pmc=europe_pmc_timeout,
+                unpaywall=lambda task: [],
+                publisher=lambda task: [],
+                institutional_repository=lambda task: [],
+            )
+
+            item = result["items"][0]
+            self.assertEqual(item["candidate_count"], 0)
+            self.assertEqual(item["status"], "retryable_error")
+            self.assertEqual(result["no_candidates"], 1)
+            self.assertEqual(result["metadata_only"], 0)
+            self.assertEqual(item["failures"][0]["error_class"], "timeout")
+            self.assertTrue(item["failures"][0]["retryable"])
+            self.assertEqual(self.task(db)["status"], "retryable_error")
+            self.assertEqual(self.rows(db), [])
+
 
 if __name__ == "__main__":
     unittest.main()
