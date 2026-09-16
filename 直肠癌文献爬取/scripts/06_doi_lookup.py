@@ -56,7 +56,7 @@ class Lookup:
     def __init__(self, cfg):
         self.cfg = cfg
         self.min_sc = float(cfg.get('crossref_similarity', 0.85))
-        mailto = cfg.get('crossref_mailto', '')
+        mailto = os.environ.get('CROSSREF_MAILTO', '')
         self.ua = {'User-Agent': f'RectalCorpusBuilder/1.0 (mailto:{mailto})'}
         self.pubmed_cache = {}
 

@@ -500,7 +500,8 @@ class Crawler:
             self.crossref_last = time.time()
         url = 'https://api.crossref.org/works'
         params = {'query.bibliographic': title, 'rows': 8}
-        ua = f'RectalCorpusBuilder/1.0 (mailto:{self.cfg.get("crossref_mailto", "")})'
+        mailto = os.environ.get('CROSSREF_MAILTO', '')
+        ua = f'RectalCorpusBuilder/1.0 (mailto:{mailto})'
         try:
             r = requests.get(url, params=params, timeout=30, headers={'User-Agent': ua})
             if r.status_code != 200:
