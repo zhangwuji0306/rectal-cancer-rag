@@ -473,7 +473,8 @@ class UnifiedHttpClient:
                 next_retry_at = _future_timestamp(delay)
 
             self._record(
-                pmid=pmid, source=source, route=route, identifier=identifier, url=url,
+                persist=record_attempts,
+                pmid=pmid, source=source, route=route, identifier=identifier, url=request_url,
                 started_at=started_at, finished_at=utc_now(), response=response,
                 outcome="failure", error_class=classification.error_class,
                 error_detail=attempt_error_detail, exception=exception,
