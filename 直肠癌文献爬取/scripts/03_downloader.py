@@ -399,6 +399,8 @@ class Crawler:
                     identifier=str(task['pmid']),
                     headers={'User-Agent': self.cfg['user_agent'],
                              'Accept': 'application/json'},
+                    record_attempts=False,
+                    success_handler_error_class='parser_error',
                     success_handler=lambda response: json.loads(
                         response.body.decode('utf-8')
                     ),
@@ -549,6 +551,8 @@ class Crawler:
                 route='legacy:03:crossref:works',
                 identifier=str(pmid),
                 headers={'User-Agent': ua, 'Accept': 'application/json'},
+                record_attempts=False,
+                success_handler_error_class='parser_error',
                 success_handler=lambda response: json.loads(
                     response.body.decode('utf-8')
                 ),

@@ -399,6 +399,7 @@ class PubMedClient:
             identifier=",".join(str(pmid) for pmid in pmids),
             headers={"User-Agent": "writing-rag-pubmed-metadata/1.0"},
             success_handler=lambda response: response.body,
+            record_attempts=False,
         )
         if not result.ok:
             error = UnifiedHttpError(result)

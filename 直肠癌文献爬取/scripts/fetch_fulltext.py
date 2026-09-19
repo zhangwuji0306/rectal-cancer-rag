@@ -117,6 +117,7 @@ class RawArtifact:
     sha256: str
     format: str
     retrieved_at: str
+    backup_path: Path | None = None
 
 
 class RawCorpusWriter:
@@ -152,7 +153,7 @@ class RawCorpusWriter:
             shutil.rmtree(path)
 
     @classmethod
-    def _publish_directory(cls, staging: Path, target: Path) -> None:
+    def _publish_directory(cls, staging: Path, target: Path) -> Path | None:
         backup: Path | None = None
         target_existed = target.exists()
         try:
@@ -161,9 +162,7 @@ class RawCorpusWriter:
                 backup.rmdir()
                 os.replace(target, backup)
             os.replace(staging, target)
-            if backup is not None:
-                cls._remove_directory(backup)
-                backup = None
+            return backup
         except Exception:
             if target.exists():
                 cls._remove_directory(target)
@@ -173,6 +172,17 @@ class RawCorpusWriter:
             cls._remove_directory(staging)
             raise
 
+    def commit(self, artifact: RawArtifact) -> None:
+        """Finalize a published artifact after its SQLite metadata is durable."""
+        if artifact.backup_path is not None:
+            self._remove_directory(artifact.backup_path)
+
+    def rollback(self, artifact: RawArtifact) -> None:
+        """Remove the new artifact and restore the previous PMID directory."""
+        self._remove_directory(artifact.path.parent)
+        if artifact.backup_path is not None and artifact.backup_path.exists():
+            os.replace(artifact.backup_path, artifact.path.parent)
+
     def write(
         self,
         *,
@@ -180,6 +190,7 @@ class RawCorpusWriter:
         task: Mapping[str, Any],
         candidate: Mapping[str, Any],
         response: HttpResponse,
+        defer_commit: bool = False,
     ) -> RawArtifact:
         fmt = _format(candidate)
         if fmt not in FORMAT_FILENAMES:
@@ -216,17 +227,28 @@ class RawCorpusWriter:
                 staged_source_json,
                 json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             )
-            self._publish_directory(staging, directory)
+            backup_path = self._publish_directory(staging, directory)
         except Exception:
             self._remove_directory(staging)
             raise
-        return RawArtifact(
+        artifact = RawArtifact(
             path=article_path,
             source_json=source_json_path,
             sha256=digest,
             format=fmt,
             retrieved_at=retrieved_at,
+            backup_path=backup_path,
         )
+        if not defer_commit:
+            self.commit(artifact)
+            artifact = RawArtifact(
+                path=artifact.path,
+                source_json=artifact.source_json,
+                sha256=artifact.sha256,
+                format=artifact.format,
+                retrieved_at=artifact.retrieved_at,
+            )
+        return artifact
 
 
 def _task_and_candidates(
@@ -337,19 +359,32 @@ def acquire_one(
     failures: list[dict[str, Any]] = []
     attempts = 0
     for candidate in candidate_rows:
+        def persist_content(response: HttpResponse, c: Mapping[str, Any] = candidate) -> RawArtifact:
+            artifact = writer.write(
+                pmid=pmid, task=task, candidate=c, response=response, defer_commit=True
+            )
+            try:
+                _update_task_content(pmid, c, artifact, db_path=db_path)
+            except Exception:
+                writer.rollback(artifact)
+                raise
+            try:
+                writer.commit(artifact)
+            except Exception:
+                # SQLite metadata is already durable; keep the new raw artifact.
+                pass
+            return artifact
+
         result: FetchResult = client.get(
             pmid=pmid,
             source=str(candidate["source"]),
             url=str(candidate["url"]),
             route=f"fulltext:{candidate['format']}",
             identifier=_pmcid(candidate.get("pmcid") or task.get("pmcid")) or _text(task.get("doi")) or str(pmid),
-            success_handler=lambda response, c=candidate: writer.write(
-                pmid=pmid, task=task, candidate=c, response=response
-            ),
+            success_handler=persist_content,
         )
         attempts += result.attempts
         if result.ok:
-            _update_task_content(pmid, candidate, result.artifact, db_path=db_path)
             return {
                 "pmid": pmid,
                 "status": _current_status(pmid, db_path),

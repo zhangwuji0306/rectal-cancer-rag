@@ -32,6 +32,8 @@ SENSITIVE_QUERY_KEYS = frozenset({
 })
 SECRET_ENV_NAMES = ("CROSSREF_MAILTO", "UNPAYWALL_EMAIL", "NCBI_API_KEY")
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config.json"
+MAX_REDIRECTS = 5
+REDIRECT_STATUS_CODES = frozenset({301, 302, 303, 307, 308})
 
 def load_project_config(config_path: str | Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
     """Load the repository's canonical acquisition configuration."""
@@ -302,6 +304,7 @@ class UnifiedHttpClient:
     def _record(
         self,
         *,
+        persist: bool = True,
         pmid: int,
         source: str,
         route: str,
@@ -317,6 +320,8 @@ class UnifiedHttpClient:
         retry_after: str | None,
         next_retry_at: str | None,
     ) -> None:
+        if not persist:
+            return
         record_fetch_attempt(
             pmid, source, db_path=self.db_path, route=route, url=redact_url(url),
             identifier=redact_text(identifier), started_at=started_at, finished_at=finished_at,
@@ -337,6 +342,8 @@ class UnifiedHttpClient:
         identifier: str | None = None,
         headers: Mapping[str, str] | None = None,
         success_handler: SuccessHandler | None = None,
+        record_attempts: bool = True,
+        success_handler_error_class: str = "storage_error",
     ) -> FetchResult:
         """Fetch one candidate and persist evidence for every transport call."""
         route = route or "fulltext"
@@ -358,17 +365,39 @@ class UnifiedHttpClient:
             exception: BaseException | None = None
             retry_after: str | None = None
             classification = None
+            request_url = url
+            redirect_count = 0
             artifact = None
             attempt_error_detail: str | None = None
             try:
-                response = _coerce_response(
-                    self.transport(
-                        url,
-                        connect_timeout=self.settings.connect_timeout,
-                        read_timeout=self.settings.read_timeout,
-                        headers=request_headers,
-                    ), url,
-                )
+                while True:
+                    response = _coerce_response(
+                        self.transport(
+                            request_url,
+                            connect_timeout=self.settings.connect_timeout,
+                            read_timeout=self.settings.read_timeout,
+                            headers=request_headers,
+                        ), request_url,
+                    )
+                    if response.status_code not in REDIRECT_STATUS_CODES:
+                        break
+                    location = response.header("location")
+                    if not location:
+                        break
+                    if redirect_count >= MAX_REDIRECTS:
+                        raise ValueError("maximum HTTP redirects exceeded")
+                    request_url = urllib.parse.urljoin(request_url, location)
+                    parsed_redirect = urllib.parse.urlsplit(request_url)
+                    if parsed_redirect.scheme.casefold() not in {"http", "https"} or not parsed_redirect.hostname:
+                        raise ValueError("HTTP redirect target must be an absolute HTTP(S) URL")
+                    redirect_count += 1
+                if response.url != request_url:
+                    response = HttpResponse(
+                        status_code=response.status_code,
+                        headers=response.headers,
+                        body=response.body,
+                        url=request_url,
+                    )
                 last_response = response
                 retry_after = response.header("retry-after")
                 classification = classify_request(http_status=response.status_code)
@@ -379,9 +408,10 @@ class UnifiedHttpClient:
                         except Exception as write_error:
                             attempt_error_detail = redact_text(str(write_error))
                             self._record(
+                                persist=record_attempts,
                                 pmid=pmid, source=source, route=route, identifier=identifier,
-                                url=url, started_at=started_at, finished_at=utc_now(),
-                                response=response, outcome="failure", error_class="storage_error",
+                                url=request_url, started_at=started_at, finished_at=utc_now(),
+                                response=response, outcome="failure", error_class=success_handler_error_class,
                                 error_detail=attempt_error_detail, exception=None,
                                 retry_after=retry_after, next_retry_at=None,
                             )
@@ -389,16 +419,17 @@ class UnifiedHttpClient:
                                 "request_finished", pmid=pmid, source=source, route=route,
                                 url=safe_url, attempt=attempt_number,
                                 http_status=response.status_code, outcome="failure",
-                                error_class="storage_error",
+                                error_class=success_handler_error_class,
                             )
                             return FetchResult(
                                 ok=False, response=response, attempts=attempt_number,
-                                error_class="storage_error", error_detail=attempt_error_detail,
+                                error_class=success_handler_error_class, error_detail=attempt_error_detail,
                                 retry_after=retry_after,
                             )
                     self._record(
+                        persist=record_attempts,
                         pmid=pmid, source=source, route=route, identifier=identifier,
-                        url=url, started_at=started_at, finished_at=utc_now(),
+                        url=request_url, started_at=started_at, finished_at=utc_now(),
                         response=response, outcome="success", error_class=None,
                         error_detail=None, exception=None, retry_after=retry_after,
                         next_retry_at=None,
@@ -428,7 +459,7 @@ class UnifiedHttpClient:
             if can_retry:
                 retry_after_seconds = (
                     _retry_after_seconds(retry_after)
-                    if classification.error_class == "rate_limit" else None
+                    if classification.retryable else None
                 )
                 if retry_after_seconds is not None:
                     delay = retry_after_seconds
@@ -442,7 +473,8 @@ class UnifiedHttpClient:
                 next_retry_at = _future_timestamp(delay)
 
             self._record(
-                pmid=pmid, source=source, route=route, identifier=identifier, url=url,
+                persist=record_attempts,
+                pmid=pmid, source=source, route=route, identifier=identifier, url=request_url,
                 started_at=started_at, finished_at=utc_now(), response=response,
                 outcome="failure", error_class=classification.error_class,
                 error_detail=attempt_error_detail, exception=exception,
