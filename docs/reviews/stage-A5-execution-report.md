@@ -10,8 +10,10 @@ CURRENT_STAGE: A5 remediation — 正文获取与统一 Retry Client
 BASE_COMMIT: a83dbc9d1100b3403c6ab11345fca41661b6315c
 IMPLEMENTATION_END_COMMIT: dd4a345c8f2610f416203c6fcd2b074de0b5c3f7
 REPORT_COMMIT: separate report-only commit; SHA is recorded in the final handoff
-REVIEW_STATUS: prior independent re-review returned NEEDS REVISION
-BLOCKING_FINDING: backup cleanup failure after durable SQLite commit could rollback new raw content and create DB/filesystem inconsistency
+REVIEW_STATUS: APPROVED WITH NON-BLOCKING NOTES
+BLOCKING_FINDINGS: None
+NEXT_ALLOWED_STAGE: A6 — 内容验证与 Bibliographic Match
+REVIEWED_HEAD: c4e60fe3fbb9e129ad37e2a6fde3e85ba6306547
 ~~~
 
 The implementation baseline is the resolved local target branch codex/a5-remediation-review-fix at BASE_COMMIT. The initial local main observation before resolving that target branch was 500990a82f16c57fc127fcf24b34b0769b93b6ef; its unrelated uncommitted user changes were preserved.
@@ -60,21 +62,24 @@ No production acquisition, network full-text request, production SQLite write, c
 
 ## 6. Known issues
 
-- A5 remains paused for independent review; raw content is not promoted to fulltext_ready without the existing A6 validation evidence.
+- A5 is approved with non-blocking notes; raw content is not promoted to fulltext_ready without the existing A6 validation evidence.
+- Post-commit backup cleanup failures are currently swallowed silently; future maintenance may add structured warning or audit logging.
 - If post-commit backup cleanup fails, the old .backup-* directory can remain by design; the NEW raw and SQLite metadata are retained as the consistent durable state.
 - Existing unrelated user modifications in the working tree were preserved and were not included in the implementation commit or report-only commit.
 
-## 7. Handoff
+## 7. Independent review disposition
 
 ~~~
-STATUS: PAUSED FOR INDEPENDENT REVIEW
+STAGE: A5 — 正文获取与统一 Retry Client
+REVIEWED_HEAD: c4e60fe3fbb9e129ad37e2a6fde3e85ba6306547
+DECISION: APPROVED WITH NON-BLOCKING NOTES
+BLOCKING_FINDINGS: None
+NEXT_ALLOWED_STAGE: A6 — 内容验证与 Bibliographic Match
+~~~
+
+Non-blocking notes:
+
+1. Post-commit backup cleanup failures are currently swallowed silently; future maintenance may add structured warning or audit logging.
+2. A failed cleanup may intentionally leave a .backup-* directory to preserve DB/raw consistency; later maintenance tooling may remove stale backups safely.
 
 A6 has not been started.
-
-Requested reviewer decision:
-
-APPROVED
-APPROVED WITH NON-BLOCKING NOTES
-NEEDS REVISION
-REJECTED
-~~~
