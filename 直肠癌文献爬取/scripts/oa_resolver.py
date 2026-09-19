@@ -459,6 +459,8 @@ def _metadata_json(
         identifier=identifier,
         headers={"Accept": "application/json"},
         success_handler=lambda response: json.loads(response.body.decode("utf-8")),
+        record_attempts=False,
+        success_handler_error_class="parser_error",
     )
     if not result.ok:
         raise UnifiedHttpError(result)
