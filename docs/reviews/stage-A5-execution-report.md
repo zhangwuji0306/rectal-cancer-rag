@@ -9,7 +9,7 @@ CURRENT_PHASE: Phase A
 CURRENT_STAGE: A5 remediation — 正文获取与统一 Retry Client
 BASE_COMMIT: 91031a7286ee77e41be1bb084da23fcc99d03560
 REMEDIATION_BASE_COMMIT: 500990a82f16c57fc127fcf24b34b0769b93b6ef
-END_COMMIT: a74c8dc671ad727037fe94a029623e030425bae0
+END_COMMIT: 314ffb0005ab2eb4cd624394b402b2867dad9ad7
 DATE: 2026-09-19
 EXECUTOR: Codex
 REVIEW_STATUS: NEEDS REVISION findings implemented; pending independent re-review
@@ -55,18 +55,15 @@ No production database, raw corpus, PDF corpus, vector index, task queue, or foc
 
 ## 5. Tests
 
-The prior A5 remediation recorded 59 offline tests passed at 500990a.... This review fix adds 12 A5 tests, bringing the expected suite size to 71 tests. The new tests are fully offline and use injected transports, temporary SQLite databases, and temporary raw directories.
+The review fix adds 12 A5 tests. The complete offline verification was run from the修复分支副本:
 
-Required verification commands:
+| Command | Result |
+|---|---|
+| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m py_compile ... | exit 0 |
+| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m unittest tests.test_a5_fulltext -q | 27 tests passed, OK |
+| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m unittest discover -s tests -q | 71 tests passed, OK |
 
-~~~powershell
-$env:PYTHONIOENCODING = 'utf-8'
-.\.venv\Scripts\python -m py_compile '直肠癌文献爬取/scripts/fulltext_client.py' '直肠癌文献爬取/scripts/fetch_fulltext.py' '直肠癌文献爬取/scripts/03_downloader.py' '直肠癌文献爬取/scripts/06_doi_lookup.py' '直肠癌文献爬取/scripts/oa_resolver.py' '直肠癌文献爬取/scripts/pubmed_metadata.py' 'tests/test_a5_fulltext.py'
-.\.venv\Scripts\python -m unittest tests.test_a5_fulltext -q
-.\.venv\Scripts\python -m unittest discover -s tests -q
-~~~
-
-The connector session updated the remote implementation and tests but did not execute the repository's local Python environment. The 59-test result above is inherited evidence from the preceding A5 remediation commit; the 12 new tests require execution in the repository environment before final independent approval.
+The tests use injected transports, temporary SQLite databases, and temporary raw directories; no production or external acquisition request was made.
 
 ## 6. Handoff
 
