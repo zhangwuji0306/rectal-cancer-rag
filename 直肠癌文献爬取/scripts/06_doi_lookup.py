@@ -93,6 +93,8 @@ class Lookup:
             url=f"{endpoint}?{query}" if query else endpoint,
             route=route, identifier=str(pmid), headers=self.ua,
             success_handler=lambda response: json.loads(response.body.decode("utf-8")),
+            record_attempts=False,
+            success_handler_error_class="parser_error",
         )
         if not result.ok:
             raise UnifiedHttpError(result)
