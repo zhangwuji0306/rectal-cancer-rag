@@ -516,9 +516,16 @@ class A5FullTextTests(unittest.TestCase):
             shared_client = self.make_client(db, transport, max_attempts=1)
             with patch.dict(os.environ, {"NCBI_EMAIL": "legacy-secret@example.org"}, clear=False):
                 pubmed.PubMedClient(http_client=shared_client, db_path=db).fetch([self.pmid])
+            before = self.task(db)
             self.assertEqual(len(calls), 1)
             self.assertNotIn("legacy-secret@example.org", calls[0][0])
             self.assertNotIn("email=", calls[0][0])
+            after = self.task(db)
+            self.assertEqual(after["status"], before["status"])
+            self.assertEqual(after["last_error_class"], before["last_error_class"])
+            self.assertEqual(after["last_error_detail"], before["last_error_detail"])
+            self.assertEqual(after["next_retry_at"], before["next_retry_at"])
+            self.assertEqual(self.attempts(db), [])
 
     def test_legacy_downloader_official_paths_use_shared_configured_client(self):
         spec = importlib.util.spec_from_file_location(
@@ -583,6 +590,277 @@ class A5FullTextTests(unittest.TestCase):
             attempt = self.attempts(db)[0]
             self.assertEqual(attempt["source"], "EuropePMC")
             self.assertEqual(attempt["route"], "legacy:03:europepmc:pdf")
+
+
+    def test_503_honors_retry_after_before_fallback_backoff(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, _ = self.sequence_transport([
+                self.response(503, headers={"Retry-After": "7"}),
+                self.response(200),
+            ])
+            sleeps = []
+            result = self.make_client(
+                db, transport, max_attempts=2, sleeper=sleeps.append
+            ).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://aws.example/article.xml",
+            )
+            self.assertTrue(result.ok)
+            self.assertEqual(sleeps, [7.0])
+            self.assertEqual(result.attempts, 2)
+
+    def test_absolute_redirect_is_followed_and_final_url_is_recorded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, calls = self.sequence_transport([
+                self.response(302, headers={"Location": "https://mock.example/final"}),
+                self.response(200, b"redirected"),
+            ])
+            result = self.make_client(db, transport, max_attempts=1).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://mock.example/start",
+                record_attempts=False,
+            )
+            self.assertTrue(result.ok)
+            self.assertEqual(
+                [call[0] for call in calls],
+                ["https://mock.example/start", "https://mock.example/final"],
+            )
+            self.assertEqual(result.response.url, "https://mock.example/final")
+
+    def test_relative_redirect_is_followed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, calls = self.sequence_transport([
+                self.response(303, headers={"Location": "/final"}),
+                self.response(200),
+            ])
+            result = self.make_client(db, transport, max_attempts=1).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://mock.example/path/start",
+                record_attempts=False,
+            )
+            self.assertTrue(result.ok)
+            self.assertEqual(calls[1][0], "https://mock.example/path/final")
+
+    def test_redirect_chain_has_a_bounded_limit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, calls = self.sequence_transport([
+                self.response(302, headers={"Location": "/next"})
+                for _ in range(client_module.MAX_REDIRECTS + 1)
+            ])
+            result = self.make_client(db, transport, max_attempts=1).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://mock.example/start",
+                record_attempts=False,
+            )
+            self.assertFalse(result.ok)
+            self.assertEqual(result.error_class, "unknown")
+            self.assertIn("redirect", result.error_detail.lower())
+            self.assertEqual(len(calls), client_module.MAX_REDIRECTS + 1)
+
+    def test_redirect_to_non_http_scheme_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, _ = self.sequence_transport([
+                self.response(302, headers={"Location": "file:///tmp/article.xml"})
+            ])
+            result = self.make_client(db, transport, max_attempts=1).get(
+                pmid=self.pmid,
+                source=oa.PMC_AWS,
+                url="https://mock.example/start",
+                record_attempts=False,
+            )
+            self.assertFalse(result.ok)
+            self.assertEqual(result.error_class, "unknown")
+            self.assertIn("HTTP(S)", result.error_detail)
+
+    def test_200_invalid_json_is_parser_error_not_storage_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            transport, _ = self.sequence_transport([
+                self.response(200, b"{not-json")
+            ])
+            result = self.make_client(db, transport, max_attempts=1).get(
+                pmid=self.pmid,
+                source=oa.EUROPE_PMC,
+                url="https://europe.example/metadata",
+                success_handler=lambda response: json.loads(
+                    response.body.decode("utf-8")
+                ),
+                success_handler_error_class="parser_error",
+            )
+            self.assertFalse(result.ok)
+            self.assertEqual(result.error_class, "parser_error")
+            self.assertEqual(self.attempts(db)[0]["error_class"], "parser_error")
+
+    def test_pubmed_metadata_success_does_not_change_document_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            before = self.task(db)
+            transport, _ = self.sequence_transport([
+                self.response(200, b"<PubmedArticleSet/>")
+            ])
+            pubmed.PubMedClient(
+                http_client=self.make_client(db, transport, max_attempts=1),
+                db_path=db,
+            ).fetch([self.pmid])
+            after = self.task(db)
+            self.assertEqual(after["status"], before["status"])
+            self.assertEqual(after["last_error_class"], before["last_error_class"])
+            self.assertEqual(after["last_error_detail"], before["last_error_detail"])
+            self.assertEqual(after["next_retry_at"], before["next_retry_at"])
+            self.assertEqual(self.attempts(db), [])
+
+    def test_pubmed_metadata_failure_does_not_change_document_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            before = self.task(db)
+            transport, _ = self.sequence_transport([self.response(503)])
+            with self.assertRaises(pubmed.PubMedFetchError):
+                pubmed.PubMedClient(
+                    http_client=self.make_client(db, transport, max_attempts=1),
+                    db_path=db,
+                ).fetch([self.pmid])
+            after = self.task(db)
+            self.assertEqual(after["status"], before["status"])
+            self.assertEqual(after["last_error_class"], before["last_error_class"])
+            self.assertEqual(after["last_error_detail"], before["last_error_detail"])
+            self.assertEqual(after["next_retry_at"], before["next_retry_at"])
+            self.assertEqual(self.attempts(db), [])
+
+    def test_crossref_metadata_request_is_status_neutral(self):
+        spec = importlib.util.spec_from_file_location(
+            "a5_doi_lookup", SCRIPTS / "06_doi_lookup.py"
+        )
+        doi_lookup = importlib.util.module_from_spec(spec)
+        self.assertIsNotNone(spec.loader)
+        spec.loader.exec_module(doi_lookup)
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            before = self.task(db)
+            transport, _ = self.sequence_transport([
+                self.response(200, b'{"message": {"items": []}}')
+            ])
+            lookup = doi_lookup.Lookup(
+                {"retry": {"max_attempts": 1}},
+                http_client=self.make_client(db, transport, max_attempts=1),
+                db_path=db,
+            )
+            self.assertEqual(lookup.crossref_hits("A5 full-text test article", pmid=self.pmid), [])
+            after = self.task(db)
+            self.assertEqual(after["status"], before["status"])
+            self.assertEqual(after["last_error_class"], before["last_error_class"])
+            self.assertEqual(after["last_error_detail"], before["last_error_detail"])
+            self.assertEqual(after["next_retry_at"], before["next_retry_at"])
+            self.assertEqual(self.attempts(db), [])
+
+    def test_unpaywall_metadata_request_is_status_neutral(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            self.make_db(db)
+            before = self.task(db)
+            transport, _ = self.sequence_transport([self.response(200, b"{}")])
+            client = oa.UnpaywallClient(
+                email="review@example.org",
+                http_client=self.make_client(db, transport, max_attempts=1),
+                db_path=db,
+            )
+            self.assertEqual(
+                client.resolve({"pmid": self.pmid, "doi": "10.1000/a5"}),
+                [],
+            )
+            after = self.task(db)
+            self.assertEqual(after["status"], before["status"])
+            self.assertEqual(after["last_error_class"], before["last_error_class"])
+            self.assertEqual(after["last_error_detail"], before["last_error_detail"])
+            self.assertEqual(after["next_retry_at"], before["next_retry_at"])
+            self.assertEqual(self.attempts(db), [])
+
+    def test_db_update_failure_rolls_back_new_raw_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            raw_root = Path(tmp) / "corpus_raw"
+            self.make_db(db)
+            transport, _ = self.sequence_transport([self.response(200, b"<article/>")])
+            candidate = {
+                "source": oa.PMC_AWS,
+                "url": "https://aws.example/PMC5001.xml",
+                "format": "xml",
+                "pmcid": "PMC5001",
+                "license": "CC BY 4.0",
+            }
+            with patch.object(
+                fetch, "_update_task_content",
+                side_effect=OSError("task metadata update failed"),
+            ):
+                result = fetch.acquire_one(
+                    self.pmid,
+                    db_path=db,
+                    raw_root=raw_root,
+                    candidates=[candidate],
+                    client=self.make_client(db, transport, max_attempts=1),
+                )
+            self.assertEqual(result["outcome"], "failed")
+            self.assertFalse((raw_root / f"PMID_{self.pmid}").exists())
+            self.assertEqual(list(raw_root.iterdir()), [])
+
+    def test_db_update_failure_restores_previous_raw_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            raw_root = Path(tmp) / "corpus_raw"
+            self.make_db(db)
+            target = raw_root / f"PMID_{self.pmid}"
+            target.mkdir(parents=True)
+            (target / "article.xml").write_text("old article", encoding="utf-8")
+            (target / "source.json").write_text("old source", encoding="utf-8")
+            transport, _ = self.sequence_transport([self.response(200, b"<article/>")])
+            candidate = {
+                "source": oa.PMC_AWS,
+                "url": "https://aws.example/PMC5001.xml",
+                "format": "xml",
+                "pmcid": "PMC5001",
+                "license": "CC BY 4.0",
+            }
+            with patch.object(
+                fetch, "_update_task_content",
+                side_effect=OSError("task metadata update failed"),
+            ):
+                result = fetch.acquire_one(
+                    self.pmid,
+                    db_path=db,
+                    raw_root=raw_root,
+                    candidates=[candidate],
+                    client=self.make_client(db, transport, max_attempts=1),
+                )
+            self.assertEqual(result["outcome"], "failed")
+            self.assertEqual(
+                (target / "article.xml").read_text(encoding="utf-8"),
+                "old article",
+            )
+            self.assertEqual(
+                (target / "source.json").read_text(encoding="utf-8"),
+                "old source",
+            )
+            self.assertEqual(
+                sorted(item.name for item in raw_root.iterdir()),
+                [f"PMID_{self.pmid}"],
+            )
 
 
 if __name__ == "__main__":
