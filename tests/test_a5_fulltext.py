@@ -648,7 +648,7 @@ class A5FullTextTests(unittest.TestCase):
                 record_attempts=False,
             )
             self.assertTrue(result.ok)
-            self.assertEqual(calls[1][0], "https://mock.example/path/final")
+            self.assertEqual(calls[1][0], "https://mock.example/final")
 
     def test_redirect_chain_has_a_bounded_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
