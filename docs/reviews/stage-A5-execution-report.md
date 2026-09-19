@@ -1,71 +1,70 @@
 # STAGE A5 REMEDIATION EXECUTION REPORT
 
-> Governing protocol: [00-总控与执行报告.md](../../整改手册/任务书/00-总控与执行报告.md#全局阶段执行协议)。本报告记录 A5 remediation 的当前实现状态与复核边界。
+> 本报告记录 A5 最终整改的当前确认状态；A6 未启动。
 
-## 1. Stage information and baseline
+## 1. Stage information
 
 ~~~
 CURRENT_PHASE: Phase A
 CURRENT_STAGE: A5 remediation — 正文获取与统一 Retry Client
-BASE_COMMIT: 91031a7286ee77e41be1bb084da23fcc99d03560
-REMEDIATION_BASE_COMMIT: 500990a82f16c57fc127fcf24b34b0769b93b6ef
-END_COMMIT: 314ffb0005ab2eb4cd624394b402b2867dad9ad7
-DATE: 2026-09-19
-EXECUTOR: Codex
-REVIEW_STATUS: NEEDS REVISION findings implemented; pending independent re-review
-NEXT_ALLOWED_STAGE: A6, only after independent review approval
+BASE_COMMIT: a83dbc9d1100b3403c6ab11345fca41661b6315c
+IMPLEMENTATION_END_COMMIT: dd4a345c8f2610f416203c6fcd2b074de0b5c3f7
+REPORT_COMMIT: separate report-only commit; SHA is recorded in the final handoff
+REVIEW_STATUS: prior independent re-review returned NEEDS REVISION
+BLOCKING_FINDING: backup cleanup failure after durable SQLite commit could rollback new raw content and create DB/filesystem inconsistency
 ~~~
 
-END_COMMIT is the final implementation commit for this remediation review. The report-only update follows that commit and does not change the implementation range. The remediation is based on the previously reviewed A5 commit 500990a...; the review fixes are additive and remain within A5 scope.
+The implementation baseline is the resolved local target branch codex/a5-remediation-review-fix at BASE_COMMIT. The initial local main observation before resolving that target branch was 500990a82f16c57fc127fcf24b34b0769b93b6ef; its unrelated uncommitted user changes were preserved.
 
-## 2. Resolved review findings
+## 2. Scope and changed files
 
-- Metadata requests now reuse the unified transport/retry behavior without writing fetch_attempts or changing document status. This applies to PubMed EFetch, Crossref, OpenAlex, Unpaywall, and Europe PMC metadata/search routes.
-- The client follows absolute and relative HTTP redirects for 301, 302, 303, 307, and 308 responses, with HTTP(S)-only targets and a maximum of five redirects. Redirects are not treated as retries.
-- Raw publication can be staged transactionally with the task metadata update. SQLite update failure removes the new raw directory and restores the previous PMID directory.
-- Any retryable response with a valid Retry-After value uses that delay before exponential backoff; this includes 429 and 5xx responses.
-- Response parsing failures supplied by metadata handlers are recorded as parser_error; raw persistence failures remain storage_error.
-- The execution report now references an existing Git commit.
+The final remediation changes only:
 
-## 3. Files changed
+- 直肠癌文献爬取/scripts/fetch_fulltext.py
+- tests/test_a5_fulltext.py
+- docs/reviews/stage-A5-execution-report.md
 
-| File | Current effect |
-|---|---|
-| 直肠癌文献爬取/scripts/fulltext_client.py | Adds optional status-neutral attempt recording, bounded redirect handling, all-retryable-response Retry-After support, and handler-specific error classification. |
-| 直肠癌文献爬取/scripts/fetch_fulltext.py | Adds staged raw publication with commit/rollback around the SQLite content update. |
-| 直肠癌文献爬取/scripts/oa_resolver.py | Makes Europe PMC and Unpaywall metadata requests status-neutral and classifies JSON parsing failures. |
-| 直肠癌文献爬取/scripts/pubmed_metadata.py | Makes PubMed metadata transport status-neutral. |
-| 直肠癌文献爬取/scripts/06_doi_lookup.py | Makes NCBI/OpenAlex/Crossref metadata transport status-neutral and classifies JSON parsing failures. |
-| 直肠癌文献爬取/scripts/03_downloader.py | Makes official Europe PMC search and Crossref metadata requests status-neutral and classifies JSON parsing failures; official PDF acquisition remains stateful. |
-| tests/test_a5_fulltext.py | Adds regression coverage for metadata neutrality, redirects, 503 Retry-After, parser errors, and raw/SQLite rollback. |
-| docs/reviews/stage-A5-execution-report.md | Records the current remediation state and real implementation commit. |
+No fulltext_client.py, schema, state model, A4 source priority, production database, production corpus, index, or A6 file was changed in this final remediation.
 
-No production database, raw corpus, PDF corpus, vector index, task queue, or focus queue was changed.
+## 3. Fix
 
-## 4. Acceptance evidence
+The successful full-text path now has two explicit phases:
 
-| Criterion | Result | Evidence |
-|---|---|---|
-| Metadata transport/state separation | IMPLEMENTED | Metadata calls pass record_attempts=False; full-text acquisition keeps the default stateful recorder. |
-| Redirect correctness | IMPLEMENTED | Redirect status set, relative URL resolution, HTTP(S)-only validation, final URL propagation, and bounded chain are implemented in UnifiedHttpClient.get. |
-| Raw/SQLite consistency | IMPLEMENTED | RawCorpusWriter retains a previous-directory backup until the task content update succeeds; failure invokes rollback. |
-| Retry policy | IMPLEMENTED | Valid Retry-After is preferred for every retryable classification, including 5xx. |
-| Error taxonomy | IMPLEMENTED | Metadata JSON handlers use parser_error; raw writer failures use storage_error. |
-| Report traceability | PASS | BASE_COMMIT, REMEDIATION_BASE_COMMIT, and END_COMMIT resolve to existing Git commits. |
+1. _update_task_content() runs after raw publication and retains the existing writer.rollback(artifact) behavior if SQLite update fails.
+2. writer.commit(artifact) runs only after SQLite durable commit. Cleanup exceptions are isolated as cleanup failures and do not call writer.rollback(artifact), so the newly published raw directory remains authoritative. A failed cleanup may leave the old .backup-* directory for later cleanup.
 
-## 5. Tests
+## 4. Regression test
 
-The review fix adds 12 A5 tests. The complete offline verification was run from the修复分支副本:
+Added:
 
-| Command | Result |
-|---|---|
-| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m py_compile ... | exit 0 |
-| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m unittest tests.test_a5_fulltext -q | 27 tests passed, OK |
-| PYTHONIOENCODING=utf-8 .venv\\Scripts\\python -m unittest discover -s tests -q | 71 tests passed, OK |
+- test_backup_cleanup_failure_does_not_rollback_committed_raw
 
-The tests use injected transports, temporary SQLite databases, and temporary raw directories; no production or external acquisition request was made.
+The test uses temporary SQLite and raw directories, preloads OLD raw content, fetches NEW content, injects an OSError during backup cleanup, and verifies:
 
-## 6. Handoff
+- acquisition outcome remains raw_fetched;
+- article.xml remains NEW and OLD raw is not restored;
+- SQLite content_sha256, content_path, content_source, content_format, and content_status match NEW raw content;
+- the existing task status remains metadata_only;
+- a backup directory may remain.
+
+## 5. Exact verification results
+
+| Exact command | Exit status | Actual result |
+|---|---:|---|
+| $env:PYTHONIOENCODING='utf-8'; .\.venv\Scripts\python.exe -m unittest tests.test_a5_fulltext -q | 0 | Ran 28 tests; OK; no warnings/errors |
+| $env:PYTHONIOENCODING='utf-8'; .\.venv\Scripts\python.exe -m unittest discover -s tests -q | 0 | Ran 72 tests; OK; no warnings/errors |
+| $env:PYTHONIOENCODING='utf-8'; .\.venv\Scripts\python.exe -m py_compile '直肠癌文献爬取/scripts/fetch_fulltext.py' '直肠癌文献爬取/scripts/fulltext_client.py' 'tests/test_a5_fulltext.py' | 0 | No output; no warnings/errors |
+| git diff --check | 0 | No whitespace errors; Git emitted non-failing LF-to-CRLF normalization warnings for pre-existing unrelated user-modified documents |
+
+No production acquisition, network full-text request, production SQLite write, corpus write, vector-index operation, ingestion, or A6 action was performed.
+
+## 6. Known issues
+
+- A5 remains paused for independent review; raw content is not promoted to fulltext_ready without the existing A6 validation evidence.
+- If post-commit backup cleanup fails, the old .backup-* directory can remain by design; the NEW raw and SQLite metadata are retained as the consistent durable state.
+- Existing unrelated user modifications in the working tree were preserved and were not included in the implementation commit or report-only commit.
+
+## 7. Handoff
 
 ~~~
 STATUS: PAUSED FOR INDEPENDENT REVIEW
