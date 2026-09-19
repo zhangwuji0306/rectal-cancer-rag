@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -860,6 +861,61 @@ class A5FullTextTests(unittest.TestCase):
             self.assertEqual(
                 sorted(item.name for item in raw_root.iterdir()),
                 [f"PMID_{self.pmid}"],
+            )
+
+    def test_backup_cleanup_failure_does_not_rollback_committed_raw(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "tasks.sqlite"
+            raw_root = Path(tmp) / "corpus_raw"
+            self.make_db(db)
+            target = raw_root / f"PMID_{self.pmid}"
+            target.mkdir(parents=True)
+            (target / "article.xml").write_bytes(b"OLD article")
+            (target / "source.json").write_text("OLD source", encoding="utf-8")
+            new_content = b"<article>NEW article</article>"
+            candidate = {
+                "source": oa.PMC_AWS,
+                "url": "https://aws.example/PMC5001.xml",
+                "format": "xml",
+                "pmcid": "PMC5001",
+                "license": "CC BY 4.0",
+            }
+            transport, _ = self.sequence_transport([self.response(200, new_content)])
+            writer = fetch.RawCorpusWriter(raw_root)
+            with patch.object(
+                fetch.RawCorpusWriter,
+                "_remove_directory",
+                side_effect=OSError("backup cleanup failed"),
+            ):
+                result = fetch.acquire_one(
+                    self.pmid,
+                    db_path=db,
+                    raw_root=raw_root,
+                    candidates=[candidate],
+                    client=self.make_client(db, transport, max_attempts=1),
+                    writer=writer,
+                )
+
+            task = self.task(db)
+            self.assertEqual(result["outcome"], "raw_fetched")
+            self.assertEqual((target / "article.xml").read_bytes(), new_content)
+            self.assertNotEqual((target / "article.xml").read_bytes(), b"OLD article")
+            self.assertEqual(
+                task["content_sha256"], hashlib.sha256(new_content).hexdigest()
+            )
+            self.assertEqual(
+                Path(task["content_path"]).resolve(),
+                (target / "article.xml").resolve(),
+            )
+            self.assertEqual(task["content_source"], oa.PMC_AWS)
+            self.assertEqual(task["content_format"], "xml")
+            self.assertEqual(task["content_status"], "fetched")
+            self.assertEqual(task["status"], "metadata_only")
+            self.assertTrue(
+                any(
+                    item.name.startswith(f".PMID_{self.pmid}.backup-")
+                    for item in raw_root.iterdir()
+                )
             )
 
 

@@ -365,10 +365,14 @@ def acquire_one(
             )
             try:
                 _update_task_content(pmid, c, artifact, db_path=db_path)
-                writer.commit(artifact)
             except Exception:
                 writer.rollback(artifact)
                 raise
+            try:
+                writer.commit(artifact)
+            except Exception:
+                # SQLite metadata is already durable; keep the new raw artifact.
+                pass
             return artifact
 
         result: FetchResult = client.get(
